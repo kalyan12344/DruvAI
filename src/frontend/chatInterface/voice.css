@@ -1,0 +1,198 @@
+/* voice.css */
+body {
+    margin: 0;
+    font-family: "Segoe UI", Roboto, sans-serif;
+    background-color: #0e1117;
+    color: #e0e0e0;
+  }
+  
+  .ai-interface {
+    height: auto;
+    width: 90vw;
+    margin-left: 5vw;
+    /* margin: 30px auto; */
+    padding: 20px;
+    background-color: #161b22;
+    border-radius: 20px;
+    box-shadow: 0 0 10px rgba(0, 255, 170, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  header {
+    text-align: center;
+  }
+  
+  header h1 {
+    font-size: 2rem;
+    color: #00ffaa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  header p {
+    font-size: 1rem;
+    color: #a0a0a0;
+  }
+  
+  .chat-container {
+    max-width: 600px;
+    width: 40vw;
+    background-color: #0d1117;
+    border-radius: 12px;
+    padding: 15px;
+    height: 400px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    /* justify-content: start; */
+    /* align-items: flex-start; */
+    box-shadow: inset 0 0 5px rgba(0, 255, 170, 0.05);
+  }
+  
+  .message {
+    min-width: 200px;
+    margin: 10px 0;
+    padding: 12px 15px;
+    border-radius: 12px;
+    max-width: 75%;
+    word-wrap: break-word;
+  }
+  
+  .message.user {
+    background-color: #2e8b57;
+    align-self: flex-end;
+    justify-content: flex-end;
+    min-height: 40px; ;
+    color: white;
+
+  }
+  
+  .message.ai {
+    background-color: #1e1e2f;
+    align-items: flex-start;
+    justify-content: flex-start;
+    color: #00ffaa;
+  }
+  
+  .message-time {
+    font-size: 0.75rem;
+    text-align: right;
+    color: #d3d3d3;
+    margin-top: 5px;
+  }
+  
+  .empty-state {
+    text-align: center;
+    color: #777;
+    font-style: italic;
+    margin-top: 150px;
+  }
+  
+  .input-area {
+    max-width: 500px;
+    width: 40vw;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #1a1f2b;
+    padding: 10px;
+    border-radius: 12px;
+    box-shadow: inset 0 0 3px rgba(0, 255, 170, 0.1);
+  }
+  
+  .input-area input {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    
+    outline: none;
+    background-color: #0e121b;
+    color: white;
+    font-size: 1rem;
+  }
+  
+  .buttons {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .buttons button {
+    background-color: #00ffaa;
+    border: none;
+    color: #0e1117;
+    padding: 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .buttons button:hover {
+    background-color: #00ddb3;
+    transform: scale(1.1);
+  }
+  
+  .buttons button.active {
+    background-color: #ff8c00;
+  }
+  
+  .typing-indicator {
+    text-align: center;
+    font-style: italic;
+    color: #ccc;
+  }
+  
+  .typing-indicator .dots {
+    display: flex;
+    justify-content: center;
+    margin-top: 5px;
+  }
+  
+  .typing-indicator .dot {
+    width: 8px;
+    height: 8px;
+    margin: 0 4px;
+    background-color: #00ffaa;
+    border-radius: 50%;
+    animation: blink 1.2s infinite ease-in-out;
+  }
+  
+  .typing-indicator .dot:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  .typing-indicator .dot:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+
+
+  .calendar-btn {
+    background-color: #1e1e2f;
+    border: none;
+    color: #00ffaa;
+    padding: 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .calendar-btn:hover {
+    background-color: #2e3a4a;
+    transform: scale(1.1);
+  }
+  
+  @keyframes blink {
+    0%, 100% { opacity: 0.2; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.2); }
+  }
+  

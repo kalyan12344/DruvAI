@@ -1,0 +1,6 @@
+flask==3.0.0
+flask-cors==4.0.0
+speechrecognition==3.10.0
+pyttsx3==2.90
+python-dotenv==1.0.0
+gunicorn==21.2.0                 # For production deployment
