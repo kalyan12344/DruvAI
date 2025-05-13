@@ -172,14 +172,22 @@ const Calendar = ({ onDateSelect }) => {
     <div className="calendar-wrapper">
       <div className="calendar-container">
         <div className="calendar-header">
-          <button onClick={handlePrevMonth} className="nav-button">
+          <button
+            onClick={handlePrevMonth}
+            className=""
+            style={
+              {
+                // borderRadius: "50%",
+              }
+            }
+          >
             <FaChevronLeft />
           </button>
           <h3>
             <FaCalendarAlt /> {months[currentDate.getMonth()]},{" "}
             {currentDate.getFullYear()}
           </h3>
-          <button onClick={handleNextMonth} className="nav-button">
+          <button onClick={handleNextMonth} className="">
             <FaChevronRight />
           </button>
         </div>

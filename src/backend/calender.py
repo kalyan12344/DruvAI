@@ -39,12 +39,50 @@ class CalendarService:
         return build('calendar', 'v3', credentials=creds)
 
     def create_event(self, title, start_time, duration_minutes=60, description=""):
-        end_time = start_time + timedelta(minutes=duration_minutes)
-        event = {
+        print("Creating event...", title)
+        print("Start time:", start_time)
+        """
+        Creates an event on Google Calendar.
+
+        If start_time is a datetime → normal timed event.
+        If start_time is a date string (YYYY-MM-DD) → all-day event.
+        """
+        # Handle all-day event if only a date is given
+        if isinstance(start_time, str):
+            try:
+                date = datetime.strptime(start_time, "%Y-%m-%d").date()
+                event = {
+                    "summary": title,
+                    "description": description or "Scheduled via Druv",
+                    "start": {"date": str(date)},
+                    "end": {"date": str(date + timedelta(days=1))},
+                    "reminders": {
+                        "useDefault": False,
+                        "overrides": [
+                            {"method": "email", "minutes": 60 * 24},  # 1 day before
+                            {"method": "popup", "minutes": 30}
+                        ]
+                    }
+                }
+                self.service.events().insert(calendarId='primary', body=event).execute()
+                return f"✅ All-day event '{title}' created for {date}."
+            except Exception as e:
+                return f"❌ Failed to create all-day event: {e}"
+
+        # Else, treat it as a timed event
+        try:
+            end_time = start_time + timedelta(minutes=duration_minutes)
+            event = {
             "summary": title,
             "description": description or "Scheduled via Druv",
-            "start": {"dateTime": start_time.isoformat(), "timeZone": "UTC"},
-            "end": {"dateTime": end_time.isoformat(), "timeZone": "UTC"},
+            "start": {
+                "dateTime": start_time.isoformat(),
+                "timeZone": "America/Chicago"
+            },
+            "end": {
+                "dateTime": end_time.isoformat(),
+                "timeZone": "America/Chicago"
+            },
             "reminders": {
                 "useDefault": False,
                 "overrides": [
@@ -53,8 +91,12 @@ class CalendarService:
                 ]
             }
         }
-        self.service.events().insert(calendarId='primary', body=event).execute()
-        return f"✅ Event '{title}' created on Google Calendar."
+
+            self.service.events().insert(calendarId='primary', body=event).execute()
+            return f"✅ Timed event '{title}' created on {start_time.strftime('%Y-%m-%d %H:%M')}."
+        except Exception as e:
+            return f"❌ Failed to create timed event: {e}"
+
     def get_event_by_date(self, date_str):
         """
         Fetch events on a specific date (YYYY-MM-DD).

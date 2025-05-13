@@ -1,15 +1,13 @@
 import { useState, useEffect, useRef } from "react";
-import { FaArrowUp, FaArrowDown } from "react-icons/fa";
+import { FaArrowUp, FaArrowDown, FaTimes, FaEnvelope } from "react-icons/fa";
 import axios from "axios";
-import "../emails/emails.css"; // Adjust path if needed
+import "../emails/emails.css";
 
 export default function ImportantEmails() {
   const [emails, setEmails] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isMobile, setIsMobile] = useState(window.visualViewport.width < 1000);
-  const [showPanel, setShowPanel] = useState(
-    window.visualViewport.width >= 1000
-  );
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1000);
+  const [showPanel, setShowPanel] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(null);
   const scrollRef = useRef(null);
 
@@ -19,7 +17,6 @@ export default function ImportantEmails() {
       axios
         .get("http://localhost:5000/api/emails/important")
         .then((res) => {
-          console.log("Fetched emails:", res.data.important);
           setEmails(res.data.important || []);
           setLastUpdated(new Date().toLocaleTimeString());
           setLoading(false);
@@ -37,17 +34,19 @@ export default function ImportantEmails() {
     // Poll every 60 seconds
     const intervalId = setInterval(fetchEmails, 60000);
 
-    return () => clearInterval(intervalId);
-  }, []);
-
-  useEffect(() => {
+    // Handle resize
     const handleResize = () => {
-      const mobile = window.innerWidth < 768;
+      const mobile = window.innerWidth < 1000;
       setIsMobile(mobile);
       if (!mobile) setShowPanel(true);
     };
+
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+
+    return () => {
+      clearInterval(intervalId);
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
   const scroll = (direction) => {
@@ -63,30 +62,40 @@ export default function ImportantEmails() {
 
   if (isMobile && !showPanel) {
     return (
-      <div className="floating-icon" onClick={() => setShowPanel(true)}>
-        📩
+      <div
+        className="floating-email-icon"
+        onClick={() => setShowPanel(true)}
+        title="View important emails"
+      >
+        <FaEnvelope className="envelope-icon" />
+        {emails.length > 0 && (
+          <span className="email-badge">{emails.length}</span>
+        )}
       </div>
     );
   }
 
   return (
-    <div
-      className={`email-widget ${isMobile ? "mobile" : ""}`}
-      style={{ width: "600px" }}
-    >
+    <div className={`email-widget ${isMobile ? "mobile" : ""}`}>
       {isMobile && (
-        <button className="close-btn" onClick={() => setShowPanel(false)}>
-          ❌
+        <button
+          className="close-btn"
+          onClick={() => setShowPanel(false)}
+          aria-label="Close email panel"
+        >
+          <FaTimes />
         </button>
       )}
 
       <div className="header-row">
-        <h3>📬 Important Emails</h3>
+        <h3>
+          <FaEnvelope className="header-icon" /> Important Emails
+        </h3>
         <div className="scroll-buttons">
-          <button onClick={() => scroll("up")}>
+          <button onClick={() => scroll("up")} aria-label="Scroll up">
             <FaArrowUp />
           </button>
-          <button onClick={() => scroll("down")}>
+          <button onClick={() => scroll("down")} aria-label="Scroll down">
             <FaArrowDown />
           </button>
         </div>
@@ -94,9 +103,12 @@ export default function ImportantEmails() {
 
       <div className="email-scroll-container" ref={scrollRef}>
         {loading ? (
-          <p>⏳ Loading important emails...</p>
+          <div className="loading-state">
+            <div className="loading-spinner"></div>
+            <p>Loading important emails...</p>
+          </div>
         ) : emails.length === 0 ? (
-          <p>📭 No important emails found.</p>
+          <p className="empty-state">No important emails found.</p>
         ) : (
           emails.map((email, index) => (
             <div className="email-card" key={index}>
@@ -108,7 +120,7 @@ export default function ImportantEmails() {
 
       {lastUpdated && (
         <div className="last-updated">
-          <small>🕒 Last updated: {lastUpdated}</small>
+          <small>Last updated: {lastUpdated}</small>
         </div>
       )}
     </div>

@@ -9,6 +9,7 @@ import axios from "axios";
 import "./voice.css";
 import CalendarComponent from "../calender/calender";
 import ImportantEmails from "../emails/emails";
+import WeatherWidget from "../weather/weather";
 
 const api = axios.create({ baseURL: "http://localhost:5000" });
 
@@ -80,75 +81,82 @@ export default function AIInterface() {
   };
 
   return (
-    <div className="ai-interface">
-      <header>
-        <h1>
-          <FaRobot className="robot-icon" />
-          Druv AI
-        </h1>
-        <p>Your voice-enabled personal assistant</p>
-      </header>
-      <div style={{ display: "flex", width: "100vw", flexDirection: "row" }}>
-        <div>
-          <div className="chat-container">
-            {conversation.length > 0 ? (
-              conversation.map((msg, i) => (
-                <div key={i} className={`message ${msg.isAI ? "ai" : "user"}`}>
-                  <div className="message-content">{msg.text}</div>
-                  <div className="message-time">{msg.time}</div>
-                </div>
-              ))
-            ) : (
-              <div className="empty-state">
-                <p>Send a message or click the mic to speak</p>
-              </div>
-            )}
-            <div ref={messagesEndRef} />
+    <>
+      <div className="ai-interface">
+        <header
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyItems: "center",
+            alignItems: "center",
+            position: "relative",
+            justifyContent: "space-around",
+          }}
+        >
+          <div>
+            <h1>
+              <FaRobot className="robot-icon" />
+              Druv AI
+            </h1>
+            <p>Your voice-enabled personal assistant</p>
           </div>
+          <WeatherWidget />
+        </header>
+        <div style={{ display: "flex", width: "100vw", flexDirection: "row" }}>
+          <div>
+            <div className="chat-container">
+              {conversation.length > 0 ? (
+                conversation.map((msg, i) => (
+                  <div
+                    key={i}
+                    className={`message ${msg.isAI ? "ai" : "user"}`}
+                  >
+                    <div className="message-content">{msg.text}</div>
+                    <div className="message-time">{msg.time}</div>
+                  </div>
+                ))
+              ) : (
+                <div className="empty-state">
+                  <p>Send a message or click the mic to speak</p>
+                </div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
 
-          <div className="input-area">
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Type or speak your command..."
-              onKeyPress={(e) => e.key === "Enter" && processInput(input)}
-            />
-            <div className="buttons">
-              <button
-                onClick={startListening}
-                className={isListening ? "active" : ""}
-                disabled={isProcessing}
-              >
-                <FaMicrophone />
-              </button>
-              <button
-                onClick={() => processInput(input)}
-                disabled={isProcessing || !input.trim()}
-              >
-                <FaPaperPlane />
-              </button>
+            <div className="input-area">
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Type or speak your command..."
+                onKeyPress={(e) => e.key === "Enter" && processInput(input)}
+              />
+              <div className="buttons">
+                <button
+                  onClick={startListening}
+                  className={isListening ? "active" : ""}
+                  disabled={isProcessing}
+                >
+                  <FaMicrophone size={20} />
+                </button>
+                <button
+                  onClick={() => processInput(input)}
+                  disabled={isProcessing || !input.trim()}
+                >
+                  <FaPaperPlane size={50} />
+                </button>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div style={{ width: "600px" }}>
-          <CalendarComponent />
-        </div>
-        <div maxWidth="600px">
-          <ImportantEmails />
-        </div>
-      </div>
-      {isProcessing && (
-        <div className="typing-indicator">
-          <span>Druv is thinking</span>
-          <div className="dots">
-            <div className="dot"></div>
-            <div className="dot"></div>
-            <div className="dot"></div>
+          <div style={{ width: "600px" }}>
+            <CalendarComponent />
+          </div>
+          <div maxWidth="600px">
+            <ImportantEmails />
           </div>
         </div>
-      )}
-    </div>
+      </div>
+    </>
   );
 }

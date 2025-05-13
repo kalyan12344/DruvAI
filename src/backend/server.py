@@ -10,6 +10,19 @@ from canvas import (
     get_course_list,
     sync_assignments_to_google_calendar,
 )
+import cv2
+from weather import get_weather_by_coords
+
+
+
+import face_recognition
+import numpy as np
+import base64
+import io
+from PIL import Image
+from datetime import datetime, timedelta
+from jobs import add_job, list_jobs
+
 from websearch import (web_search)
 import os
 import requests
@@ -63,12 +76,16 @@ SUPPORTED_INTENTS = [
     "sync_assignments_to_google_calendar",
     "chat",
     "get_unread_emails",
+    "add_job",
+    "list_jobs",
 ]
 
 # --------------------- LLM Intent Extractor ---------------------
 
 def call_llm(prompt):
     today_str = datetime.today().strftime("%A, %B %d, %Y")
+    today_iso = datetime.today().strftime("%Y-%m-%d")
+    tomorrow_iso = (datetime.today() + timedelta(days=1)).strftime("%Y-%m-%d")
 
     function_guide = f"""
 Today’s date is {today_str}.
@@ -136,7 +153,7 @@ User: "What's your name?"
 → Response: {{ "intent": "chat", "arguments": {{ "message": "My name is Druv! I'm your AI assistant, always ready to help 🚀" }} }}
 
 User: "What day is it?"  
-→ Response: {{ "intent": "chat", "arguments": {{ "message": "Today is {today_str}." }} }}
+→ Response: {{ "intent": "chat", "arguments": {{ "message": "Today is {{today_str}}." }} }}
 
 User: "What is quantum computing?"  
 → Response: {{ "intent": "chat", "arguments": {{ "message": "search: What is quantum computing?" }} }}
@@ -160,9 +177,30 @@ User: "What courses am I taking?"
 User: "Show all my events"  
 → Response: {{ "intent": "get_all_events", "arguments": {{ }} }}
 
+User: "What are my plans today?"  
+→ Response: {{ "intent": "get_event_by_date", "arguments": {{ "date": "{today_iso}" }} }}
+
+User: "Do I have anything scheduled today?"  
+→ Response: {{ "intent": "get_event_by_date", "arguments": {{ "date": "{today_iso}" }} }}
+
+User: "What are my plans tomorrow?"  
+→ Response: {{ "intent": "get_event_by_date", "arguments": {{ "date": "{tomorrow_iso}" }} }}
+
+User: "What’s on my calendar on April 25?"  
+→ Response: {{ "intent": "get_event_by_date", "arguments": {{ "date": "2025-04-25" }} }}
+
+
 13. get_unread_emails  
 → args: { {}}  
 Use this when the user says: "Check my emails", "Do I have unread emails?", "Show latest emails", etc.
+
+14. add_job
+→ args: {{"company": str, "role": str, "url": str, "status": str, "notes": str}}
+Use this when the user says: "Add a job at XYZ", "I applied to ABC company", etc.
+
+15. list_jobs
+→ args: {{}}    
+use this when the user says: "List my jobs", "Show me my job applications", etc.
 ✅ Always reply with ONLY valid JSON (no markdown or extra text).
 
 """
@@ -283,6 +321,7 @@ Use this when the user says: "Check my emails", "Do I have unread emails?", "Sho
 # 13. get_unread_emails  
 # → args: { {}}  
 # Use this when the user says: "Check my emails", "Do I have unread emails?", "Show latest emails", etc.
+
 # ✅ Always reply with ONLY valid JSON (no markdown or extra text).
 
 # """
@@ -335,7 +374,15 @@ def route_intent(intent, args):
     elif intent == "get_event":
         events = calendar_service.get_events(5)
         return format_events(events)
-
+    
+    elif intent == "add_job":
+        return add_job(
+            args.get("company"), args.get("role"),
+            args.get("url", ""), args.get("status", "Applied"),
+            args.get("notes", "")
+            )
+    elif intent == "list_jobs":
+        return list_jobs()
     elif intent == "get_all_events":
         events = calendar_service.get_all_events()
         return format_events(events)
@@ -406,7 +453,33 @@ def get_important_emails():
     emails = gmail_service.get_unread_emails(max_results=5)
     return jsonify({"important": emails})
 
+@app.route("/recognize", methods=["POST"])
 
+def recognize_face():
+    known_face_encodings = np.load("encodings.npy", allow_pickle=True)
+    known_face_names = np.load("names.npy", allow_pickle=True)
+    data = request.json
+    image_data = data["image"].split(",")[1]  # Remove base64 prefix
+    decoded_image = base64.b64decode(image_data)
+
+    # Convert to OpenCV format
+    image = np.array(Image.open(io.BytesIO(decoded_image)))
+    rgb_frame = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+    # Detect face and encode
+    face_locations = face_recognition.face_locations(rgb_frame)
+    face_encodings = face_recognition.face_encodings(rgb_frame, face_locations)
+
+    for face_encoding in face_encodings:
+        matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
+        face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
+
+        if len(face_distances) > 0:
+            best_match_index = np.argmin(face_distances)
+            if matches[best_match_index]:
+                return jsonify({"name": known_face_names[best_match_index]})
+
+    return jsonify({"name": "Unknown"})
 
 @app.route('/process', methods=['POST', 'OPTIONS'])
 def process_command():
@@ -446,6 +519,19 @@ def process_command():
     response = route_intent(intent, args)
     return _corsify_actual_response(jsonify({"status": "success", "response": response}))
 
+@app.route("/api/weather", methods=["GET"])
+def get_weather_api():
+    lat = request.args.get("lat")
+    lon = request.args.get("lon")
+    city = request.args.get("city")
+
+    if lat and lon:
+        return jsonify(get_weather_by_coords(lat, lon))
+    elif city:
+        return jsonify(get_weather_json(city))
+    else:
+        return jsonify({ "error": "Missing location parameters" }), 400
+    
 @app.route('/api/calendar/events', methods=['GET'])
 def get_calendar_events():
     print("Fetching all calendar events...")
