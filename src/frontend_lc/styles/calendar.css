@@ -14,6 +14,32 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
     width: 70vw;
     margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Liquid glass effect background */
+.calendar-container::before {
+    content: "";
+    position: absolute;
+    inset: -20%;
+    background:
+        radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.25), transparent 60%),
+        radial-gradient(circle at 70% 80%, rgba(255, 255, 255, 0.15), transparent 60%);
+    filter: blur(60px);
+    opacity: 0.6;
+    animation: liquidGlassMove 8s ease-in-out infinite alternate;
+    pointer-events: none;
+    z-index: -1;
+}
+
+@keyframes liquidGlassMove {
+    0% {
+        transform: translate(-10%, -10%);
+    }
+    100% {
+        transform: translate(10%, 10%);
+    }
 }
 
 .calendar-header {
