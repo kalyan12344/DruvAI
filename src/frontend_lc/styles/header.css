@@ -1,0 +1,157 @@
+.header {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 1rem 1rem;
+    width: 80%;
+    max-width: 1200px;
+    border-radius: 50px;
+    background-color: rgba(0, 0, 0, 0.25);
+    box-shadow: 10px 4px 10px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    position: sticky;
+    /* border: 1px solid white; */
+    top: 0;
+    z-index: 100;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    margin-right: 80px;
+}
+
+/* CSS for circle with surrounding circle */
+.circle-container {
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    width: 100vw;
+    /* Adjust size as needed */
+    height: 500px;
+    z-index: -900;
+    transform: translateY(-100px);
+    /* Adjust size as needed */
+}
+
+.inner-circle {
+    width: 70vw;
+    /* Inner circle size */
+    height: 400px;
+    border-radius: 50%;
+    background-color: #482b88;
+    filter: blur(100px);
+
+    /* Purple color from your design */
+    z-index: 2;
+}
+
+.outer-circle {
+    position: absolute;
+    width: 100vw;
+    /* Slightly larger than inner circle */
+    height: 800px;
+    border-radius: 50%;
+    background-color: #5100ff;
+    /* Same color as inner circle */
+    opacity: 0.8;
+    /* Makes it slightly transparent */
+    z-index: 1;
+    filter: blur(70px);
+}
+
+
+
+.nav {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.nav-it {
+    color: white;
+    text-transform: uppercase;
+    font-size: 14px;
+    text-decoration: none;
+    font-weight: 300;
+    padding: 0.5rem 0;
+    /* transition: color 0.2s; */
+}
+
+.nav-item:hover {
+    color: #5100ff;
+    background-color: none;
+}
+
+
+.signin-bt {
+    background: none;
+    border-bottom: 0.5px solid white;
+    border-left: 0.5px solid white;
+
+    color: white;
+    padding: 0.5rem 1.5rem;
+    border-radius: 50px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: ease-in-out 0.5s;
+}
+
+.signin-bt:hover {
+    background-color: white;
+    color: #1E1E2D;
+    /* color: #1E1E2D; */
+    border: 0.5px solid #ffffff;
+    /* animation: fullborder 2s forwards; */
+    transition: all 1s;
+
+}
+
+
+
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        padding: 1rem;
+        gap: 1rem;
+    }
+
+    .nav {
+        width: 100%;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .nav-item,
+    .signin-btn {
+        font-size: 0.9rem;
+        padding: 0.3rem 0;
+    }
+}
+
+@keyframes fullborder {
+    0% {
+        border-top: white 0.5px solid;
+
+    }
+
+    50% {
+        border-top: white 0.5px solid;
+        border-right: white 0.5px solid;
+    }
+
+    100% {
+        border-top: white 0.5px solid;
+        border-right: white 0.5px solid;
+        border-bottom: white 0.5px solid;
+        border-left: white 0.5px solid;
+    }
+}

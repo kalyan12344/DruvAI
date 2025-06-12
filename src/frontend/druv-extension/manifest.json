@@ -1,0 +1,50 @@
+{
+    "manifest_version": 3,
+    "name": "Druv Assistant",
+    "description": "Floating HTML/CSS-based AI Assistant",
+    "version": "1.0",
+    "background": {
+        "service_worker": "background.js"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "content/content.js"
+            ],
+            "css": [
+                "content/floating.css"
+            ],
+            "run_at": "document_idle"
+        }
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "widget.html",
+                "content/assets/*"
+            ],
+            "matches": [
+                "<all_urls>"
+            ]
+        }
+    ],
+    "permissions": [
+        "scripting",
+        "activeTab",
+        "tabs"
+    ],
+    "host_permissions": [
+        "<all_urls>"
+    ],
+    "icons": {
+        "16": "content/assets/druv_logo.png",
+        "48": "content/assets/druv_logo.png",
+        "128": "content/assets/druv_logo.png"
+    },
+    "action": {
+        "default_icon": "content/assets/druv_logo.png"
+    }
+}

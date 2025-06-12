@@ -1,0 +1,69 @@
+--- 2025-06-10 20:43:04.070235 ---
+Traceback (most recent call last):
+  File "/Users/kalyankeerthipati/Documents/Projects/DruvAI/src/backend_lc/api/routes/webhooks.py", line 139, in process_new_email
+    _log_job_email_to_excel(date_received, extracted_details, sender, subject)
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kalyankeerthipati/Documents/Projects/DruvAI/src/backend_lc/api/routes/webhooks.py", line 45, in _log_job_email_to_excel
+    workbook = openpyxl.load_workbook(EXCEL_FILENAME)
+  File "/Users/kalyankeerthipati/Documents/Projects/DruvAI/src/backend/venv/lib/python3.13/site-packages/openpyxl/reader/excel.py", line 346, in load_workbook
+    reader = ExcelReader(filename, read_only, keep_vba,
+                         data_only, keep_links, rich_text)
+  File "/Users/kalyankeerthipati/Documents/Projects/DruvAI/src/backend/venv/lib/python3.13/site-packages/openpyxl/reader/excel.py", line 123, in __init__
+    self.archive = _validate_archive(fn)
+                   ~~~~~~~~~~~~~~~~~^^^^
+  File "/Users/kalyankeerthipati/Documents/Projects/DruvAI/src/backend/venv/lib/python3.13/site-packages/openpyxl/reader/excel.py", line 95, in _validate_archive
+    archive = ZipFile(filename, 'r')
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/zipfile/__init__.py", line 1385, in __init__
+    self._RealGetContents()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/zipfile/__init__.py", line 1452, in _RealGetContents
+    raise BadZipFile("File is not a zip file")
+zipfile.BadZipFile: File is not a zip file
+
+
+--- 2025-06-10 20:43:22.722933 ---
+Traceback (most recent call last):
+  File "/Users/kalyankeerthipati/Documents/Projects/DruvAI/src/backend_lc/api/routes/webhooks.py", line 139, in process_new_email
+    _log_job_email_to_excel(date_received, extracted_details, sender, subject)
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kalyankeerthipati/Documents/Projects/DruvAI/src/backend_lc/api/routes/webhooks.py", line 45, in _log_job_email_to_excel
+    workbook = openpyxl.load_workbook(EXCEL_FILENAME)
+  File "/Users/kalyankeerthipati/Documents/Projects/DruvAI/src/backend/venv/lib/python3.13/site-packages/openpyxl/reader/excel.py", line 346, in load_workbook
+    reader = ExcelReader(filename, read_only, keep_vba,
+                         data_only, keep_links, rich_text)
+  File "/Users/kalyankeerthipati/Documents/Projects/DruvAI/src/backend/venv/lib/python3.13/site-packages/openpyxl/reader/excel.py", line 123, in __init__
+    self.archive = _validate_archive(fn)
+                   ~~~~~~~~~~~~~~~~~^^^^
+  File "/Users/kalyankeerthipati/Documents/Projects/DruvAI/src/backend/venv/lib/python3.13/site-packages/openpyxl/reader/excel.py", line 95, in _validate_archive
+    archive = ZipFile(filename, 'r')
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/zipfile/__init__.py", line 1385, in __init__
+    self._RealGetContents()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/zipfile/__init__.py", line 1452, in _RealGetContents
+    raise BadZipFile("File is not a zip file")
+zipfile.BadZipFile: File is not a zip file
+
+
+--- 2025-06-10 20:43:28.970515 ---
+Traceback (most recent call last):
+  File "/Users/kalyankeerthipati/Documents/Projects/DruvAI/src/backend_lc/api/routes/webhooks.py", line 139, in process_new_email
+    _log_job_email_to_excel(date_received, extracted_details, sender, subject)
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kalyankeerthipati/Documents/Projects/DruvAI/src/backend_lc/api/routes/webhooks.py", line 45, in _log_job_email_to_excel
+    workbook = openpyxl.load_workbook(EXCEL_FILENAME)
+  File "/Users/kalyankeerthipati/Documents/Projects/DruvAI/src/backend/venv/lib/python3.13/site-packages/openpyxl/reader/excel.py", line 346, in load_workbook
+    reader = ExcelReader(filename, read_only, keep_vba,
+                         data_only, keep_links, rich_text)
+  File "/Users/kalyankeerthipati/Documents/Projects/DruvAI/src/backend/venv/lib/python3.13/site-packages/openpyxl/reader/excel.py", line 123, in __init__
+    self.archive = _validate_archive(fn)
+                   ~~~~~~~~~~~~~~~~~^^^^
+  File "/Users/kalyankeerthipati/Documents/Projects/DruvAI/src/backend/venv/lib/python3.13/site-packages/openpyxl/reader/excel.py", line 95, in _validate_archive
+    archive = ZipFile(filename, 'r')
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/zipfile/__init__.py", line 1385, in __init__
+    self._RealGetContents()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/zipfile/__init__.py", line 1452, in _RealGetContents
+    raise BadZipFile("File is not a zip file")
+zipfile.BadZipFile: File is not a zip file
+
+

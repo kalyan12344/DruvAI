@@ -15,7 +15,7 @@ export default function ImportantEmails() {
     const fetchEmails = () => {
       setLoading(true);
       axios
-        .get("http://localhost:5000/api/emails/important")
+        .get("http://localhost:5001/api/emails/important")
         .then((res) => {
           setEmails(res.data.important || []);
           setLastUpdated(new Date().toLocaleTimeString());

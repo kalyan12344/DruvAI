@@ -29,3 +29,17 @@ src/backend/gmail_token.json
 src/backend/calender_token.json
 src/backend/.env
 **/.env
+
+
+src/backend_lc/credentials.json
+src/backend_lc/token.json
+src/backend_lc/ctoken.json
+src/backend/.env
+
+
+x
+
+
+
+
+

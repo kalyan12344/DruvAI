@@ -7,6 +7,7 @@ import {
   FaAngleDown,
 } from "react-icons/fa";
 import axios from "axios";
+import { motion, AnimatePresence } from "framer-motion";
 import "../calender/calender.css";
 
 const Calendar = ({ onDateSelect }) => {
@@ -35,13 +36,23 @@ const Calendar = ({ onDateSelect }) => {
 
   const days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 
+  // Check if a date is today
+  const isToday = (date) => {
+    const today = new Date();
+    return (
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
+    );
+  };
+
   // Fetch events from backend
   const fetchEvents = async () => {
     try {
       setError(null);
       setLoading(true);
       const response = await axios.get(
-        "http://localhost:5000/api/calendar/events"
+        "http://localhost:5001/api/calendar/events"
       );
       setEvents(response.data);
     } catch (err) {
@@ -131,13 +142,15 @@ const Calendar = ({ onDateSelect }) => {
         selectedDate.getDate() === i &&
         selectedDate.getMonth() === month &&
         selectedDate.getFullYear() === year;
+      const today = isToday(date);
 
       daysArray.push(
         <div
           key={`current-${i}`}
-          className={`calendar-day ${isSelected ? "selected" : ""} ${
-            hasEvents ? "has-events" : ""
-          }`}
+          className={`calendar-day 
+            ${isSelected ? "selected" : ""} 
+            ${hasEvents ? "has-events" : ""}
+            ${today ? "today" : ""}`}
           onClick={() => handleDateClick(i)}
         >
           {i}
@@ -169,27 +182,33 @@ const Calendar = ({ onDateSelect }) => {
     : selectedDateEvents.slice(0, 3);
 
   return (
-    <div className="calendar-wrapper">
-      <div className="calendar-container">
+    <motion.div
+      className="dashboard-calendar-wrapper"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+    >
+      {/* Calendar Grid */}
+      <div className="dashboard-calendar-container">
         <div className="calendar-header">
-          <button
+          <motion.button
             onClick={handlePrevMonth}
-            className=""
-            style={
-              {
-                // borderRadius: "50%",
-              }
-            }
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
           >
             <FaChevronLeft />
-          </button>
+          </motion.button>
           <h3>
             <FaCalendarAlt /> {months[currentDate.getMonth()]},{" "}
             {currentDate.getFullYear()}
           </h3>
-          <button onClick={handleNextMonth} className="">
+          <motion.button
+            onClick={handleNextMonth}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
             <FaChevronRight />
-          </button>
+          </motion.button>
         </div>
 
         {loading ? (
@@ -214,17 +233,21 @@ const Calendar = ({ onDateSelect }) => {
       </div>
 
       {/* Events Card */}
-      <div className="events-card-container" ref={eventsCardRef}>
+      <div className="dashboard-events-card" ref={eventsCardRef}>
         {selectedDate && (
-          <div className="events-card">
+          <motion.div
+            className="events-card"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
             <div className="events-card-header">
               <h3>
-                {" "}
                 {selectedDate.toLocaleDateString("en-US", {
                   weekday: "long",
                   month: "long",
                   day: "numeric",
                 })}
+                {isToday(selectedDate) && <span className="today-badge">Today</span>}
               </h3>
               {selectedDateEvents.length > 0 && (
                 <span className="events-count">
@@ -233,45 +256,61 @@ const Calendar = ({ onDateSelect }) => {
               )}
             </div>
 
-            {selectedDateEvents.length > 0 ? (
-              <div className="events-list">
-                {displayedEvents.map((event, index) => (
-                  <div key={index} className="event-item">
-                    <div className="event-time">
-                      {event.start.dateTime
-                        ? new Date(event.start.dateTime).toLocaleTimeString(
+            <AnimatePresence>
+              {selectedDateEvents.length > 0 ? (
+                <div className="events-list">
+                  {displayedEvents.map((event, index) => (
+                    <motion.div
+                      key={index}
+                      className="event-item"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: index * 0.1 }}
+                    >
+                      <div className="event-time">
+                        {event.start.dateTime
+                          ? new Date(event.start.dateTime).toLocaleTimeString(
                             [],
                             { hour: "2-digit", minute: "2-digit" }
                           )
-                        : "All day"}
-                    </div>
-                    <div className="event-content">
-                      <div className="event-summary">{event.summary}</div>
-                      {event.description && (
-                        <div className="event-description">
-                          {event.description}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="no-events">No events scheduled</div>
-            )}
+                          : "All day"}
+                      </div>
+                      <div className="event-content">
+                        <div className="event-summary">{event.summary}</div>
+                        {event.description && (
+                          <div className="event-description">
+                            {event.description}
+                          </div>
+                        )}
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              ) : (
+                <motion.div
+                  className="no-events"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                >
+                  No events scheduled
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {hasMultipleEvents && !showAllEvents && (
-              <button
+              <motion.button
                 className="show-more-btn"
                 onClick={() => setShowAllEvents(true)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 <FaAngleDown /> Show all {selectedDateEvents.length} events
-              </button>
+              </motion.button>
             )}
-          </div>
+          </motion.div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 };
 

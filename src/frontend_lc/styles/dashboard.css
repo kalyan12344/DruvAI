@@ -1,0 +1,388 @@
+/* dashboard.css */
+
+/* --- Base & Variables (Optional, but good for theming) --- */
+:root {
+    --dashboard-bg: #111827;
+    /* Dark blue-gray (e.g., Tailwind Gray 900) */
+    --card-bg: #1f2937;
+    /* Slightly lighter card bg (e.g., Tailwind Gray 800) */
+    --card-border: #374151;
+    /* Border for cards (e.g., Tailwind Gray 700) */
+    --text-primary: #f3f4f6;
+    /* Off-white for primary text (e.g., Tailwind Gray 100) */
+    --text-secondary: #9ca3af;
+    /* Lighter gray for secondary text (e.g., Tailwind Gray 400) */
+    --text-headings: #e5e7eb;
+    /* Slightly brighter for headings (e.g., Tailwind Gray 200) */
+    --accent-color: #3b82f6;
+    /* A vibrant blue for accents (e.g., Tailwind Blue 500) */
+    --accent-hover: #2563eb;
+    /* Darker blue for hover */
+    --completed-color: #10b981;
+    /* Green for completed items (e.g., Tailwind Emerald 500) */
+    --progress-bar-bg: #374151;
+    /* Background of progress bar track */
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+body {
+    /* Apply base font to body for consistency if dashboard is full page */
+    font-family: var(--font-family);
+    background-color: var(--dashboard-bg);
+    /* If dashboard takes full page */
+    color: var(--text-primary);
+}
+
+.dashboard {
+    background-color: var(--dashboard-bg);
+    color: var(--text-primary);
+    padding: 20px;
+    font-family: var(--font-family);
+    min-height: 100vh;
+}
+
+/* --- Header --- */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.dashboard-header h1 {
+    color: var(--text-headings);
+    font-size: 2rem;
+    margin: 0 0 5px 0;
+}
+
+.dashboard-header p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.header-actions button {
+    margin-left: 10px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.header-actions .primary-btn {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+.header-actions .primary-btn:hover {
+    background-color: var(--accent-hover);
+    transform: translateY(-1px);
+}
+
+.header-actions .secondary-btn {
+    background-color: var(--card-bg);
+    color: var(--text-primary);
+    border: 1px solid var(--card-border);
+}
+
+.header-actions .secondary-btn:hover {
+    background-color: var(--card-border);
+    transform: translateY(-1px);
+}
+
+/* --- Content & Cards --- */
+.dashboard-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.content-row {
+    width: 80vw;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    /* Allow cards to wrap on smaller screens */
+}
+
+.card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    flex: 1;
+    /* Make cards in a row take up equal space */
+    min-width: 300px;
+    /* Minimum width before wrapping */
+}
+
+.card h2 {
+    color: var(--text-headings);
+    font-size: 1.5rem;
+    margin-top: 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 10px;
+}
+
+.card h3 {
+    color: var(--text-headings);
+    font-size: 1.1rem;
+    margin: 0 0 5px 0;
+}
+
+.add-btn {
+    background-color: transparent;
+    color: var(--accent-color);
+    border: 1px dashed var(--accent-color);
+    border-radius: 8px;
+    padding: 8px 15px;
+    cursor: pointer;
+    margin-top: 15px;
+    font-weight: 500;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.add-btn:hover {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+/* --- Tasks Card --- */
+.tasks-card .task-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.tasks-card .task-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.tasks-card .task-item:last-child {
+    border-bottom: none;
+}
+
+.tasks-card .task-info {
+    display: flex;
+    align-items: center;
+}
+
+.tasks-card .task-indicator {
+    width: 10px;
+    height: 10px;
+    background-color: var(--accent-color);
+    border-radius: 50%;
+    margin-right: 12px;
+}
+
+.tasks-card .task-completed {
+    color: var(--completed-color);
+    font-weight: bold;
+    margin-right: 12px;
+    font-size: 1.2rem;
+}
+
+.tasks-card .task-title {
+    color: var(--text-primary);
+}
+
+.tasks-card .task-item.completed .task-title {
+    text-decoration: line-through;
+    color: var(--text-secondary);
+}
+
+.tasks-card .task-due {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+/* --- Calendar Card --- */
+.calendar-card .calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    color: var(--text-headings);
+}
+
+.calendar-card .nav-btn {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.calendar-card .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    text-align: center;
+}
+
+.calendar-card .calendar-day-header {
+    color: var(--text-secondary);
+    font-weight: bold;
+    font-size: 0.8rem;
+    padding-bottom: 5px;
+}
+
+.calendar-card .calendar-day {
+    padding: 8px 0;
+    border-radius: 6px;
+    color: var(--text-primary);
+    transition: background-color 0.2s ease;
+}
+
+.calendar-card .calendar-day:hover {
+    background-color: var(--card-border);
+}
+
+.calendar-card .calendar-day.highlight {
+    background-color: var(--accent-color);
+    color: white;
+    font-weight: bold;
+}
+
+/* --- Goals Card --- */
+.goals-card .goal-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.goals-card .goal-item {
+    margin-bottom: 20px;
+}
+
+.goals-card .goal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.goals-card .goal-header span {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.progress-bar {
+    background-color: var(--progress-bar-bg);
+    border-radius: 5px;
+    height: 10px;
+    overflow: hidden;
+    /* Ensures fill stays within rounded corners */
+}
+
+.progress-bar .progress-fill {
+    background-color: var(--accent-color);
+    height: 100%;
+    border-radius: 5px;
+    transition: width 0.5s ease-in-out;
+}
+
+/* --- Projects Card --- */
+.projects-card .project-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.projects-card .project-item {
+    padding: 15px 0;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.projects-card .project-item:last-child {
+    border-bottom: none;
+}
+
+.projects-card .project-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.projects-card .project-members {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.projects-card .progress-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.projects-card .progress-container .progress-bar {
+    flex-grow: 1;
+    /* Progress bar takes remaining space */
+}
+
+.projects-card .progress-percent {
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* --- Reminders Card --- */
+.reminders-card .reminder-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.reminders-card .reminder-item {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.reminders-card .reminder-item:last-child {
+    border-bottom: none;
+}
+
+.reminders-card .reminder-item p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* Responsive adjustments (example) */
+@media (max-width: 768px) {
+    .content-row {
+        flex-direction: column;
+        /* Stack cards vertically on smaller screens */
+    }
+
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .header-actions {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        /* Allow buttons to wrap */
+        gap: 10px;
+    }
+
+    .header-actions button {
+        flex-grow: 1;
+        /* Make buttons take available space if they wrap */
+        margin-left: 0;
+    }
+}

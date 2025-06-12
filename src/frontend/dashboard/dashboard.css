@@ -1,0 +1,388 @@
+/* Base Styles */
+.dark-dashboard {
+    min-height: 90vh;
+    background-color: #121212;
+    color: #e0e0e0;
+    padding: 2rem;
+    font-family: 'Inter', sans-serif;
+    width: 70vw;
+}
+
+/* Header */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100px;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    /* background-color: #1e1e1e; */
+    border-radius: 16px;
+    /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); */
+}
+
+.header-left .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.robot-icon {
+    color: #bb86fc;
+    font-size: 1.8rem;
+}
+
+.date-display {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    color: #a0a0a0;
+    font-size: 1rem;
+}
+
+.weather-widget {
+    background: linear-gradient(135deg, #3700b3, #6200ee);
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.weather-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.weather-info h3 {
+    margin: 0;
+    font-size: 1.8rem;
+}
+
+/* Main Grid */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.dashboard-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Cards */
+
+.events-card,
+.news-card,
+.mail-card,
+.notes-card,
+.jobs-card,
+.assignments-card,
+.quote-card,
+.grades-card,
+.tracker-card {
+    background-color: #1e1e1e;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.calendar-card {
+    background-color: #1e1e1e;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+h3 {
+    margin-top: 0;
+    margin-bottom: 1.2rem;
+    color: #bb86fc;
+    font-size: 1.2rem;
+    border-bottom: 1px solid #333;
+    padding-bottom: 0.5rem;
+}
+
+/* Events Card */
+.events-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.events-card li {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid #333;
+}
+
+/* News Card */
+.news-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.news-card li {
+    padding: 0.8rem 0;
+    border-bottom: 1px solid #333;
+    transition: color 0.3s ease;
+}
+
+.news-card li:hover {
+    color: #bb86fc;
+}
+
+/* Mail Card */
+.mail-item {
+    margin-bottom: 1rem;
+}
+
+.mail-item div {
+    display: flex;
+    justify-content: space-between;
+}
+
+.mail-item small {
+    color: #a0a0a0;
+    display: block;
+    margin-top: 4px;
+}
+
+.draft-button {
+    background-color: #03dac6;
+    color: #000;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 24px;
+    font-weight: 500;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 1rem;
+}
+
+/* Notes Card */
+.reminder-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.add-reminder {
+    background: none;
+    border: 1px solid #bb86fc;
+    color: #bb86fc;
+    padding: 0.4rem 0.8rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+/* Jobs Card */
+.job-listing h4 {
+    margin: 0 0 0.4rem 0;
+    color: #e0e0e0;
+}
+
+.job-listing p {
+    margin: 0 0 0.4rem 0;
+    color: #a0a0a0;
+}
+
+.job-listing small {
+    color: #666;
+}
+
+.find-more {
+    background: none;
+    border: none;
+    color: #03dac6;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    text-align: right;
+}
+
+/* Footer */
+.dashboard-footer {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Assignments Card */
+.assignment-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid #333;
+}
+
+.assignment-item div {
+    display: flex;
+    flex-direction: column;
+}
+
+.assignment-item small {
+    color: #a0a0a0;
+}
+
+.assignment-item span {
+    color: #03dac6;
+    font-weight: 500;
+}
+
+/* Quote Card */
+.quote-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+.quote-card p {
+    font-style: italic;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.quote-card small {
+    color: #a0a0a0;
+    margin-top: 0.8rem;
+}
+
+/* Grades Card */
+.grade-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.grade-item span {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #4caf50;
+}
+
+.grade-item small {
+    color: #a0a0a0;
+}
+
+/* Tracker Card */
+.tracker-stats {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 1rem;
+}
+
+.tracker-stats div {
+    text-align: center;
+}
+
+.tracker-stats span {
+    font-size: 1.8rem;
+    font-weight: bold;
+    display: block;
+    color: #bb86fc;
+}
+
+.tracker-stats small {
+    color: #a0a0a0;
+    font-size: 0.8rem;
+}
+
+/* AI Assistant */
+.ai-assistant {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 400px;
+}
+
+.input-container {
+    display: flex;
+    background-color: #1e1e1e;
+    border-radius: 24px;
+    padding: 0.8rem 1rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.input-container input {
+    flex: 1;
+    background: none;
+    border: none;
+    color: #e0e0e0;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.input-container input::placeholder {
+    color: #666;
+}
+
+.button-group {
+    display: flex;
+    gap: 8px;
+}
+
+.mic-button,
+.send-button {
+    background: none;
+    border: none;
+    color: #e0e0e0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+}
+
+.mic-button {
+    background-color: #3700b3;
+}
+
+.mic-button.active {
+    background-color: #ff0266;
+    animation: pulse 1.5s infinite;
+}
+
+.send-button {
+    background-color: #03dac6;
+    color: #000;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 2, 102, 0.7);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(255, 2, 102, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 2, 102, 0);
+    }
+}
+
+/* Mini Calendar (placeholder) */
+.mini-calendar {
+    height: 460px;
+    background-color: #252525;
+    border-radius: 12px;
+    margin-top: 1rem;
+}

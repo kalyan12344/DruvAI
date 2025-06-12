@@ -12,17 +12,19 @@ from canvas import (
 )
 import cv2
 from weather import get_weather_by_coords
+from datetime import datetime, timedelta
+import time
 
 
 
-import face_recognition
+# import face_recognition
 import numpy as np
 import base64
 import io
-from PIL import Image
+# from PIL import Image
 from datetime import datetime, timedelta
 from jobs import add_job, list_jobs
-
+from gmail import summarize_job_applications
 from websearch import (web_search)
 import os
 import requests
@@ -34,6 +36,8 @@ gmail_service = GmailService()
 import threading
 from openai import OpenAI
 from openai.types.chat import ChatCompletionMessageParam
+from calender import get_kalyan_shift_schedule_from_image
+
 
 # Setup the client using Groq base
 groq_client = OpenAI(
@@ -53,7 +57,7 @@ groq_client = OpenAI(
 
 # --------------------- Setup ---------------------
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": ["http://localhost:5176"]}})
+CORS(app, supports_credentials=True, origins=["http://localhost:5176"])
 load_dotenv()
 calendar_service = CalendarService()
 
@@ -78,6 +82,8 @@ SUPPORTED_INTENTS = [
     "get_unread_emails",
     "add_job",
     "list_jobs",
+    "extract_kalyan_shifts",
+
 ]
 
 # --------------------- LLM Intent Extractor ---------------------
@@ -203,17 +209,32 @@ Use this when the user says: "Add a job at XYZ", "I applied to ABC company", etc
 use this when the user says: "List my jobs", "Show me my job applications", etc.
 ✅ Always reply with ONLY valid JSON (no markdown or extra text).
 
+16. extract_kalyan_shifts
+→ args: {{}}
+Use this when the user uploads or pastes an image and says things like:
+- "Extract Kalyan's shifts"
+- "What are Kalyan's timings this week?"
+- "Read my schedule and show my shifts"
+
 """
 
+    headers = {
+        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        "Content-Type": "application/json",
+    }
+
+    data = {
+        "model": "mistral/ministral-8b",  # or any model you prefer
+        "messages": [
+            {"role": "system", "content": function_guide},
+            {"role": "user", "content": prompt}
+        ]
+    }
+
     try:
-        response = groq_client.chat.completions.create(
-            model="gemma2-9b-it",  # Fast + free on Groq!
-            messages=[
-                { "role": "system", "content": function_guide },
-                { "role": "user", "content": prompt }
-            ]
-        )
-        return response.choices[0].message.content
+        response = requests.post(OPENROUTER_URL, headers=headers, json=data)
+        result = response.json()
+        return result["choices"][0]["message"]["content"]
     except Exception as e:
         print("LLM Error:", e)
         return json.dumps({
@@ -407,6 +428,10 @@ def route_intent(intent, args):
 
     elif intent == "get_grades":
         return get_grades()
+    
+    elif intent == "extract_kalyan_shifts":
+        return "📥 Please upload your schedule image so I can extract Kalyan's shifts."
+
 
     elif intent == "sync_assignments_to_google_calendar":
         return sync_assignments_to_google_calendar()
@@ -453,71 +478,85 @@ def get_important_emails():
     emails = gmail_service.get_unread_emails(max_results=5)
     return jsonify({"important": emails})
 
-@app.route("/recognize", methods=["POST"])
+# @app.route("/recognize", methods=["POST"])
 
-def recognize_face():
-    known_face_encodings = np.load("encodings.npy", allow_pickle=True)
-    known_face_names = np.load("names.npy", allow_pickle=True)
-    data = request.json
-    image_data = data["image"].split(",")[1]  # Remove base64 prefix
-    decoded_image = base64.b64decode(image_data)
+# def recognize_face():
+#     known_face_encodings = np.load("encodings.npy", allow_pickle=True)
+#     known_face_names = np.load("names.npy", allow_pickle=True)
+#     data = request.json
+#     image_data = data["image"].split(",")[1]  # Remove base64 prefix
+#     decoded_image = base64.b64decode(image_data)
 
-    # Convert to OpenCV format
-    image = np.array(Image.open(io.BytesIO(decoded_image)))
-    rgb_frame = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+#     # Convert to OpenCV format
+#     image = np.array(Image.open(io.BytesIO(decoded_image)))
+#     rgb_frame = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
-    # Detect face and encode
-    face_locations = face_recognition.face_locations(rgb_frame)
-    face_encodings = face_recognition.face_encodings(rgb_frame, face_locations)
+#     # Detect face and encode
+#     face_locations = face_recognition.face_locations(rgb_frame)
+#     face_encodings = face_recognition.face_encodings(rgb_frame, face_locations)
 
-    for face_encoding in face_encodings:
-        matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
-        face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
+#     for face_encoding in face_encodings:
+#         matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
+#         face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
 
-        if len(face_distances) > 0:
-            best_match_index = np.argmin(face_distances)
-            if matches[best_match_index]:
-                return jsonify({"name": known_face_names[best_match_index]})
+#         if len(face_distances) > 0:
+#             best_match_index = np.argmin(face_distances)
+#             if matches[best_match_index]:
+#                 return jsonify({"name": known_face_names[best_match_index]})
 
-    return jsonify({"name": "Unknown"})
+#     return jsonify({"name": "Unknown"})
 
 @app.route('/process', methods=['POST', 'OPTIONS'])
+@app.route('/process', methods=['POST'])
 def process_command():
-    if request.method == 'OPTIONS':
-        return _build_cors_preflight_response()
-    data = request.get_json()
-    user_input = data.get("input", "")
-    print("User said:", user_input)
+    user_input = request.form.get("input", "")
+    image_file = request.files.get("image")  # Optional
 
+    print("🧠 User said:", user_input)
+
+    # Call LLM to get intent
     intent_payload_raw = call_llm(user_input)
-
     try:
-        if isinstance(intent_payload_raw, str):
-            # Clean up if LLM wrapped it with ```json ... ```
-            intent_payload_clean = intent_payload_raw.strip()
-            if intent_payload_clean.startswith("```json"):
-                intent_payload_clean = intent_payload_clean[7:].strip("`").strip()
-            elif intent_payload_clean.startswith("```"):
-                intent_payload_clean = intent_payload_clean[3:].strip("`").strip()
+        intent_payload_clean = intent_payload_raw.strip()
+        if intent_payload_clean.startswith("```json"):
+            intent_payload_clean = intent_payload_clean[7:].strip("`").strip()
+        elif intent_payload_clean.startswith("```"):
+            intent_payload_clean = intent_payload_clean[3:].strip("`").strip()
 
-            intent_payload = json.loads(intent_payload_clean)
-        else:
-            intent_payload = intent_payload_raw
+        intent_payload = json.loads(intent_payload_clean)
     except Exception as e:
-        print("❌ Failed to parse intent payload:", e)
-        return _corsify_actual_response(jsonify({
-            "status": "error",
-            "response": "⚠️ Invalid response from language model."
-        }))
+        print("❌ LLM parsing failed:", e)
+        return jsonify({"status": "error", "response": "⚠️ Invalid intent format."})
 
     intent = intent_payload.get("intent")
     args = intent_payload.get("arguments", {})
 
-    if intent not in SUPPORTED_INTENTS:
-        return jsonify({"status": "error", "response": f"❌ Unsupported intent: {intent}"})
+    print("✅ Intent:", intent)
+    print("📦 Arguments:", args)
 
+    if intent == "extract_kalyan_shifts":
+        if not image_file:
+            return jsonify({"status": "error", "response": "❌ Image required for shift extraction."})
+        
+        image_bytes = image_file.read()
+        shifts = get_kalyan_shift_schedule_from_image(image_bytes)
+        print("Extracted shifts:", shifts)
+
+        if not shifts:
+            return jsonify({"status": "success", "response": "⚠️ No shifts found in the image."})
+        
+        summary = "\n".join(f"📅 {s['date']}: {s['time_range']}" for s in shifts)
+        return jsonify({"status": "success", "response": f"✅ Kalyan's shifts:\n{summary}"})
+
+    # Handle all other non-image intents
     response = route_intent(intent, args)
-    return _corsify_actual_response(jsonify({"status": "success", "response": response}))
+    return jsonify({"status": "success", "response": response})
+
+
+@app.route('/api/emails/extract-jobs', methods=['GET'])
+def extract_job_emails():
+    count = gmail_service.extract_job_related_emails_to_excel()
+    return jsonify({"message": f"✅ Extracted {count} job-related emails to Excel."})
 
 @app.route("/api/weather", methods=["GET"])
 def get_weather_api():
@@ -574,12 +613,54 @@ def extract_search_query(text):
     clean_text = clean_text.replace('?', '').strip()
     return clean_text if clean_text else None
 
+def should_run_job():
+    try:
+        with open("last_run_time.txt", "r") as f:
+            last_run = datetime.fromisoformat(f.read().strip())
+        return datetime.now() - last_run >= timedelta(hours=1)
+    except FileNotFoundError:
+        return True  # No record = first run
+
+def update_last_run_time():
+    with open("last_run_time.txt", "w") as f:
+        f.write(datetime.now().isoformat())
+@app.route('/api/jobs/summary', methods=['GET'])
+def jobs_summary():
+    print(summarize_job_applications())
+    return summarize_job_applications()
+
+
+
+
+@app.route('/api/schedule/extract-kalyan', methods=['POST'])
+def extract_kalyan_schedule():
+    file = request.files.get("image")
+    if not file:
+        return jsonify({"error": "No image uploaded"}), 400
+
+    try:
+        image_bytes = file.read()
+        shift_schedule = get_kalyan_shift_schedule_from_image(image_bytes)
+        return jsonify({"shifts": shift_schedule})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+def hourly_job_loop():
+    while True:
+        if should_run_job():
+            print("⏰ Running hourly email job extraction...")
+            count = gmail_service.extract_job_related_emails_to_excel()
+            update_last_run_time()
+            print(f"✅ Extracted {count} job emails.")
+        else:
+            print("⏳ Not yet an hour since last run.")
+        time.sleep(60)
 # --------------------- Run Server ---------------------
 if __name__ == '__main__':
     # Start email checking in a background thread
     # email_thread = threading.Thread(target=start_periodic_check, kwargs={"interval_minutes": 1}, daemon=True)
     # email_thread.start()
-
     # Start Flask server
-    app.run(debug=True, port=5000)
+    threading.Thread(target=hourly_job_loop, daemon=True).start()
+    app.run(debug=True, port=5001)
 

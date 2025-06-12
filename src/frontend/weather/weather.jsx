@@ -12,6 +12,7 @@ import "../weather/weather.css";
 const WeatherWidget = () => {
   const [weather, setWeather] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
+  console.log("Current time:", currentTime);
   const [loading, setLoading] = useState(true);
 
   const weatherIcons = {
@@ -37,7 +38,7 @@ const WeatherWidget = () => {
         try {
           const { latitude, longitude } = position.coords;
           const response = await axios.get(
-            `http://localhost:5000/api/weather?lat=${latitude}&lon=${longitude}`
+            `http://localhost:5001/api/weather?lat=${latitude}&lon=${longitude}`
           );
           setWeather(response.data);
           console.log("Weather data:", response.data);
@@ -77,23 +78,28 @@ const WeatherWidget = () => {
     <div className="weather-widget">
       <div className="weather-header">
         <h2 className="location">
-          {weather.city}
+          {weather?.city}
           <span className="time">
             {currentTime.toLocaleTimeString([], {
+              day: "2-digit",
+              // weekday: "short",
+              month: "short",
+
               hour: "2-digit",
               minute: "2-digit",
             })}
           </span>
+
         </h2>
-        <p className="weather-description">{weather.description}</p>
+        <p className="weather-description">{weather?.description}</p>
       </div>
 
       <div className="weather-main">
         <div className="temperature-display">
-          {weatherIcons[weather.description.toLowerCase()] ||
+          {weatherIcons[weather?.description.toLowerCase()] ||
             weatherIcons["clear sky"]}
           <div className="temperature">
-            {Math.round(weather.temp)}
+            {Math.round(weather?.temp)}
             <span className="degree">°C</span>
           </div>
         </div>
@@ -102,12 +108,12 @@ const WeatherWidget = () => {
           <div className="detail-item">
             <span className="detail-label">Feels Like </span>
             <span className="detail-value">
-              {Math.round(weather.feels_like)}°C
+              {Math.round(weather?.feels_like)}°C
             </span>
           </div>
           <div className="detail-item">
             <span className="detail-label">Humidity </span>
-            <span className="detail-value ">{weather.humidity}%</span>
+            <span className="detail-value ">{weather?.humidity}%</span>
           </div>
           {/* <div className="detail-item">
             <span className="detail-label">Wind</span>

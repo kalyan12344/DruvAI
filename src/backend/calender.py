@@ -5,6 +5,11 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
+import pytesseract
+from PIL import Image
+import io
+from datetime import datetime, timedelta
+
 
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 
@@ -31,8 +36,8 @@ class CalendarService:
 
 
         if not creds or not creds.valid:
-            flow = InstalledAppFlow.from_client_secrets_file(CREDENTIALS_FILE, SCOPES, redirect_uri='http://localhost:5000')
-            creds = flow.run_local_server(port=5000)
+            flow = InstalledAppFlow.from_client_secrets_file(CREDENTIALS_FILE, SCOPES, redirect_uri='http://localhost:5001')
+            creds = flow.run_local_server(port=5001)
             with open(TOKEN_FILE, 'w') as token:
                 token.write(creds.to_json())
 
@@ -142,3 +147,52 @@ class CalendarService:
             calendarId='primary', timeMin=start, timeMax=end, singleEvents=True, orderBy='startTime'
         ).execute()
         return events_result.get('items', [])
+
+
+def extract_text_from_image(image_bytes):
+    image = Image.open(io.BytesIO(image_bytes))
+    return pytesseract.image_to_string(image)
+def extract_kalyan_shifts(text):
+    days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    for line in text.splitlines():
+        if line.strip().lower().startswith("kalyan"):
+            parts = line.split()
+            shift_values = parts[1:]
+
+            # Determine start day (e.g., if only 5 shifts are present starting from Wed)
+            start_index = 0
+            if len(shift_values) < 7:
+                # Heuristic: Assume starts from current weekday (e.g., Wed)
+                today = datetime.today().weekday()  # Monday = 0
+                start_index = 2  # If Wed is your usual start day → index 2
+
+            aligned_days = days[start_index:start_index + len(shift_values)]
+
+            return dict(zip(aligned_days, shift_values))
+    return {}
+
+def get_kalyan_shift_schedule_from_image(image_bytes):
+    text = extract_text_from_image(image_bytes)
+    shifts = extract_kalyan_shifts(text)
+
+    # Map weekdays to index
+    day_to_index = {"Mon": 0, "Tue": 1, "Wed": 2, "Thu": 3, "Fri": 4, "Sat": 5, "Sun": 6}
+
+    # Get the Monday of the current week
+    today = datetime.today()
+    start_of_week = today - timedelta(days=today.weekday())  # Monday
+
+    shift_schedule = []
+    for day, time_range in shifts.items():
+        if time_range.strip().lower() in ["", "off"]:
+            continue
+        day_index = day_to_index[day]
+        shift_date = start_of_week + timedelta(days=day_index)
+        shift_schedule.append({
+            "day": day,
+            "date": shift_date.strftime("%Y-%m-%d"),
+            "time_range": time_range
+        })
+    # print("Shift schedule extracted:", shift_schedule)
+    return shift_schedule
+
