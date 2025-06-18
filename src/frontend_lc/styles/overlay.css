@@ -1,0 +1,144 @@
+/* frontend_lc/styles/overlay.css */
+
+/* The main overlay background */
+.resume-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(10, 25, 47, 0.7);
+    /* A dark, semi-transparent background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* The centered content box with the glass effect */
+.overlay-content-box {
+    position: relative;
+    width: 90%;
+    max-width: 500px;
+    padding: 30px;
+    background: rgba(23, 42, 69, 0.6);
+    /* Slightly transparent background */
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #e0e0e0;
+    text-align: center;
+    animation: slideIn 0.4s ease-out;
+}
+
+.overlay-content-box h2 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #ffffff;
+}
+
+.overlay-content-box p {
+    margin-bottom: 25px;
+    color: #c0c0c0;
+    line-height: 1.5;
+}
+
+/* The 'X' close button */
+.close-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: #ffffff;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.close-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Styling for the drag-and-drop zone */
+.dropzone {
+    border: 2px dashed #4a90e2;
+    border-radius: 8px;
+    padding: 40px 20px;
+    background-color: rgba(74, 144, 226, 0.1);
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+    margin-bottom: 20px;
+}
+
+.dropzone:hover {
+    background-color: rgba(74, 144, 226, 0.2);
+    border-color: #5ca1f5;
+}
+
+.dropzone p {
+    margin: 0;
+    color: #a0c8f0;
+}
+
+/* The main upload button */
+.upload-button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background-color: #4a90e2;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.upload-button:hover:not(:disabled) {
+    background-color: #357abd;
+}
+
+.upload-button:disabled {
+    background-color: #555;
+    color: #999;
+    cursor: not-allowed;
+}
+
+/* Error message styling */
+.error-message {
+    color: #ff6b6b;
+    font-size: 14px;
+    margin-top: -10px;
+    margin-bottom: 15px;
+}
+
+
+/* Keyframe animations for fade-in and slide-in effect */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-30px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

@@ -1,0 +1,98 @@
+.settings-tab-glass {
+    margin-left: 300px;
+    padding: 2rem;
+    color: #e2e2e2;
+    font-family: 'Inter', sans-serif;
+    max-width: 700px;
+}
+
+.settings-title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.setting-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(16px) saturate(180%);
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.3s ease;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+}
+
+.setting-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.setting-info {
+    max-width: 70%;
+}
+
+.setting-name {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 0.3rem;
+}
+
+.setting-desc {
+    font-size: 0.95rem;
+    color: #c0c0c0;
+    line-height: 1.4;
+}
+
+.save-status {
+    margin-top: 1rem;
+    color: #00f5d4;
+    font-size: 0.9rem;
+}
+
+.glass-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 32px;
+}
+
+.glass-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.glass-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #eb7539c2;
+    transition: 0.4s;
+    border-radius: 34px;
+    /* box-shadow: 0 0 10px rgba(123, 44, 191, 0.6); */
+}
+
+.glass-slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 5px;
+    bottom: 5px;
+    background-color: white;
+    border-radius: 50%;
+    transition: 0.4s;
+}
+
+.glass-switch input:checked+.glass-slider {
+    background-color: #4bff63d3;
+    /* box-shadow: 0 0 10px rgba(0, 245, 212, 0.6); */
+}
+
+.glass-switch input:checked+.glass-slider:before {
+    transform: translateX(26px);
+}

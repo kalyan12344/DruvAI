@@ -46,7 +46,7 @@
     /* Inner circle size */
     height: 400px;
     border-radius: 50%;
-    background-color: #482b88;
+    background-color: #886c2b;
     filter: blur(100px);
 
     /* Purple color from your design */
@@ -59,7 +59,7 @@
     /* Slightly larger than inner circle */
     height: 800px;
     border-radius: 50%;
-    background-color: #5100ff;
+    background-color: #ffd500c2;
     /* Same color as inner circle */
     opacity: 0.8;
     /* Makes it slightly transparent */

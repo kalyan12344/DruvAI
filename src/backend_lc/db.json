@@ -1,0 +1,17 @@
+{
+  "jobs_feature_enabled": true,
+  "connected_calendars": {
+    "google": {
+      "connected": true,
+      "user_email": "kalyanraju90@gmail.com"
+    },
+    "outlook": {
+      "connected": false,
+      "user_email": null
+    },
+    "icloud": {
+      "connected": false,
+      "user_email": null
+    }
+  }
+}

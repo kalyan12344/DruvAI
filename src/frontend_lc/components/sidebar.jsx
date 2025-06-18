@@ -1,66 +1,126 @@
-import React from 'react';
-import '../styles/sidebar.css';
-import { useState } from 'react';
-const Sidebar = ({ activeTab, setActiveTab }) => {
-    const [projects] = useState([
-        { id: 1, name: 'Design System', members: 8, color: 'purple' },
-        { id: 2, name: 'Mobile App', members: 5, color: 'blue' },
-        { id: 3, name: 'Website Redesign', members: 12, color: 'green' },
-        { id: 4, name: 'Marketing Campaign', members: 6, color: 'orange' }
-    ]);
+// src/components/Sidebar.jsx
 
-    const navItems = [
-        { id: 1, name: 'Home', icon: '🏠' },
-        { id: 2, name: 'Druv AI', icon: '🤖' },
-        { id: 3, name: 'My Tasks', icon: '📝' },
-        { id: 4, name: 'Inbox', icon: '📥' },
-        { id: 5, name: 'Calendar', icon: '📅' },
-        { id: 6, name: 'Reports & Analytics', icon: '📊' },
-        { id: 7, name: 'Settings', icon: '⚙️' }
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useJobsFeature } from '../context/jobfeaturecontext.jsx';
+import '../styles/sidebar.css';
+
+// Import sleek icons from lucide-react
+import {
+    LayoutDashboard, Bot, CheckSquare, Inbox, Calendar, BarChart2, Briefcase, Settings, Sparkles
+} from 'lucide-react';
+
+const Sidebar = ({ activeTab, setActiveTab }) => {
+    const { jobsEnabled } = useJobsFeature();
+
+    // Mapping strings to actual icon components
+    const iconMap = {
+        'Home': LayoutDashboard,
+        'Druv AI': Bot,
+        'My Tasks': CheckSquare,
+        'Inbox': Inbox,
+        'Calendar': Calendar,
+        'Reports & Analytics': BarChart2,
+        'Jobs': Briefcase,
+        'Settings': Settings,
+    };
+
+    const staticNavItems = [
+        { id: 'Home', name: 'Home' },
+        { id: 'Druv AI', name: 'Druv AI' },
+        { id: 'My Tasks', name: 'My Tasks' },
+        { id: 'Inbox', name: 'Inbox' },
+        { id: 'Calendar', name: 'Calendar' },
+        { id: 'Reports & Analytics', name: 'Reports & Analytics' },
     ];
 
+    const settingsItem = { id: 'Settings', name: 'Settings' };
+    const jobsNavItem = { id: 'Jobs', name: 'Jobs' };
+
+    const navItems = [...staticNavItems];
+    if (jobsEnabled) {
+        navItems.push(jobsNavItem);
+    }
+    navItems.push(settingsItem);
+
+    // Sidebar container animation
+    const sidebarVariants = {
+        hidden: { x: '-100%', opacity: 0 },
+        visible: {
+            x: 0,
+            opacity: 1,
+            transition: { duration: 0.5, ease: "easeInOut" }
+        }
+    };
+
+    // Staggered animation for list items
+    const listVariants = {
+        visible: {
+            transition: { staggerChildren: 0.05, delayChildren: 0.2 }
+        },
+        hidden: {}
+    };
+
+    const itemVariants = {
+        hidden: { y: 20, opacity: 0 },
+        visible: {
+            y: 0,
+            opacity: 1,
+            transition: { type: 'spring', stiffness: 100 }
+        }
+    };
+
     return (
-        <div className="sidebar">
+        <motion.aside
+            className="sidebar"
+            variants={sidebarVariants}
+            initial="hidden"
+            animate="visible"
+        >
             <div className="profile">
                 <div className="avatar">CW</div>
                 <div className="profile-info">
-                    <div className="name">Courtney Wilson</div>
-                    <div className="status">● Online</div>
+                    <div className="profile-name">Courtney Wilson</div>
+                    <div className="profile-status"><span className="dot"></span>Online</div>
                 </div>
             </div>
 
-            <ul className="nav-links">
-                {navItems.map(item => (
-                    <li
-                        key={item.id}
-                        className={`nav-item ${activeTab === item.name ? 'active' : ''}`}
-                        onClick={() => setActiveTab(item.name)}
-                    >
-                        <span className="nav-icon">{item.icon}</span>
-                        <span>{item.name}</span>
-                    </li>
-                ))}
-            </ul>
+            <motion.nav
+                className="nav-links"
+                variants={listVariants}
+                initial="hidden"
+                animate="visible"
+            >
+                {navItems.map(item => {
+                    const Icon = iconMap[item.name];
+                    return (
+                        <motion.a
+                            key={item.id}
+                            className={`nav-item ${activeTab === item.name ? 'active' : ''}`}
+                            onClick={() => setActiveTab(item.name)}
+                            variants={itemVariants}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                        >
+                            <Icon className="nav-icon" size={20} />
+                            <span>{item.name}</span>
+                        </motion.a>
+                    );
+                })}
+            </motion.nav>
 
-            <div className="projects-section">
-                <div className="projects-header">MY PROJECTS +</div>
-                <ul className="projects-list">
-                    {projects.map(project => (
-                        <li key={project.id} className="project-item">
-                            <span className={`dot ${project.color}`}></span>
-                            <span className="project-name">{project.name}</span>
-                            <span className="project-members">{project.members} members</span>
-                        </li>
-                    ))}
-                </ul>
+            {/* Redesigned "Upgrade" section - sleek and unobtrusive */}
+            <div className="upgrade-section">
+                <motion.a
+                    href="#"
+                    className="upgrade-link"
+                    whileHover={{ scale: 1.03 }}
+                >
+                    <Sparkles className="icon" size={18} />
+                    <span>Unlock Pro Features</span>
+                </motion.a>
             </div>
-
-            <div className="upgrade-box">
-                <p className="prodify">Prodify</p>
-                <p>Upgrade to unlock all features</p>
-                <button className="upgrade-btn">Invite people</button>
-            </div>
-        </div>
+        </motion.aside>
     );
 };
 

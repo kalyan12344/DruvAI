@@ -1,39 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-import LandingPage from './frontend_lc/components/landingpage';
-import Sidebar from './frontend_lc/components/sidebar';
-import Dashboard from './frontend_lc/components/dashboard';
-import Tasks from './frontend_lc/components/tasks';
-// Future imports for other tabs
-// import Inbox from './frontend_lc/components/inbox';
-// import Calendar from './frontend_lc/components/calendar';
-// import Reports from './frontend_lc/components/reports';
-// import Settings from './frontend_lc/components/settings';
+// Import the provider
+import { JobsFeatureProvider } from './frontend_lc/context/jobfeaturecontext.jsx';
 
 import './App.css';
-import Home from './frontend_lc/components/home';
-import Calendar from './frontend_lc/components/calendar';
+import Dashboard from './frontend_lc/components/dashboard.jsx';
+import Sidebar from './frontend_lc/components/sidebar.jsx';
+import Home from './frontend_lc/components/home.jsx';
+import LandingPage from './frontend_lc/components/landingpage.jsx';
+import Tasks from './frontend_lc/components/tasks.jsx';
+import Calendar from './frontend_lc/components/calendar.jsx';
+import SettingsTab from './frontend_lc/components/settings.jsx';
+import JobsTab from './frontend_lc/components/jobs.jsx';
 
 function App() {
-  const [activeTab, setActiveTab] = useState('Prodify AI');
+  // Initialize activeTab from localStorage or default to 'Druv AI'
+  const [activeTab, setActiveTab] = useState(() => {
+    return localStorage.getItem('activeTab') || 'Druv AI';
+  });
+
+  // Save to localStorage whenever activeTab changes
+  useEffect(() => {
+    localStorage.setItem('activeTab', activeTab);
+  }, [activeTab]);
 
   const renderActiveTab = () => {
     switch (activeTab) {
       case 'Home':
         return <Home />;
-      case 'Prodify AI':
+      case 'Druv AI':
         return <Dashboard />;
       case 'My Tasks':
         return <Tasks />;
-      // case 'Inbox':
-      //   return <Inbox />;
       case 'Calendar':
         return <Calendar />;
-      // case 'Reports & Analytics':
-      //   return <Reports />;
-      // case 'Settings':
-      //   return <Settings />;
+      case 'Settings':
+        return <SettingsTab />;
+      case 'Jobs':
+        return <JobsTab />;
       default:
         return <Dashboard />;
     }
@@ -46,10 +51,12 @@ function App() {
         <Route
           path="/dashboard"
           element={
-            <div className="app-container">
-              <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-              <div className="content">{renderActiveTab()}</div>
-            </div>
+            <JobsFeatureProvider>
+              <div className="app-container">
+                <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+                <div className="content">{renderActiveTab()}</div>
+              </div>
+            </JobsFeatureProvider>
           }
         />
       </Routes>

@@ -1,0 +1,202 @@
+[
+  {
+    "title": "Sr. Data Engineer, P2 Science, Data, and Insights",
+    "company": "Amazon.com",
+    "location": "Seattle, WA, US",
+    "url": "https://www.indeed.com/viewjob?jk=7fd59f1524be751f",
+    "description": "\\- 5\\+ years of data engineering experience\n\\- Experience with data modeling, warehousing and building ETL pipelines\n\\- Experience with SQL\n\\- Experience in at least one modern scripting or programming language, such as Python, Java, Scala, or NodeJS\n\\- Experience mentoring team members on best practices\n  \n\nAre you looking for a role where you have the opportunity to shape Amazon\u2019s Pricing and Promotions using data, analytics, and insights? If so, our role in Amazon's Pricing \\& Promotions Science, Data, and Insights organization is for you.\nAmazon's Pricing \\& Promotions Science, Data, and Insights organization is seeking a highly engineering\\-drive Senior Data Engineer. In this role, you will develop, build, and deliver automated data engineering infrastructure, which will deliver the best prices and experiences to our customers. Data is at the core of Amazon\u2019s culture, and your work will have a direct impact on decision making and strategy for the Pricing and Promotions organization.\nThis role requires a self\\-starting leader with high judgment that thrives in ambiguity. We are looking for a person with broad and deep data engineering skills, that is customer and delivery\\-focused, and a has a track record of earning your customers and peer\u2019s trust. To be successful in this role, you will need strong cloud and data engineering skills as well as an entrepreneurial mindset.\nKey job responsibilities\n\\- Lead data engineering for your business and its customers.\n\\- Develop, build, and deliver data engineering infrastructure and its operations.\n\\- Conducting deep dive analyses and tuning of our engineering infrastructure and cloud architecture. \n\\- Leverage LLMs to drive customer improvements and operations efficiencies.\n\\- Producing written documentation for your team in code and in narrative format.\n\\- Continuously invent, simplify, and automate your products, tools, services, and methodologies.\n\\- Improving back\\-end data sources for increased accuracy and simplicity.\n\\- Recognizing and adopting best practices in data engineering.\n  \n\n* Experience with big data technologies such as: Hadoop, Hive, Spark, EMR\n* Experience operating large data warehouses\n\n  \n\nAmazon is an equal opportunity employer and does not discriminate on the basis of protected veteran status, disability, or other legally protected status.  \n\n  \n\nOur inclusive culture empowers Amazonians to deliver the best results for our customers. If you have a disability and need a workplace accommodation or adjustment during the application and hiring process, including support for the interview or onboarding process, please visit https://amazon.jobs/content/en/how\\-we\\-hire/accommodations for more information. If the country/region you\u2019re applying in isn\u2019t listed, please contact your Recruiting Partner.  \n\n  \n\nOur compensation reflects the cost of labor across several US geographic markets. The base pay for this position ranges from $139,100/year in our lowest geographic market up to $240,500/year in our highest geographic market. Pay is based on a number of factors including market location and may vary depending on job\\-related knowledge, skills, and experience. Amazon is a total compensation company. Dependent on the position offered, equity, sign\\-on payments, and other forms of compensation may be provided as part of a total compensation package, in addition to a full range of medical, financial, and/or other benefits. For more information, please visit https://www.aboutamazon.com/workplace/employee\\-benefits. This position will remain posted until filled. Applicants should apply via our internal or external career site.",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience in data engineering, ETL processes, and SQL, but lacks the required 5+ years of experience and specific big data technologies like Hadoop, Hive, Spark, and EMR.",
+    "id": "indeed-8"
+  },
+  {
+    "title": "Senior Data Engineer",
+    "company": "Cargill",
+    "location": "Wayzata, MN, US",
+    "url": "https://www.indeed.com/viewjob?jk=aae517c37f238be8",
+    "description": "Cargill\u2019s size and scale allows us to make a positive impact in the world. Our purpose is to nourish the world in a safe, responsible and sustainable way.\n  \nCargill is a family company providing food, ingredients, agricultural solutions and industrial products that are vital for living. We connect farmers with markets so they can prosper. We connect customers with ingredients so they can make meals people love. And we connect families with daily essentials \u2014 from eggs to edible oils, salt to skincare, feed to alternative fuel. Our 160,000 colleagues, operating in 70 countries, make essential products that touch billions of lives each day. Join us and reach your higher purpose at Cargill.\n  \nThis position is in Cargill\u2019s food and bioindustrial\u202fbusiness, where manufacturers, retailers, and foodservice companies rely on us to consistently deliver the products and services they need, and use our technical expertise and market knowledge to develop innovative products. Job Summary\n  \n  \n\nThe Senior Professional, Data Engineering job designs, builds and maintains complex data systems that enable data analysis and reporting. With minimal supervision, this job ensures that large sets of data are efficiently processed and made accessible for decision making. Essential Functions\n  \n  \n\n**DATA INFRASTRUCTURE:** Prepares data infrastructure to support the efficient storage and retrieval of data.\n  \n**DATA FORMATS:** Examines and resolves appropriate data formats to improve data usability and accessibility across the organization.\n  \n**DATA \\& ANALYTICAL SOLUTIONS:** Develops complex data products and solutions using advanced engineering and cloud based technologies, ensuring they are designed and built to be scalable, sustainable and robust.\n  \n**DATA PIPELINES:** Develops and maintains streaming and batch data pipelines that facilitate the seamless ingestion of data from various data sources, transform the data into information and move to data stores like data lake, data warehouse and others.\n  \n**DATA SYSTEMS:** Reviews existing data systems and architectures to identify areas for improvement and optimization.\n  \n**STAKEHOLDER MANAGEMENT:** Collaborates with multi\\-functional data and advanced analytic teams to gain requirements and ensure that data solutions meet the functional and non\\-functional needs of various partners.\n  \n**DATA FRAMEWORKS:** Builds complex prototypes to test new concepts and implements data engineering frameworks and architectures that improve data processing capabilities and support advanced analytics initiatives.\n  \n**AUTOMATED DEPLOYMENT PIPELINES:** Develops automated deployment pipelines improving efficiency of code deployments with fit for purpose governance.\n  \n**DATA MODELING:** Performs complex data modeling in accordance to the datastore technology to ensure sustainable performance and accessibility. Minimum and Typical Years of Experience\n  \n  \n\nMinimum requirement of 4 years of relevant work experience. Typically reflects 5 years or more of relevant experience.\n  \n  \n\n**Preferred Experience:**  \n\nExperience developing modern data architectures, such as data warehouses, data lakes, data meshes, hubs and associated capabilities including ingestion, governance, modeling, observability and more\n  \nExperience with transformation and modeling tools, including SQL based transformation frameworks, orchestration and quality frameworks such as dbt, Apache Nifi, Talend, AWS Glue, Airflow, Dagster, Great Expectations, Oozie and others\n  \nStrong experience of working in devops models with demonstratable understanding of associated best practices for code management, continuous integration, and deployment strategies\n  \n\\#LI\\-NS7\n  \n\\#FGB\n  \n\\#themuse\n  \nInformation for Minnesota Based Candidates\n  \n  \n\nMinnesota Sick and Safe Leave accruals of one hour for every 30 worked, up to 48 hours per calendar year unless otherwise provided by law.\n  \nThe expected salary for this position is $130,000\\-170,000\\. Compensation varies depending on a wide array of factors including but not limited to the specific location, certifications, education, and level of experience. The disclosed range estimate may be adjusted for any applicable geographic differential associated with the location at which the position may be filled. This position is eligible for a discretionary incentive award. The incentive award amount is dependent upon company performance and your personal performance.\n  \n  \n\nEqual Opportunity Employer, including Disability/Vet",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience in data engineering, ETL processes, and cloud-based technologies, but lacks specific experience with some of the preferred transformation and modeling tools mentioned in the job description.",
+    "id": "indeed-13"
+  },
+  {
+    "title": "Data Engineer II, AWS Sustainability Technology",
+    "company": "Amazon.com",
+    "location": "Seattle, WA, US",
+    "url": "https://www.indeed.com/viewjob?jk=31bb4bc278a800b0",
+    "description": "\\- 3\\+ years of data engineering experience\n\\- Experience with data modeling, warehousing and building ETL pipelines\n  \n\nAWS Infrastructure Services owns the design, planning, delivery, and operation of all AWS global infrastructure. In other words, we\u2019re the people who keep the cloud running. We support all AWS data centers and all of the servers, storage, networking, power, and cooling equipment that ensure our customers have continual access to the innovation they rely on. We work on the most challenging problems, with thousands of variables impacting the supply chain \u2014 and we\u2019re looking for talented people who want to help.\nYou\u2019ll join a diverse team of software, hardware, and network engineers, supply chain specialists, security experts, operations managers, and other vital roles. You\u2019ll collaborate with people across AWS to help us deliver the highest standards for safety and security while providing seemingly infinite capacity at the lowest possible cost for our customers. And you\u2019ll experience an inclusive culture that welcomes bold ideas and empowers you to own them to completion.\nAWS Infrastructure Services owns the design, planning, delivery, and operation of all AWS global infrastructure. In other words, we\u2019re the people who keep the cloud running. We support all AWS data centers and all of the servers, storage, networking, power, and cooling equipment that ensure our customers have continual access to the innovation they rely on. We work on the most challenging problems, with thousands of variables impacting the supply chain \u2014 and we\u2019re looking for talented people who want to help.\nWe are calling on engineers who wants to contribute to a sustainable future through technology. Join us in developing solutions for renewable energy portfolio and reduce carbon footprint of our materials in data centers.\nIn 2019, Amazon co\\-founded The Climate Pledge and made a commitment to achieve net\\-zero carbon by 2040 \u201410 years ahead of the Paris Agreement. We invited others to join us and there are now more than 300 businesses and organizations across 51 industries and 29 countries that have signed the Pledge, which means we are collectively coming at the climate crisis from nearly every sector and nearly every angle.\nAs part of our efforts to decarbonize our business, we became the world\u2019s largest corporate purchaser of renewable energy in 2020, and last year, we reached 85% renewable energy across our business, and are on a path to power our operations with 100% renewable energy by 2025\\.\nWe recently announced that AWS will be water positive by 2030, returning more water to communities than it uses in its direct operations. To learn more about AWS\u2019s water\\+ commitment visit: Water Stewardship.\nCome join the team that is building the tools and innovative technology to manage our growing portfolio of renewable energy investments, including solar, on\\-shore and off\\-shore wind farms.\nKey job responsibilities\nOur Data Engineers develop large data models for clients in energy, renewable resources, sustainability, and water sectors, enabling them to assess their portfolios. They help our data scientists create predictive models to enhance decision\\-making.\nA day in the life\nWhy AWS\nAmazon Web Services (AWS) is the world\u2019s most comprehensive and broadly adopted cloud platform. We pioneered cloud computing and never stopped innovating \u2014 that\u2019s why customers from the most successful startups to Global 500 companies trust our robust suite of products and services to power their businesses.\nDiverse Experiences\nAmazon values diverse experiences. Even if you do not meet all of the preferred qualifications and skills listed in the job description, we encourage candidates to apply. If your career is just starting, hasn\u2019t followed a traditional path, or includes alternative experiences, don\u2019t let it stop you from applying.\nWork/Life Balance\nWe value work\\-life harmony. Achieving success at work should never come at the expense of sacrifices at home, which is why we strive for flexibility as part of our working culture. When we feel supported in the workplace and at home, there\u2019s nothing we can\u2019t achieve in the cloud.\nInclusive Team Culture\nHere at AWS, it\u2019s in our nature to learn and be curious. Our employee\\-led affinity groups foster a culture of inclusion that empower us to be proud of our differences. Ongoing events and learning experiences, including our Conversations on Race and Ethnicity (CORE) and AmazeCon (gender diversity) conferences, inspire us to never stop embracing our uniqueness.\nMentorship and Career Growth\nWe\u2019re continuously raising our performance bar as we strive to become Earth\u2019s Best Employer. That\u2019s why you\u2019ll find endless knowledge\\-sharing, mentorship and other career\\-advancing resources here to help you develop into a better\\-rounded professional.\nAbout the team\nThe AWS Sustainability Technology Organization (STO) develops solutions to drive AWS's ambitious sustainability goals. We create advanced analytics tools and data\\-driven platforms that empower AWS, our customers, and partners to make informed decisions for improving the environmental impact of cloud infrastructure and services. We focus on integrating sustainability metrics across AWS operations, from energy procurement to carbon footprint tracking. Our work directly contributes to AWS's commitment to achieving net\\-zero carbon emissions and supports our customers in meeting their own sustainability objectives.\n  \n\n* Experience with AWS technologies like Redshift, S3, AWS Glue, EMR, Kinesis, FireHose, Lambda, and IAM roles and permissions\n* Experience with non\\-relational databases / data stores (object storage, document or key\\-value stores, graph databases, column\\-family databases)\n\n  \n\nAmazon is an equal opportunity employer and does not discriminate on the basis of protected veteran status, disability, or other legally protected status.  \n\n  \n\nOur inclusive culture empowers Amazonians to deliver the best results for our customers. If you have a disability and need a workplace accommodation or adjustment during the application and hiring process, including support for the interview or onboarding process, please visit https://amazon.jobs/content/en/how\\-we\\-hire/accommodations for more information. If the country/region you\u2019re applying in isn\u2019t listed, please contact your Recruiting Partner.  \n\n  \n\nOur compensation reflects the cost of labor across several US geographic markets. The base pay for this position ranges from $118,900/year in our lowest geographic market up to $205,600/year in our highest geographic market. Pay is based on a number of factors including market location and may vary depending on job\\-related knowledge, skills, and experience. Amazon is a total compensation company. Dependent on the position offered, equity, sign\\-on payments, and other forms of compensation may be provided as part of a total compensation package, in addition to a full range of medical, financial, and/or other benefits. For more information, please visit https://www.aboutamazon.com/workplace/employee\\-benefits. This position will remain posted until filled. Applicants should apply via our internal or external career site.",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience with data engineering, ETL processes, and AWS technologies like Redshift and AWS Glue, which align well with the job's required qualifications.",
+    "id": "indeed-15"
+  },
+  {
+    "title": "Data Engineer",
+    "company": "Largeton Group",
+    "location": "Greater Jacksonville, NC Area",
+    "url": "https://www.linkedin.com/jobs/view/data-engineer-at-largeton-group-4251672139?position=1&pageNum=0&refId=SftfjDt%2BKzaKyipwlKsIWQ%3D%3D&trackingId=XmJ8qI6HWkyZ9YC%2BDK1%2BCg%3D%3D",
+    "description": "Data Engineer",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience with Azure Data Factory, PySpark, and SQL, which are key requirements for the role, but lacks specific experience with the required platforms like Informatica, Anaplan, or Databricks.",
+    "id": "linkedin-20"
+  },
+  {
+    "title": "Senior Data Engineer",
+    "company": "Discord",
+    "location": "San Francisco, CA",
+    "url": "https://www.linkedin.com/jobs/view/senior-data-engineer-at-discord-4177777076?position=2&pageNum=0&refId=SftfjDt%2BKzaKyipwlKsIWQ%3D%3D&trackingId=%2BzPWh3ULbNnob%2B0LLKrKZg%3D%3D",
+    "description": "Senior Data Engineer",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience with Azure Data Factory, PySpark, and SQL, which are key requirements for the role, but lacks specific experience with the required platforms like Informatica, Anaplan, or Databricks.",
+    "id": "linkedin-21"
+  },
+  {
+    "title": "Data Engineer",
+    "company": "FanDuel",
+    "location": "Atlanta, GA",
+    "url": "https://www.linkedin.com/jobs/view/data-engineer-at-fanduel-4221512829?position=3&pageNum=0&refId=SftfjDt%2BKzaKyipwlKsIWQ%3D%3D&trackingId=tp%2BYBa0kEypdWxaJdFsTzg%3D%3D",
+    "description": "Data Engineer",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience with Azure Data Factory, PySpark, and SQL, which are key requirements for the role, but lacks specific experience with the required platforms like Informatica, Anaplan, or Databricks.",
+    "id": "linkedin-22"
+  },
+  {
+    "title": "**** ********",
+    "company": "*********",
+    "location": "****** ******",
+    "url": "https://www.linkedin.com/jobs/view/data-engineer-at-9amhealth-4251685733?position=4&pageNum=0&refId=SftfjDt%2BKzaKyipwlKsIWQ%3D%3D&trackingId=ygvoHpEhJrJBnpRj9ey4Kg%3D%3D",
+    "description": "**** ********",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience with Azure Data Factory, SSIS, PySpark, and SQL, which are key requirements for the job, but lacks specific experience with the required platforms like Informatica, Anaplan, and Databricks.",
+    "id": "linkedin-23"
+  },
+  {
+    "title": "**** ********",
+    "company": "*********",
+    "location": "******** ****, **",
+    "url": "https://www.linkedin.com/jobs/view/data-engineer-at-ascendion-4250599807?position=5&pageNum=0&refId=SftfjDt%2BKzaKyipwlKsIWQ%3D%3D&trackingId=07TY6brNmrXksQlOC1L%2BNA%3D%3D",
+    "description": "**** ********",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience with Azure Data Factory, SSIS, PySpark, and SQL, which are key requirements for the job, but lacks specific experience with the required platforms like Informatica, Anaplan, and Databricks.",
+    "id": "linkedin-24"
+  },
+  {
+    "title": "**** ********",
+    "company": "****** *********",
+    "location": "*******, **",
+    "url": "https://www.linkedin.com/jobs/view/data-engineer-at-costco-wholesale-4190735832?position=6&pageNum=0&refId=SftfjDt%2BKzaKyipwlKsIWQ%3D%3D&trackingId=zHO9vTd2rqeZckf2k%2FlEcA%3D%3D",
+    "description": "**** ********",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience with Azure Data Factory, SSIS, PySpark, and SQL, which are key requirements for the job, but lacks specific experience with the required platforms like Informatica, Anaplan, and Databricks.",
+    "id": "linkedin-25"
+  },
+  {
+    "title": "****** **** ********",
+    "company": "*********, ***.",
+    "location": "****** ******",
+    "url": "https://www.linkedin.com/jobs/view/senior-data-engineer-at-coalition-inc-4251671744?position=7&pageNum=0&refId=SftfjDt%2BKzaKyipwlKsIWQ%3D%3D&trackingId=C3%2BNoBNAKAYraTA%2BwgURDw%3D%3D",
+    "description": "****** **** ********",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience with Azure Data Factory, SSIS, and PySpark, which are key requirements for the job, but lacks specific experience with the required platforms like Informatica, Anaplan, and Databricks.",
+    "id": "linkedin-26"
+  },
+  {
+    "title": "ETL Developer",
+    "company": "Galent",
+    "location": "San Francisco, CA",
+    "url": "https://www.linkedin.com/jobs/view/etl-developer-at-galent-4249709197?position=2&pageNum=0&refId=ODqQ3WrodfEiE5XBovWPFQ%3D%3D&trackingId=iV9EMlMTSQO%2BPwySx9htaw%3D%3D",
+    "description": "ETL Developer",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience with Azure Data Factory, SSIS, and PySpark, which are key requirements for the ETL Developer role, but lacks specific experience with the required platforms like Informatica, Anaplan, or Databricks.",
+    "id": "linkedin-48"
+  },
+  {
+    "title": "****** *** *********",
+    "company": "********* ** ***** ***",
+    "location": "*********, **",
+    "url": "https://www.linkedin.com/jobs/view/senior-etl-developer-at-signature-it-world-inc-4249716011?position=4&pageNum=0&refId=ODqQ3WrodfEiE5XBovWPFQ%3D%3D&trackingId=ZG6DZ3Kzo%2BV7hLx9izh4AA%3D%3D",
+    "description": "****** *** *********",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience with Azure Data Factory, SSIS, PySpark, and SQL, which are key requirements for the job, but lacks specific experience with the required platforms like Informatica, Anaplan, and Databricks.",
+    "id": "linkedin-50"
+  },
+  {
+    "title": "*** *********",
+    "company": "******* ******",
+    "location": "*****, **",
+    "url": "https://www.linkedin.com/jobs/view/etl-developer-at-insight-global-4250803510?position=7&pageNum=0&refId=ODqQ3WrodfEiE5XBovWPFQ%3D%3D&trackingId=kRFCYSsTgGdsX6FhwmfPwA%3D%3D",
+    "description": "*** *********",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience with Azure Data Factory, SSIS, PySpark, and SQL, which are key requirements for the job, but lacks specific experience with the required platforms like Informatica, Anaplan, and Databricks.",
+    "id": "linkedin-53"
+  },
+  {
+    "title": "Business Intelligence Developer",
+    "company": "Interclypse, Inc.",
+    "location": "Annapolis Junction, MD, US",
+    "url": "https://www.indeed.com/viewjob?jk=752c1a6a7b507f75",
+    "description": "Description:\n\nWelcome to Interclypse, where innovation meets passion. Every team member is a vital piece of our success story. We are not just a company, but a dynamic community driven by the shared vision of redefining excellence. At Interclypse, you will find more than a career \u2013 you will discover a vibrant ecosystem where your talents are celebrated, your ideas are embraced, and your potential is achieved. Every Interclypse team member can benefit based on their efforts and collectively benefit through the overall company\u2019s success. Join our mission to positively impact society, community, industry, and individuals by always \u201cDoing What is Right\u201d. Together, let's pioneer a future where greatness is achieved and exceeded.\n\n\nTo actualize this vision, Interclypse employs a growth mindset culture that empowers employees to rise in their careers by providing them with tools, mentorship, and a supportive environment to ensure long\\-term success.\n\n\nInterclypse is supporting several Maryland state agencies in the modernization and sustainment of critical systems. This exciting opportunity provides candidates with the ability to contribute to the long\\-term health and success of the state while continuing to learn and grow professionally within Interclypse\u2019s growth mindset culture.\n\n\nAll positions are required to be onsite at various locations in Maryland.\n\n\nMake a difference. Join our team by applying today!\n\n**Responsibilities:**\n\n\nResponsible for developing and operating business intelligence (BI) platforms, tools, and reports. The individual is responsible for the following tasks:\n\n\nA. Design, develop and maintain BI solutions, extract, transform, load (ETL) processes, and dashboards.\n\n\nB. Gather and analyze requirements from stakeholders to ensure the BI solution meets needs.\n\n\nC. Develop data models to support reporting and analytics.\n\n\nD. Implement ETL processes to analyze data from various source systems and data formats.\n\n\nE. Create interactive dashboards, reports, and visualizations.\n\n\nF. Collaboration with multiple teams to understand requirements and objectives.\n\n\nG. Administer testing and troubleshooting.\n\n\nH. Create and update documentation.\n\n\nRequirements:\n**Required Qualifications**\n\n* Bachelor\u2019s or Master's degree from an accredited college or university in computer science, statistics, mathematics, economics, or related field\n* Three (3\\) years of experience as a BI Developer\n* Experience as a BI developer or similar role with a strong understanding of data modeling and ETL processes\n* Proficient in SQL and experience with BI tools/software\n* Possess a strong understanding of data warehouse, data lakehouse, and data mart concepts\n\n**Why You Will Love** **Interclypse**\n\n* You want to work for an adaptive company that moves at your speed.\n* You want a healthy work\\-life balance.\n* You want to work with a passionate team on an important mission.\n* You want to work for an organization that values and appreciates you.\n* You want to work for an organization that invests in your growth.\n* You want the option for career mentorship, both in technology and in business.\n* You value a company with a strong culture of growth and support.\n\n**Employee Impact Program**\n\n\nEvery employee has the opportunity to be rewarded for the contributions they can make toward the long\\-term health of the company, our customers, and employees. This program in combination with our comprehensive benefits, time off and leave programs allow you to design a career and compensation program that enables unmatched flexibility while ensuring company, customer, and employee health and prosperity.\n\n**Benefits**\n\n* Personal Time Off (PTO) for vacations, holidays, illnesses\n* Parental Leave\n* Bereavement Leave\n* Jury Duty Leave\n* Retirement: Unlimited 401K match up to 8% of your salary up to the federal maximum\n* Financial education and planning support\n* Health Insurance (Medical, Dental, Vision)\n* Health Savings Account (HSA)\n* Medical and Dependent Care Flexible Spending Accounts (FSA)\n* Employee Assistance Program\n* Life Insurance\n* Accidental Death and Dismemberment Insurance\n* Disability: Short\\-term and long\\-term disability coverage\n* Educational support\n* Company apparel\n* Social events: Holiday Party, Spring Picnic, Fall Picnic, happy hours and more.\n* Access to group rates for voluntary benefits such as Accident, Hospital Indemnity, Critical Illness, Pet Insurance, and Identity Theft Protection\n\n**EOE AA M/F/Vet/Disability:**\n\n\nInterclypse is an Equal Opportunity/Affirmative Action employer. All qualified applicants will receive consideration for employment without regard to race, color, religion, creed, sex, sexual orientation, gender identity, national origin, disability, or protected Veteran status.\n\n\nThe base salary range provided is not adjusted for geographic differences associated with where the work is being performed. Actual salaries will vary depending on factors including but not limited to location, candidate\u2019s experience and education/training, internal peer equity, and market and business consideration.",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience in BI development, ETL processes, and SQL, but lacks the required 3 years of experience as a BI Developer.",
+    "id": "indeed-56"
+  },
+  {
+    "title": "Associate Business Intelligence Developer",
+    "company": "Uline",
+    "location": "Waukegan, IL, US",
+    "url": "https://www.indeed.com/viewjob?jk=f29670b27c26d8b0",
+    "description": "**Associate Business Intelligence Developer**\n\n\n**Pay from $80,000 to $90,000 per year**\n\n\n**2200 S. Lakeside Drive, Waukegan, IL 60085**\n\n\nReal work. Real training. Real growth. As an Associate BI Developer, jumpstart your career in business analytics by developing impactful solutions in a fast\\-paced, team\\-driven environment. Learn how we turn data into decisions at Uline, a leader in e\\-commerce and distribution.\n\n\n**Better together!** This position is on\\-site in Pleasant Prairie, WI or Waukegan, IL based on need, and we are looking for people who share our passion.\n\n\n**Position Responsibilities**\n\n\n* Design data\\-driven dashboards and reports using tools like Power BI, Power Apps and Python.\n* Partner with business leaders to identify key data insights and translate them into actionable reports.\n* Communicate effectively to understand business needs and deliver impactful data solutions.\n* Document project requirements, data dictionaries and user guides to support data initiatives.\n\n**LearnIT at Uline!**\n\n\n* **What\u2019s it About?** Our 6\\-week training course offers hands\\-on job experience while you learn Uline\u2019s IT functions and business model.\n* **What\u2019s the Benefit?** Sharpen your technical and communication skills as you expand your professional network.\n* **Who Should Apply?** If you\u2019re an entry\\-level professional with a passion for IT and looking to grow your technical aptitude, then this is for you!\n\n**Minimum Requirements**\n\n\n* Bachelor\u2019s degree in computer science, IT or related field.\n* Strong critical thinking and problem\\-solving skills.\n* Experience with SQL and data analysis.\n* Excellent communication and organizational skills.\n\n**Benefits**\n\n\n* Complete health insurance coverage and 401(k) with 6% employer match that starts day one!\n* Multiple bonus programs.\n* Paid holidays and generous paid time off.\n* Tuition Assistance Program that covers professional continuing education.\n\n**Employee Perks**\n\n\n* Caf\u00e9 featuring affordable daily meal options from local restaurants.\n* On\\-site fitness center and beautifully maintained walking paths.\n* Best\\-in\\-class, clean, modern facilities.\n\n**About Uline**\n\n\nUline, a family\\-owned company, is North America\u2019s leading distributor of shipping, industrial, and packaging materials with over 9,000 employees across 13 locations.\n\n\nUline is a drug\\-free workplace.\n\n\nEEO/AA Employer/Vet/Disabled\n\n\n\\#LI\\-MW3\n\n\n\\#CORP\n\n\n(\\#IN\\-PPITL4\\)\n\n\nOur employees make the difference and we are committed to offering exceptional benefits and perks! Explore https://www.uline.jobs/\\#working\\-here\\_blankUline.jobs to learn more!",
+    "match_score": 0.7,
+    "match_reason": "The candidate's experience with SQL, data analysis, and Power BI aligns well with the job's required qualifications, but the lack of specific experience with Power Apps and the entry-level nature of the position suggest a moderate match.",
+    "id": "indeed-64"
+  },
+  {
+    "title": "BI Developer",
+    "company": "YSI",
+    "location": "Richmond, VA, US",
+    "url": "https://www.indeed.com/viewjob?jk=9b1a9687dfcfb14f",
+    "description": "**Yakshna Solutions, Inc., (YSI)** is a CMMI Level 3 assessed, ISO 9001, 20000:1, 27001 certified, woman\\-owned small business enterprises, headquartered in Herndon, Virginia, USA. YSI provides professional IT solutions and services to business corporations and government organizations. YSI is committed to serve its business communities as a leading IT vendor providing innovative, quality, and cost\\-effective IT business solutions and services.\n\nWe offer a competitive benefits package that includes the following: 401(k), health, dental, and vision insurance, Life insurance, short\\-term and long\\-term disability insurance, paid time off, training, and professional development assistance.\n\nThe Virginia Department of Elections is seeking an Azure Business Intelligence Developer with a minimum of 3\\-5 years\u2019 experience to work with an existing software development team on an ongoing project.\n\nThis position will work in an Agile/Scrum development environment with an existing data and analytics team to design, develop, test, and support solutions that enable data\\-driven decision\\-making across the agency. The candidate will lead and contribute to the design and implementation of scalable data warehouse and business intelligence systems, applying principles and techniques of data architecture, integration, and analytics. The position requires experience with cloud\\-native data warehousing platforms, ETL development, and a strong understanding of enterprise data management best practices.\n\n**Required skills and experience** \n\n\u00b7 At least 3 years of hands\\-on experience designing, developing, and supporting enterprise data warehouse and business intelligence solutions.\n\n\u00b7 Strong proficiency with ETL/ELT tools such as SQL Server Integration Services (SSIS) and Azure Data Factory.\n\n\u00b7 Experience working with cloud\\-based data platforms such as Azure Synapse Analytics or Microsoft Fabric.\n\n\u00b7 Proficiency in SQL development, including writing complex queries, stored procedures, views, and optimizing performance for large datasets.\n\n\u00b7 Experience building and maintaining star schema data models, fact and dimension tables, and metadata documentation.\n\n\u00b7 Experience with data visualization and reporting tools, especially Power BI Service.\n\n\u00b7 Strong understanding of data governance, quality, and lineage principles.\n\n\u00b7 Experience integrating data from diverse structured and semi\\-structured sources including relational databases, flat files, APIs, and cloud storage\n\n\u00b7 Familiarity with source control and DevOps practices, including CI/CD pipelines for data integration workflows.\n\n\u00b7 Strong analytical and troubleshooting skills for diagnosing data anomalies, ETL failures, and performance bottlenecks.\n\n\u00b7 Demonstrated ability to collaborate with business stakeholders to translate requirements into technical specifications and data pipelines.\n\n\u00b7 Strong communication skills, both written and verbal, for documenting data models, workflows, and data contracts.\n\n\u00b7 Experience working in Agile/Scrum or DevOps environments.\n\n\u00b7 Microsoft certifications such as Azure Data Engineer Associate (DP\\-203\\) or SQL Server certifications are highly desirable.\n\n\u00b7 Bachelor\u2019s degree in Computer Science, Information Systems, Data Science, or a related field is highly desirable.\n\nJob Types: Full\\-time, Contract\n\nPay: $85,000\\.00 \\- $90,000\\.00 per year\n\nBenefits:\n\n* 401(k)\n* 401(k) matching\n* Dental insurance\n* Health insurance\n* Health savings account\n* Paid time off\n* Professional development assistance\n* Vision insurance\n\nSchedule:\n\n* Monday to Friday\n\nWork Location: Hybrid remote in Richmond, VA 23219",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience with Azure Data Factory, SSIS, and Power BI, meeting most of the required skills, but lacks experience with Azure Synapse Analytics or Microsoft Fabric.",
+    "id": "indeed-71"
+  },
+  {
+    "title": "Business Intelligence Developer",
+    "company": "Midland Memorial Hospital",
+    "location": "Midland, TX",
+    "url": "https://www.linkedin.com/jobs/view/business-intelligence-developer-at-midland-memorial-hospital-4252019179?position=1&pageNum=0&refId=HdM60NL19XkRZ6yphB1y0A%3D%3D&trackingId=RCBB4nBkqk6HCM7wCzRU5g%3D%3D",
+    "description": "Business Intelligence Developer",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience with Azure Data Factory, SSIS, and Power BI, which are key requirements for the role, but lacks specific experience with the required platforms like Informatica, Anaplan, or Databricks.",
+    "id": "linkedin-74"
+  },
+  {
+    "title": "Business Intelligence Developer",
+    "company": "Ascendion",
+    "location": "Overland Park, KS",
+    "url": "https://www.linkedin.com/jobs/view/business-intelligence-developer-at-ascendion-4250598843?position=2&pageNum=0&refId=HdM60NL19XkRZ6yphB1y0A%3D%3D&trackingId=IB4KXhoe6nisjai4mTb5rw%3D%3D",
+    "description": "Business Intelligence Developer",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience with Azure Data Factory, SSIS, and Power BI, which are key requirements for the role, but lacks specific experience with the required platforms like Informatica, Anaplan, or Databricks.",
+    "id": "linkedin-75"
+  },
+  {
+    "title": "Business Intelligence Developer",
+    "company": "Franklin Fitch",
+    "location": "St Augustine, FL",
+    "url": "https://www.linkedin.com/jobs/view/business-intelligence-developer-at-franklin-fitch-4251666515?position=3&pageNum=0&refId=HdM60NL19XkRZ6yphB1y0A%3D%3D&trackingId=W1El0sXN8magLMUJJdyfzA%3D%3D",
+    "description": "Business Intelligence Developer",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience with Azure Data Factory, SSIS, and Power BI, which are key requirements for the role, but lacks specific experience with the required platforms like Informatica, Anaplan, or Databricks.",
+    "id": "linkedin-76"
+  },
+  {
+    "title": "******** ************ *********",
+    "company": "********",
+    "location": "*********, **",
+    "url": "https://www.linkedin.com/jobs/view/business-intelligence-developer-at-simatree-4236151589?position=4&pageNum=0&refId=HdM60NL19XkRZ6yphB1y0A%3D%3D&trackingId=AC0Tgld2CjcYNAtRPmB9Vw%3D%3D",
+    "description": "******** ************ *********",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience with Azure Data Factory, SSIS, PySpark, and SQL, which are key requirements for the job, but lacks specific experience with the required platforms like Informatica, Anaplan, or Databricks.",
+    "id": "linkedin-77"
+  }
+]

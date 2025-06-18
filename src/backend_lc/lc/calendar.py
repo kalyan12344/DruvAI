@@ -80,27 +80,47 @@ class EventsOnArgs(BaseModel):
     date: str = Field(..., description="YYYY-MM-DD")
 
 @tool(args_schema=EventsOnArgs)
-def get_events_on_date(date: str) -> str:
+# In lc/calendar.py
 
+@tool(args_schema=EventsOnArgs)
+def get_events_on_date(date: str) -> dict:
     """
-    today is {TODAY}
-    if dates are not specified example if said next week first call find_dates and then get the date accordingly
-    Return a friendly list of all events on *date* . today is {TODAY}. always refer to this date and then look for the date accordingly 
-     very important if year is not specified, assume current year.
-        For natural language dates (e.g., 'tomorrow', 'next Friday'), you MUST use the 'find_dates' tool FIRST to convert them to YYYY-MM-DD format.
-
+    Return a structured JSON object containing a list of all events on a specific date.
+    For natural language dates (e.g., 'tomorrow'), you MUST use the 'find_dates' tool FIRST.
+    The date input MUST be in YYYY-MM-DD format.
     """
     start, end = f"{date}T00:00:00Z", f"{date}T23:59:59Z"
-    items = _svc().events().list(calendarId="primary",
-                                 timeMin=start, timeMax=end,
-                                 singleEvents=True, orderBy="startTime"
-                                 ).execute().get("items", [])
+    
+    items = _svc().events().list(
+        calendarId="primary",
+        timeMin=start, 
+        timeMax=end,
+        singleEvents=True, 
+        orderBy="startTime"
+    ).execute().get("items", [])
+
+    # If no events are found, return a specific JSON structure
     if not items:
-        return f"🎉 You’re free on {date}"
-    return  " | ".join(
-        f"{e['start'].get('dateTime', e['start'].get('date'))} – {e.get('summary','(No title)')}"
-        for e in items
-    )
+        return {
+            "status": f"🎉 You’re free on {date}",
+            "events": []
+        }
+
+    # If events are found, process them into a clean list
+    simplified_events = []
+    for event in items:
+        simplified_events.append({
+            "summary": event.get("summary", "(No title)"),
+            "start": event.get("start"),
+            "end": event.get("end"),
+            "id": event.get("id")
+        })
+    
+    # Return the structured JSON response
+    return {
+        "status": f"Found {len(simplified_events)} events on {date}.",
+        "events": simplified_events
+    }
 
 # ─────────── get_events_in_range ───────────────────────────────
 class RangeArgs(BaseModel):

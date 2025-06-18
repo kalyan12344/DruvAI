@@ -2,7 +2,7 @@
 
 /* --- Base & Variables (Optional, but good for theming) --- */
 :root {
-    --dashboard-bg: #111827;
+    --dashboard-bg: #000000;
     /* Dark blue-gray (e.g., Tailwind Gray 900) */
     --card-bg: #1f2937;
     /* Slightly lighter card bg (e.g., Tailwind Gray 800) */
@@ -39,7 +39,10 @@ body {
     padding: 20px;
     font-family: var(--font-family);
     min-height: 100vh;
+    margin-left: 280px;
+    /* Make space for fixed sidebar */
 }
+
 
 /* --- Header --- */
 .dashboard-header {

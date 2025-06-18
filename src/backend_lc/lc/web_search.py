@@ -1,4 +1,4 @@
-# lc/research_tool.py
+# lc/web_search.py
 
 import os
 import requests

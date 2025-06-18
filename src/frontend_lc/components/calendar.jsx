@@ -1,222 +1,234 @@
-// src/components/Calendar.jsx
-
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
-import { FaChevronLeft, FaChevronRight, FaSpinner, FaAngleDown } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
-import "../styles/calendar.css"; // Ensure your CSS path is correct
+import { FaChevronLeft, FaChevronRight, FaPlus, FaBrain } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
+import { SiGooglecalendar } from "react-icons/si"
+import googleCalendarIcon from "../assets/Google_Calendar_icon.svg";
 
+// --- FIX: Corrected the icon name from SiMicrosoftoutlook to SiMicrosoftOutlook ---
+import { PiMicrosoftOutlookLogoLight } from "react-icons/pi";
+import { motion, AnimatePresence } from "framer-motion";
+import "../styles/calendar.css";
+
+// --- Helper Functions & Constants ---
+const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const today = new Date();
+
+// --- Main Calendar Component ---
 const Calendar = () => {
+    const [view, setView] = useState('month');
     const [currentDate, setCurrentDate] = useState(new Date());
-    const [selectedDate, setSelectedDate] = useState(null);
+    const [selectedDate, setSelectedDate] = useState(new Date());
     const [events, setEvents] = useState({});
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [showAllEvents, setShowAllEvents] = useState(false);
-    const eventsPanelRef = useRef(null);
 
-    const months = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-    ];
-
-    const daysOfWeek = ["S", "M", "T", "W", "T", "F", "S"];
-
-    // NEW: Get today's date once for efficiency. We'll use this for comparison.
-    const today = new Date();
-
-    // ... (fetchEvents and useEffect logic remains the same) ...
-    const fetchEvents = async () => {
-        try {
-            setError(null);
-            setLoading(true);
-            const response = await axios.get("http://localhost:8000/api/calendar/events");
-
-            const eventsByDate = {};
-            response.data.forEach((event) => {
-                const eventDate = new Date(event.start.dateTime || event.start.date);
-                const dateKey = eventDate.toDateString();
-                if (!eventsByDate[dateKey]) {
-                    eventsByDate[dateKey] = [];
-                }
-                eventsByDate[dateKey].push(event);
-            });
-            setEvents(eventsByDate);
-
-        } catch (err) {
-            setError("Failed to load calendar events. Please try again.");
-            console.error("Error fetching events:", err);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const [connections, setConnections] = useState({ google: {}, outlook: {}, icloud: {} });
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     useEffect(() => {
-        fetchEvents();
+        const fetchInitialData = async () => {
+            try {
+                setLoading(true);
+
+                const [statusResponse, eventsResponse] = await Promise.all([
+                    axios.get("http://127.0.0.1:8000/api/calendars/status"),
+                    axios.get("http://127.0.0.1:8000/api/calendar/events"),
+
+                ]);
+
+                const eventsByDate = {};
+                eventsResponse.data.forEach((event) => {
+                    const eventDate = new Date(event.start.dateTime || `${event.start.date}T00:00:00`);
+                    const dateKey = eventDate.toDateString();
+                    if (!eventsByDate[dateKey]) {
+                        eventsByDate[dateKey] = { allDay: [], timed: [] };
+                    }
+                    const eventWithSource = { ...event, source: 'google' };
+                    if (event.start.dateTime) {
+                        eventsByDate[dateKey].timed.push(eventWithSource);
+                    } else {
+                        eventsByDate[dateKey].allDay.push(eventWithSource);
+                    }
+                });
+
+                for (const dateKey in eventsByDate) {
+                    eventsByDate[dateKey].timed.sort((a, b) => new Date(a.start.dateTime) - new Date(b.start.dateTime));
+                }
+                setEvents(eventsByDate);
+                setConnections(statusResponse.data);
+
+            } catch (err) {
+                console.error("Error fetching initial data:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchInitialData();
     }, []);
 
+    const handleConnectCalendar = (provider) => {
+        const authUrl = `http://127.0.0.1:8000/api/${provider}/auth/login`;
+        const popup = window.open(authUrl, `${provider}-auth-popup`, 'width=600,height=700');
+        setIsMenuOpen(false);
+
+        const checkPopupClosed = setInterval(() => {
+            if (popup.closed) {
+                clearInterval(checkPopupClosed);
+                axios.get("http://127.0.0.1:8000/api/calendars/status")
+                    .then(res => setConnections(res.data));
+            }
+        }, 1000);
+    };
 
     const handleDateClick = (date) => {
         setSelectedDate(date);
-        setShowAllEvents(false);
-        setTimeout(() => {
-            eventsPanelRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-        }, 100);
+        setView('day');
+    };
+    const handlePrevMonth = () => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
+    const handleNextMonth = () => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
+    const handleToday = () => {
+        setCurrentDate(new Date());
+        setView('month');
     };
 
-    const handlePrevMonth = () => {
-        setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
-    };
+    const renderHeader = () => (
+        <div className="calendar-header">
+            <h2>Calendar</h2>
+            <div className="calendar-actions">
+                <div className="connected-accounts">
+                    {connections.google?.connected && (
+                        <img src={googleCalendarIcon} alt="Google Calendar" className="icon" title={`Google Calendar Connected: ${connections.google.user_email}`} />
+                    )}
+                    {connections.outlook?.connected && (
+                        // --- FIX: Corrected the component name to SiMicrosoftOutlook ---
+                        <PiMicrosoftOutlookLogoLight size={18} className="icon" title={`Outlook Connected: ${connections.outlook.user_email}`} />
+                    )}
 
-    const handleNextMonth = () => {
-        setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
-    };
+                    <div className="action-btn-wrapper">
+                        <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="action-btn !p-2 !rounded-full" title="Connect another account">
+                            <FaPlus size={12} />
+                        </button>
+                        <AnimatePresence>
+                            {isMenuOpen && (
+                                <motion.div
+                                    className="connect-menu"
+                                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                                >
+                                    <button onClick={() => handleConnectCalendar('google')} disabled={connections.google?.connected}>
+                                        <SiGooglecalendar /> Connect Google Calendar
+                                    </button>
+                                    <button onClick={() => alert("Outlook integration coming soon!")} disabled>
+                                        {/* --- FIX: Corrected the component name to SiMicrosoftOutlook --- */}
+                                        <PiMicrosoftOutlookLogoLight color="#0072C6" /> Connect Outlook Calendar
+                                    </button>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
+                </div>
+                <button className="action-btn"><FaBrain size={14} /> Find a Time</button>
+            </div>
+        </div>
+    );
 
-    const renderMonth = (monthOffset = 0) => {
-        const date = new Date(currentDate);
-        date.setMonth(currentDate.getMonth() + monthOffset);
-
-        const year = date.getFullYear();
-        const month = date.getMonth();
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const renderMonthView = () => {
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
         const firstDayOfMonth = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-        const daysArray = [];
-
-        for (let i = 0; i < firstDayOfMonth; i++) {
-            daysArray.push(<div key={`empty-${month}-${i}`} className="calendar-day empty"></div>);
-        }
+        const daysArray = Array.from({ length: firstDayOfMonth }, (_, i) => (
+            <div key={`empty-${i}`} className="calendar-day not-current-month"></div>
+        ));
 
         for (let day = 1; day <= daysInMonth; day++) {
             const dayDate = new Date(year, month, day);
             const dateKey = dayDate.toDateString();
-
-            const isSelected = selectedDate && selectedDate.toDateString() === dateKey;
-
-            // NEW: Check if the current day in the loop is today.
-            // We compare `toDateString()` to ignore the time part of the date.
             const isToday = today.toDateString() === dateKey;
-
-            const hasEvents = events[dateKey] && events[dateKey].length > 0;
+            const dayEventData = events[dateKey];
+            const hasEvents = dayEventData && (dayEventData.allDay.length > 0 || dayEventData.timed.length > 0);
 
             daysArray.push(
-                <div
-                    key={`day-${month}-${day}`}
-                    // UPDATED: Added the `isToday` condition to the class list.
-                    className={`calendar-day 
-                        ${isSelected ? "selected" : ""}
-                        ${isToday ? "today" : ""}
-                        ${hasEvents ? "has-events" : ""}`
-                    }
-                    onClick={() => handleDateClick(dayDate)}
-                >
+                <motion.div key={`day-${day}`} onClick={() => handleDateClick(dayDate)} className={`calendar-day ${isToday ? "today" : ""}`} whileHover={{ scale: 1.05, y: -2 }} transition={{ type: 'spring', stiffness: 300 }}>
                     <span>{day}</span>
-                    {hasEvents && <div className="event-dot"></div>}
-                </div>
+                    {hasEvents && (<div className="event-dots"><div className="event-dot dot-google"></div></div>)}
+                </motion.div>
             );
         }
-
         return (
-            <div className="month-calendar">
-                <h3>{months[month]} {year}</h3>
+            <motion.div key="month-view" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, scale: 0.95 }}>
+                <div className="month-navigation">
+                    <button className="nav-btn" onClick={handlePrevMonth}><FaChevronLeft /></button>
+                    <span style={{ fontSize: "15px" }}>{months[month]} {year}</span>
+                    <button className="nav-btn" onClick={handleNextMonth}><FaChevronRight /></button>
+                    <button className="action-btn today-pill" style={{ borderRadius: "20px", height: "25px", fontSize: "14px" }} onClick={handleToday} title="Go to today">Today</button>
+                </div>
                 <div className="calendar-grid">
-                    {daysOfWeek.map(day => (
-                        <div key={day} className="calendar-day-header">{day}</div>
-                    ))}
+                    {daysOfWeek.map((day, index) => <div key={`${day}-${index}`} className="calendar-day-header">{day}</div>)}
                     {daysArray}
                 </div>
-            </div>
+            </motion.div>
         );
     };
 
-    // ... (rest of the component remains the same) ...
-    const selectedDateEvents = selectedDate ? events[selectedDate.toDateString()] || [] : [];
-    const hasMultipleEvents = selectedDateEvents.length > 3;
-    const displayedEvents = showAllEvents ? selectedDateEvents : selectedDateEvents.slice(0, 3);
+    const renderDayView = () => {
+        const dayEventData = events[selectedDate.toDateString()] || { allDay: [], timed: [] };
+        const hours = Array.from({ length: 24 }, (_, i) => i);
 
+        return (
+            <motion.div key="day-view" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}>
+                <div className="month-navigation">
+                    <button className="action-btn !px-4" onClick={() => setView('month')}><FaChevronLeft size={12} /> Back to Month</button>
+                    <span className="!text-left !min-w-0 flex-grow">{selectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</span>
+                </div>
+                {dayEventData.allDay.length > 0 && (
+                    <div className="all-day-events-container">
+                        <span className="timeline-time !transform-none">All-day</span>
+                        <div className="all-day-events-list">
+                            {dayEventData.allDay.map(event => (<div key={event.id} className="event-block all-day">{event.summary}</div>))}
+                        </div>
+                    </div>
+                )}
+                <div className="daily-timeline">
+                    {hours.map(hour => (
+                        <div key={hour} className="timeline-hour">
+                            <div className="timeline-time">{hour % 12 === 0 ? 12 : hour % 12} {hour < 12 ? 'AM' : 'PM'}</div>
+                            <div className="timeline-slot">
+                                {dayEventData.timed.map(event => {
+                                    const eventStart = new Date(event.start.dateTime);
+                                    if (eventStart.getHours() !== hour) return null;
+                                    const eventEnd = new Date(event.end.dateTime);
+                                    const durationMinutes = (eventEnd - eventStart) / (1000 * 60);
+                                    const topPosition = (eventStart.getMinutes() / 60) * 100;
+                                    const height = (durationMinutes / 60) * 100;
+                                    return (
+                                        <div key={event.id} className="event-block" style={{ top: `${topPosition}%`, height: `max(10%, ${height}%)` }}>
+                                            <span className="font-bold">{event.summary}</span>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </motion.div>
+        );
+    };
+
+    // --- Main Return ---
     return (
         <div className="calendar-container">
-            <div className="calendar-header">
-                <h2>Calendar</h2>
-                <div className="month-navigation">
-                    <motion.button onClick={handlePrevMonth} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                        <FaChevronLeft />
-                    </motion.button>
-                    <span>{months[currentDate.getMonth()]} {currentDate.getFullYear()}</span>
-                    <motion.button onClick={handleNextMonth} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                        <FaChevronRight />
-                    </motion.button>
-                </div>
-            </div>
+            {renderHeader()}
             {loading ? (
-                <div className="loading-state">
-                    <FaSpinner className="spinner" /> Loading events...
-                </div>
-            ) : error ? (
-                <div className="error-state">
-                    {error} <button onClick={fetchEvents}>Retry</button>
-                </div>
+                <div className="centered-state">Loading Calendar...</div>
             ) : (
-                <div className="dual-month-view">
-                    {renderMonth(0)}
-                    {renderMonth(1)}
-                </div>
+                <AnimatePresence mode="wait">
+                    {view === 'month' ? renderMonthView() : renderDayView()}
+                </AnimatePresence>
             )}
-            <div ref={eventsPanelRef}>
-                {selectedDate && (
-                    <motion.div
-                        className="events-panel"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.3 }}
-                    >
-                        <h3>
-                            Events for {selectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
-                            {today.toDateString() === selectedDate.toDateString() && <span className="today-badge">Today</span>}
-                        </h3>
-
-                        <AnimatePresence>
-                            {selectedDateEvents.length > 0 ? (
-                                <div className="events-list">
-                                    {displayedEvents.map((event, index) => (
-                                        <motion.div
-                                            key={index}
-                                            className="event-item"
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            transition={{ delay: index * 0.1 }}
-                                        >
-                                            <div className="event-time">
-                                                {event.start.dateTime
-                                                    ? new Date(event.start.dateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                                                    : "All Day"}
-                                            </div>
-                                            <div className="event-details">
-                                                <div className="event-title">{event.summary}</div>
-                                                {event.description && <p className="event-description">{event.description}</p>}
-                                            </div>
-                                        </motion.div>
-                                    ))}
-                                </div>
-                            ) : (
-                                <motion.div className="no-events" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                                    No events scheduled.
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-
-                        {hasMultipleEvents && !showAllEvents && (
-                            <motion.button
-                                className="show-more-btn"
-                                onClick={() => setShowAllEvents(true)}
-                                whileHover={{ scale: 1.05 }}
-                            >
-                                <FaAngleDown /> Show all {selectedDateEvents.length} events
-                            </motion.button>
-                        )}
-                    </motion.div>
-                )}
-            </div>
         </div>
     );
 };

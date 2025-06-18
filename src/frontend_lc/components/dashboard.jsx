@@ -1,5 +1,6 @@
 import React from 'react';
 import '../styles/dashboard.css';
+import Calendar from './calendar';
 
 const Dashboard = () => {
     const tasks = [
@@ -42,21 +43,7 @@ const Dashboard = () => {
 
             <div className="dashboard-content">
                 <div className="content-row">
-                    <div className="card tasks-card">
-                        <h2>My Tasks</h2>
-                        <ul className="task-list">
-                            {tasks.map(task => (
-                                <li key={task.id} className={`task-item ${task.completed ? 'completed' : ''}`}>
-                                    <div className="task-info">
-                                        {!task.completed ? <span className="task-indicator"></span> : <span className="task-completed">✓</span>}
-                                        <span className="task-title">{task.title}</span>
-                                    </div>
-                                    <span className="task-due">{task.due}</span>
-                                </li>
-                            ))}
-                        </ul>
-                        <button className="add-btn">+ Add Task</button>
-                    </div>
+                    <Calendar />
 
                     <div className="card calendar-card">
                         <h2>Calendar</h2>
