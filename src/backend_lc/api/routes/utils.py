@@ -1,9 +1,34 @@
 # api/routes/utils.py
 
+import json
+import math
 import os
 import io
 from pdfminer.high_level import extract_text
 from docx import Document
+
+# --- JSON Encoding Utilities ---
+
+class NaNHandlingEncoder(json.JSONEncoder):
+    """
+    Custom JSON encoder to handle NaN and Infinity values,
+    converting them to null, which is JSON compliant.
+    """
+    def default(self, obj):
+        if isinstance(obj, float):
+            # If the float is not a number or is infinite, return None (which becomes null)
+            if math.isnan(obj) or math.isinf(obj):
+                return None
+        return super(NaNHandlingEncoder, self).default(obj)
+
+def render_json_with_nan_handling(content):
+    """
+    A helper function to render a Python object into a JSON string
+    using our custom encoder.
+    """
+    return json.dumps(content, cls=NaNHandlingEncoder)
+
+# --- File & Path Utilities ---
 
 # --- Constants for file handling ---
 UPLOAD_DIR = "uploads"

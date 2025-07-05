@@ -13,5 +13,24 @@
       "connected": false,
       "user_email": null
     }
+  },
+  "connected_mails": {
+    "outlook": {
+      "connected": false,
+      "user_email": null
+    },
+    "google_gmail": {
+      "connected": true,
+      "user_email": "kalyanraju90@gmail.com"
+    }
+  },
+  "contacts": {
+    "connected": false
+  },
+  "connected_contacts": {
+    "google": {
+      "connected": true,
+      "user_email": "kalyanraju90@gmail.com"
+    }
   }
 }

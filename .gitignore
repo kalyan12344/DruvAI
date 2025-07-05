@@ -34,10 +34,13 @@ src/backend/.env
 src/backend_lc/credentials.json
 src/backend_lc/token.json
 src/backend_lc/ctoken.json
+src/backend_lc/token_gmail.json
+src/backend_lc/token_calendar.json
+src/backend_lc/token_people.json
+
 src/backend/.env
 
 
-x
 
 
 

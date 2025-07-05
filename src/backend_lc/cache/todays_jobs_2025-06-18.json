@@ -1,0 +1,202 @@
+[
+  {
+    "title": "AI Engineer (Data Engineer)",
+    "company": "Ease Logistics Services LLC",
+    "location": "Dublin, OH, US",
+    "url": "https://www.indeed.com/viewjob?jk=c9d61108f7847a1b",
+    "description": "**JOB SUMMARY:**As a Data Engineer, you will play a pivotal role in designing, developing, and maintaining data pipelines and data warehouses. You will leverage your expertise in Azure Data Factory, Azure SQL, ETL, data modeling, and key concepts to extract, transform, and load data into our data warehouse, and bring cost savings ideas to the table.\n\n\n**ESSENTIAL DUTIES**\n\n* Data Pipeline Development: Design, build, and maintain robust data pipelines using Azure Data Factory to automate data ingestion, transformation, and delivery.\n* Data Warehouse Design: Collaborate with data analysts and business stakeholders to understand data requirements and design efficient data warehouse structures.\n* ETL Implementation**:** Develop and optimize ETL processes to ensure data quality, accuracy, and consistency.\n* Data Modeling: Create and maintain data models, including the use of primary keys and surrogate keys to ensure data integrity.\n* Data Quality: Implement data quality checks and validation procedures to maintain data accuracy and reliability.\n* Performance Optimization: Monitor and optimize data pipeline performance to ensure efficient data processing.\n* Documentation: Create and maintain clear and comprehensive documentation for data pipelines, data models, and ETL processes.\n\n**Qualifications**\n\n*Education*\n\n* Bachelors degree in Data Analytics, Data Science, Computer Science or a degree in a related field.\n* In lieu of a degree, 4 years of experience is required.\n\n*Experience*\n\n* In lieu of a degree, 4 years of experience is required.\n* Experience with Microsoft Technologies: Proven experience with the full stack of Microsoft products, including Azure Data Factory, Azure SQL Database, Power BI, and related tools.\n* Strong SQL Skills**:** Proficiency in writing complex SQL queries for data extraction, transformation, and analysis.\n* Data Pipeline Development: Demonstrated experience in designing, building, and maintaining data pipelines using Azure Data Factory or similar ETL tools.\n* Data Modeling: Expertise in creating and maintaining data models, with a strong understanding of data warehousing concepts, normalization, master data management, ERDs and dimensional modeling.\n* Performance Tuning**:** Ability to optimize and troubleshoot data pipelines and SQL queries to improve performance and efficiency.\n* Data Quality Assurance: Experience implementing data quality checks, validation procedures, and error handling within data pipelines.\n* Cloud Data Solutions: Familiarity with cloud\\-based data warehousing solutions and experience working with large datasets in Azure or similar cloud environments.\n* Preferred Experience with McLeod: Knowledge of and experience with McLeod software, particularly in integrating or extracting data for reporting and analysis.\n\n*Knowledge, Skills, \\& Abilities*\n\n* Problem\\-Solving Skills: Strong analytical and problem\\-solving abilities, with a focus on developing efficient and scalable data solutions.\n* Communication Skills: Excellent verbal and written communication skills, with the ability to define technical specifications of solutions and document processes.\n* Efficient in managing different projects at once.\n* Ability to work cross functionally.",
+    "match_score": 0.8,
+    "match_reason": "The candidate has strong experience with Azure Data Factory, SQL, and ETL processes, which are key requirements for the job, but lacks specific experience with McLeod software.",
+    "id": "indeed-16"
+  },
+  {
+    "title": "Business Intelligence Developer",
+    "company": "Constellation Service Company",
+    "location": "Topeka, KS, US",
+    "url": "https://www.indeed.com/viewjob?jk=8179b71e5da26ba0",
+    "description": "Constellation Service Company, headquartered in Topeka, KS, is seeking a Business Intelligence Developer to help drive decision\\-making across our organization through meaningful data reporting and analysis. You\u2019ll work closely with subject matter experts to create custom reports, dashboards, and KPIs using Microsoft SQL Server and Power BI. This role is ideal for someone who thrives in a fast\\-paced, collaborative environment and enjoys solving business problems with data.\n\n\nResponsibilities:\n\n* Design, develop, and maintain custom reports and dashboards using SQL Server Reporting Services (SSRS) and Power BI\n* Write and optimize T\\-SQL queries, stored procedures, functions, and views to support reporting needs\n* Collaborate with stakeholders to define and refine KPIs and performance metrics\n* Serve as an internal data consultant, helping teams interpret and use data effectively\n* Analyze and validate data to ensure accuracy and consistency across reports\n* Assist with ERP system administration, particularly related to reporting and data access\n\n  \n\n\nPosition Requrements  \n\nPreferred Qualifications:\n\n* 3\\+ years of experience in business intelligence, data analytics, or a related field (or equivalent education)\n* Strong experience with Microsoft SQL Server, including advanced T\\-SQL (queries, stored procedures, functions, views)\n* Hands\\-on experience with Power BI or similar data visualization tools\n* Strong problem\\-solving and communication skills\n* Ability to manage multiple projects in a dynamic environment\n\n  \n\nConstellation is an Equal Opportunity Employer, complies with Executive Order 11246, and takes affirmative action to ensure that qualified applicants are employed, and that employees are treated during employment, without regard to race, color, religion/creed, national origin, gender, or sex, marital status, age, disability, use of a guide dog or service animal, sexual orientation, military/veteran status, or any other status protected by Federal or State law or local ordinance.",
+    "match_score": 0.8,
+    "match_reason": "The candidate has strong experience with SQL Server, Power BI, and ETL processes, which align well with the job's required qualifications, but lacks specific experience with SSRS.",
+    "id": "indeed-59"
+  },
+  {
+    "title": "Senior Data Engineer",
+    "company": "Cargill",
+    "location": "Wayzata, MN, US",
+    "url": "https://www.indeed.com/viewjob?jk=aae517c37f238be8",
+    "description": "Cargill\u2019s size and scale allows us to make a positive impact in the world. Our purpose is to nourish the world in a safe, responsible and sustainable way.\n  \nCargill is a family company providing food, ingredients, agricultural solutions and industrial products that are vital for living. We connect farmers with markets so they can prosper. We connect customers with ingredients so they can make meals people love. And we connect families with daily essentials \u2014 from eggs to edible oils, salt to skincare, feed to alternative fuel. Our 160,000 colleagues, operating in 70 countries, make essential products that touch billions of lives each day. Join us and reach your higher purpose at Cargill.\n  \nThis position is in Cargill\u2019s food and bioindustrial\u202fbusiness, where manufacturers, retailers, and foodservice companies rely on us to consistently deliver the products and services they need, and use our technical expertise and market knowledge to develop innovative products. Job Summary\n  \n  \n\nThe Senior Professional, Data Engineering job designs, builds and maintains complex data systems that enable data analysis and reporting. With minimal supervision, this job ensures that large sets of data are efficiently processed and made accessible for decision making. Essential Functions\n  \n  \n\n**DATA INFRASTRUCTURE:** Prepares data infrastructure to support the efficient storage and retrieval of data.\n  \n**DATA FORMATS:** Examines and resolves appropriate data formats to improve data usability and accessibility across the organization.\n  \n**DATA \\& ANALYTICAL SOLUTIONS:** Develops complex data products and solutions using advanced engineering and cloud based technologies, ensuring they are designed and built to be scalable, sustainable and robust.\n  \n**DATA PIPELINES:** Develops and maintains streaming and batch data pipelines that facilitate the seamless ingestion of data from various data sources, transform the data into information and move to data stores like data lake, data warehouse and others.\n  \n**DATA SYSTEMS:** Reviews existing data systems and architectures to identify areas for improvement and optimization.\n  \n**STAKEHOLDER MANAGEMENT:** Collaborates with multi\\-functional data and advanced analytic teams to gain requirements and ensure that data solutions meet the functional and non\\-functional needs of various partners.\n  \n**DATA FRAMEWORKS:** Builds complex prototypes to test new concepts and implements data engineering frameworks and architectures that improve data processing capabilities and support advanced analytics initiatives.\n  \n**AUTOMATED DEPLOYMENT PIPELINES:** Develops automated deployment pipelines improving efficiency of code deployments with fit for purpose governance.\n  \n**DATA MODELING:** Performs complex data modeling in accordance to the datastore technology to ensure sustainable performance and accessibility. Minimum and Typical Years of Experience\n  \n  \n\nMinimum requirement of 4 years of relevant work experience. Typically reflects 5 years or more of relevant experience.\n  \n  \n\n**Preferred Experience:**  \n\nExperience developing modern data architectures, such as data warehouses, data lakes, data meshes, hubs and associated capabilities including ingestion, governance, modeling, observability and more\n  \nExperience with transformation and modeling tools, including SQL based transformation frameworks, orchestration and quality frameworks such as dbt, Apache Nifi, Talend, AWS Glue, Airflow, Dagster, Great Expectations, Oozie and others\n  \nStrong experience of working in devops models with demonstratable understanding of associated best practices for code management, continuous integration, and deployment strategies\n  \n\\#LI\\-NS7\n  \n\\#FGB\n  \n\\#themuse\n  \nInformation for Minnesota Based Candidates\n  \n  \n\nMinnesota Sick and Safe Leave accruals of one hour for every 30 worked, up to 48 hours per calendar year unless otherwise provided by law.\n  \nThe expected salary for this position is $130,000\\-170,000\\. Compensation varies depending on a wide array of factors including but not limited to the specific location, certifications, education, and level of experience. The disclosed range estimate may be adjusted for any applicable geographic differential associated with the location at which the position may be filled. This position is eligible for a discretionary incentive award. The incentive award amount is dependent upon company performance and your personal performance.\n  \n  \n\nEqual Opportunity Employer, including Disability/Vet",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience in data engineering, ETL processes, and cloud-based technologies, but lacks specific experience with some of the preferred transformation and modeling tools mentioned in the job description.",
+    "id": "indeed-18"
+  },
+  {
+    "title": "Data Engineer",
+    "company": "Lensa",
+    "location": "New York, NY",
+    "url": "https://www.linkedin.com/jobs/view/data-engineer-at-lensa-4250782410?position=2&pageNum=0&refId=dEbu6dCmwvFqAfkEZuTKNw%3D%3D&trackingId=FMnLWSfuzjN1OF7YDdb7cg%3D%3D",
+    "description": "Data Engineer",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience with Azure Data Factory, SSIS, and PySpark, which are key technologies required for the role, but lacks specific experience with the mentioned platforms like Informatica, Anaplan, and Databricks.",
+    "id": "linkedin-21"
+  },
+  {
+    "title": "Data Engineer",
+    "company": "The Value Maximizer",
+    "location": "Austin, TX",
+    "url": "https://www.linkedin.com/jobs/view/data-engineer-at-the-value-maximizer-4253157509?position=3&pageNum=0&refId=dEbu6dCmwvFqAfkEZuTKNw%3D%3D&trackingId=CmuIBa9glFsu9U4Htlg4SA%3D%3D",
+    "description": "Data Engineer",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience with Azure Data Factory, SSIS, PySpark, and SQL, which are key requirements for the role, but lacks specific experience with the required platforms like Informatica, Anaplan, or Databricks.",
+    "id": "linkedin-22"
+  },
+  {
+    "title": "**** ********",
+    "company": "*** ***** *********",
+    "location": "************, ****** ******",
+    "url": "https://www.linkedin.com/jobs/view/data-engineer-at-the-value-maximizer-4253158460?position=4&pageNum=0&refId=dEbu6dCmwvFqAfkEZuTKNw%3D%3D&trackingId=rGrGK3gnKbfVqvlWPqBmeg%3D%3D",
+    "description": "**** ********",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience with Azure Data Factory, SSIS, PySpark, and SQL, which are key requirements for the job, but lacks specific experience with the required platforms like Informatica, Anaplan, and Databricks.",
+    "id": "linkedin-23"
+  },
+  {
+    "title": "**** ********",
+    "company": "*** ***** *********",
+    "location": "****, **",
+    "url": "https://www.linkedin.com/jobs/view/data-engineer-at-the-value-maximizer-4253154836?position=5&pageNum=0&refId=dEbu6dCmwvFqAfkEZuTKNw%3D%3D&trackingId=q2QAERpsgM0Z5Fs9TeIosw%3D%3D",
+    "description": "**** ********",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience with Azure Data Factory, SSIS, and PySpark, which are key requirements for the job, but lacks specific experience with the required platforms like Informatica, Anaplan, and Databricks.",
+    "id": "linkedin-24"
+  },
+  {
+    "title": "**** ********",
+    "company": "**********",
+    "location": "******, **",
+    "url": "https://www.linkedin.com/jobs/view/data-engineer-at-infoverity-4252318771?position=6&pageNum=0&refId=dEbu6dCmwvFqAfkEZuTKNw%3D%3D&trackingId=0mZaNte7GgiyJNBxfIaTvw%3D%3D",
+    "description": "**** ********",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience with Azure Data Factory, SSIS, and PySpark, which are key requirements for the job, but lacks specific experience with the required platforms like Informatica, Anaplan, and Databricks.",
+    "id": "linkedin-25"
+  },
+  {
+    "title": "****** **** ********",
+    "company": "********",
+    "location": "******, **",
+    "url": "https://www.linkedin.com/jobs/view/senior-data-engineer-at-syngenta-4252722967?position=7&pageNum=0&refId=dEbu6dCmwvFqAfkEZuTKNw%3D%3D&trackingId=oqrCxPOOPPYBcl%2Ffxi1L%2Bg%3D%3D",
+    "description": "****** **** ********",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience with Azure Data Factory, SSIS, PySpark, and SQL, which are key requirements for the job, but lacks specific experience with the required platforms like Informatica, Anaplan, and Databricks.",
+    "id": "linkedin-26"
+  },
+  {
+    "title": "Azure ADF ETL Developer",
+    "company": "dgfh",
+    "location": "Bellevue, WA, US",
+    "url": "https://www.indeed.com/viewjob?jk=2779fbe186dc2433",
+    "description": "**Benefits:**  \n\n* Competitive salary\n* Opportunity for advancement\n* Training \\& development\n\n  \n\n**Role: Azure ADF ETL Developer (Remote)**  \n\n  \n\n**Why Join Us:**  \n\n* Work remotely with flexible hours.\n* Opportunity to extend beyond the initial contract.\n* Lead cutting\\-edge cloud data integration initiatives.\n* Collaborate with a highly skilled and supportive data engineering team.\n\n**Role Overview:** We are seeking a skilled and proactive **Azure ADF ETL Developer**. This senior\\-level role is fully **remote** and ideal for a developer passionate about scalable cloud data solutions and ETL performance optimization within **Azure environments**.  \n\n  \n\n**Key Responsibilities:**  \n\n* Design and develop robust ETL pipelines using Azure Data Factory (v2\\).\n* Optimize and monitor data workflows for performance, scalability, and reliability.\n* Troubleshoot bottlenecks and ensure high\\-quality data processing.\n* Collaborate with architects and analysts to convert requirements into efficient data solutions.\n* Integrate data from Azure SQL, Blob Storage, APIs, and on\\-prem systems.\n* Utilize Azure services like Data Lake, Synapse Analytics, Key Vault, and Logic Apps.\n* Implement logging, monitoring, and alerting for ETL operations.\n* (Optional) Develop Power BI dashboards and reports for business insights.\n* Document technical workflows, processes, and data mappings.\n\n**Required Qualifications:**  \n\n* 4\\+ years of hands\\-on experience with Azure Data Factory and ETL processes.\n* Proven ability to tune and troubleshoot complex data pipelines.\n* Strong SQL proficiency with Azure SQL Database and/or Synapse Analytics.\n* Knowledge of data modeling, transformation, and integration practices.\n* Familiar with Azure services such as Data Lake, Key Vault, and Azure Monitor.\n* Excellent analytical and independent problem\\-solving skills.\n* Strong communication and documentation abilities.\n\n**Preferred Qualifications:**  \n\n* Experience in Power BI development and DAX.\n* Exposure to CI/CD, Git, and DevOps for data pipelines.\n* Familiarity with data governance, cataloging, and lineage tools.\n\n**Ready to drive cloud data transformation? Apply now and be part of our innovation journey!**",
+    "match_score": 0.7,
+    "match_reason": "The candidate has 3+ years of experience with Azure Data Factory and strong SQL proficiency, but falls short of the required 4+ years of experience.",
+    "id": "indeed-27"
+  },
+  {
+    "title": "ETL Developer",
+    "company": "Intone Networks",
+    "location": "Plano, TX, US",
+    "url": "https://www.indeed.com/viewjob?jk=5a74f70264f8a6cd",
+    "description": "ETL Developer. Develops, enhances, debugs, supports, maintains, and tests Data Pipelines with any of the major ETL tools. Prior Bank of America experience preferred. Experience working on Data Connect will be a plus. Participates in the design, development, and implementation of complex applications, often using new technologies. Collaborate with external programmers to coordinate delivery of software application. Works under minimal supervision, with general guidance from more seasoned consultants. Agile",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience with ETL processes, Azure Data Factory, and SSIS, which are key requirements for the ETL Developer role, but lacks specific experience with Data Connect and Bank of America.",
+    "id": "indeed-31"
+  },
+  {
+    "title": "ETL Support Developer (SSIS)",
+    "company": "84 Lumber",
+    "location": "Eighty Four, PA, US",
+    "url": "https://www.indeed.com/viewjob?jk=c71f9746eda86728",
+    "description": "Overview:\n\nThe Business Intelligence ETL Developer is responsible for supporting the data and business intelligence needs of our teams at both Team Headquarters and in the Field. The successful candidate will ensure that our stakeholders have the information and reporting tools needed to support our business process. The Developer will provide technical support of our enterprise data warehouse, including the design, development, implementation of solutions.\nResponsibilities:\n* Ensure data accuracy and availability through monitoring and supporting ETL processes from various sources\n* Gain thorough understanding of existing processes and procedures including data dependencies\n* Collaborate with team to refine processes to ensure a high level of data quality and optimal system performance\n* Supports the technical deliverables for the design, implementation, maintenance, and support of data warehouse systems and applications\n* Interpret business requirements; design, build and test processes\n* Participates in the data design and the creation of database architecture and data repositories\n* Responsible for technical documentation that includes architecture diagrams, process flow diagrams, and prototypes to effectively communicate design ideas\n* Participate in testing for development tool and hardware upgrades\n* Provides status updates of work progress to project team and management\n* Supports the definition, scope and technical estimates for portions of large complex projects\n* Contribute to the roadmap for Business Intelligence and data transformation solutions for the team\n* Develop a good working relationship with a wide range of stakeholders to design end\\-to\\-end experiences\n* Partner with other team members as well as cross\\-functional partners to support business processes and system solutions\n\n\nQualifications:\n* 5\\+ years of experience using Microsoft SQL Server including design, creation, and maintenance of relational database objects (tables, stored procedures, scripts, SSIS packages) and automated schedules\n* Availability outside of normal working hours to provide oversight, monitor and troubleshoot ETL processing issues\n* Strong analytical, problem\\-solving, deductive reasoning and critical thinking skills\n* Familiarity with standard software development concepts (SDLC, modeling, migration / conversion, repositories, change management, unit testing)\n* A willingness to learn technology to solve business problems\n* Ability to deliver assigned work tasks within project timelines\n* Interest in learning about builder supply \\& construction industry and company business practices\n* Excellent interpersonal and communication skills, both oral and written\n* Proven success working in a collaborative team environment\n* A curious self\\-starter who can determine viable options or the best next step to work independently to achieve results\n\n**Preferred Experience**\n\n* Experience with Visual Studio, Azure DevOps, and Azure ADF\n\n**Preferred Education**\n\n* Bachelor\u2019s degree in Computer Science or a related field.",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience with SQL Server, SSIS, and Azure Data Factory, meeting the required qualifications, but falls short of the 5+ years of experience requirement.",
+    "id": "indeed-33"
+  },
+  {
+    "title": "ETL Developer (Remote)",
+    "company": "Maximus",
+    "location": "United States",
+    "url": "https://www.linkedin.com/jobs/view/etl-developer-remote-at-maximus-4253179600?position=3&pageNum=0&refId=4xJsDKf%2BmCfwtpkgQNCF%2FA%3D%3D&trackingId=xeW4R8MF1dpztJDhBdLFrA%3D%3D",
+    "description": "ETL Developer (Remote)",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience with Azure Data Factory, SSIS, and PySpark, which are key requirements for the ETL Developer role, but lacks specific experience with the required platforms like Informatica, Anaplan, or Databricks.",
+    "id": "linkedin-49"
+  },
+  {
+    "title": "***/*** *********",
+    "company": "************.**",
+    "location": "****** ******",
+    "url": "https://www.linkedin.com/jobs/view/sql-etl-developer-at-fullthrottle-ai-4238711365?position=4&pageNum=0&refId=4xJsDKf%2BmCfwtpkgQNCF%2FA%3D%3D&trackingId=kgoFG1r91f44YUpzyx1zHw%3D%3D",
+    "description": "***/*** *********",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience with Azure Data Factory, SSIS, PySpark, and SQL, which are key requirements for the job, but lacks specific experience with the required platforms like Informatica, Anaplan, or Databricks.",
+    "id": "linkedin-50"
+  },
+  {
+    "title": "*********** *** ********* - ******",
+    "company": "*****",
+    "location": "****** ******",
+    "url": "https://www.linkedin.com/jobs/view/informatica-etl-developer-remote-at-lensa-4250786324?position=5&pageNum=0&refId=4xJsDKf%2BmCfwtpkgQNCF%2FA%3D%3D&trackingId=av%2ByPSJ%2Fngg2ylBmBg%2FIiw%3D%3D",
+    "description": "*********** *** ********* - ******",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience with Azure Data Factory, SSIS, PySpark, and SQL, which are key requirements for the job, but lacks specific experience with the required platforms like Informatica, Anaplan, and Databricks.",
+    "id": "linkedin-51"
+  },
+  {
+    "title": "*********** *** ********* - ******",
+    "company": "*****",
+    "location": "******, **",
+    "url": "https://www.linkedin.com/jobs/view/informatica-etl-developer-remote-at-lensa-4250780571?position=6&pageNum=0&refId=4xJsDKf%2BmCfwtpkgQNCF%2FA%3D%3D&trackingId=YHGCt2%2FTSxIen3zSs%2Brerg%3D%3D",
+    "description": "*********** *** ********* - ******",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience with Azure Data Factory, SSIS, PySpark, and SQL, which are key requirements for the job, but lacks specific experience with the required platforms like Informatica, Anaplan, or Databricks.",
+    "id": "linkedin-52"
+  },
+  {
+    "title": "*** *********/******** **** **** ********* ** ****** **&*",
+    "company": "******* **** ***********",
+    "location": "****** ******",
+    "url": "https://www.linkedin.com/jobs/view/etl-developer-designer-with-deep-expertise-in-oracle-cc-b-at-pacific-data-integrators-4250745392?position=7&pageNum=0&refId=4xJsDKf%2BmCfwtpkgQNCF%2FA%3D%3D&trackingId=UL5RRDa4WgKPMlkY38hPUQ%3D%3D",
+    "description": "*** *********/******** **** **** ********* ** ****** **&*",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience with Azure Data Factory, SSIS, PySpark, and SQL, which are key requirements for the job, but lacks specific experience with the required platforms like Informatica, Anaplan, and Databricks.",
+    "id": "linkedin-53"
+  },
+  {
+    "title": "Business Intelligence Developer",
+    "company": "The Community Solution Education System",
+    "location": "Remote, US",
+    "url": "https://www.indeed.com/viewjob?jk=ec7e88d05f9f925c",
+    "description": "Job Description:\nTitle: Business Intelligence Developer\nDepartment: IT Applications\nJob Purpose\nPosition responsibilities include, but not limited to:* Design, build, and optimize Power BI Dashboards\n* Design \\& develop standardized reports using SQL Server Reporting Services, TSQL queries, and stored Procedures\n* Create and Deploy Packages for ETL and ELT processes utilizing Azure Data Factory/SSIS\n* Develop reusable semantic models and datasets using DAX and Power Query\n* Create tables, stored procedures, views, functions, etc using SQL Server Management Studio\n* Query Performance Tuning, Optimization and power BI security administration\n* Maintain and support existing Data Warehouses/Marts\n* Analyze data to improve processes and assist with defining key metrics\n* Follow governance standards, resolve data issues, and promote best practices in report design and data usage\n* Collaborate with business analysts, subject experts, and other team members to determine BI requirements and develop enterprise level solutions\n* Support IT staff and business users in the development, usage and troubleshooting of database\\-driven applications\n* Documentation for all implemented reports, processes, and procedures\n* Respond quickly to bug fixes and enhancement requests\n\n\nRequired Qualifications:\nKnowledge and Skills:* Excellent analytical, written and verbal communication skills\n* Strong analytical thinking, attention to detail, and commitment to data accuracy\n* Strong hands\\-on experience with Power BI, including DAX, Power Query, and data model design\n* Advanced proficiency in T\\-SQL with the ability to write and optimize complex queries\n* Solid understanding of data warehousing principles, star schemas, and relational databases\n* Work on multiple projects concurrently.\n* Knowledge of data extraction through API/web services is a plus\n* Knowledge of SQL BI Tools (SSRS, SSIS, SSAS)\n* Familiarity with Power BI Service features: workspaces, scheduled refreshes, and pipelines\n\n\nEducation:* Bachelor's degree in Computer Science, Information System, Analytics, or related field\n\n\nExperience:* 3\\+ years experience working with Power BI and SQL Server\n* Data warehouse/ Data Mart development experience\n* Python experience is a plus\n* Experience in education industry a plus\n* Experience with Microsoft Fabric a plus\n\n\nWorking Conditions:* Ability to complete sedentary work for extended periods of time.\n* Ability to operate office equipment including laptop, phone, etc.\n\n\nCompensation \\& Benefits\nThis opportunity is budgeted at $90,000 \\- 100,000 base compensation. Additional compensation factors may impact total compensation. To learn more about our competitive benefits and additional rewards, including generous paid time\\-off, medical and dental insurance coverage, life and disability insurance, retirement plan with employer contribution, multiple flexible spending accounts, tuition reimbursement, click the link below.\nhttps://www.tcsedsystem.edu/careers/\nThe Community Solution is an Equal Opportunity Employer.",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience with Power BI, SQL Server, and Azure Data Factory, meeting most of the required qualifications, but lacks specific experience with SSRS and SSAS.",
+    "id": "indeed-56"
+  },
+  {
+    "title": "Business Intelligence Developer",
+    "company": "Constellation Service Company",
+    "location": "Topeka, KS, US",
+    "url": "https://www.indeed.com/viewjob?jk=a970bae98d30455b",
+    "description": "Business Intelligence Developer Location: Topeka, Kansas \\| Full\\-Time \\| $75,000\u2013$90,000/year\n\nConstellation Service Company, headquartered in Topeka, KS, is seeking a Business Intelligence Developer to help drive decision\\-making across our organization through meaningful data reporting and analysis. You\u2019ll work closely with subject matter experts to create custom reports, dashboards, and KPIs using Microsoft SQL Server and Power BI. This role is ideal for someone who thrives in a fast\\-paced, collaborative environment and enjoys solving business problems with data.\n\nResponsibilities:\n\n\u00b7 Design, develop, and maintain custom reports and dashboards using SQL Server Reporting Services (SSRS) and Power BI\n\n\u00b7 Write and optimize T\\-SQL queries, stored procedures, functions, and views to support reporting needs\n\n\u00b7 Collaborate with stakeholders to define and refine KPIs and performance metrics\n\n\u00b7 Serve as an internal data consultant, helping teams interpret and use data effectively\n\n\u00b7 Analyze and validate data to ensure accuracy and consistency across reports\n\n\u00b7 Assist with ERP system administration, particularly related to reporting and data access\n\nPreferred Qualifications:\n\n\u00b7 3\\+ years of experience in business intelligence, data analytics, or a related field (or equivalent education)\n\n\u00b7 Strong experience with Microsoft SQL Server, including advanced T\\-SQL (queries, stored procedures, functions, views)\n\n\u00b7 Hands\\-on experience with Power BI or similar data visualization tools\n\n\u00b7 Strong problem\\-solving and communication skills\n\n\u00b7 Ability to manage multiple projects in a dynamic environment\n\nJob Type: Full\\-time\n\nPay: $75,000\\.00 \\- $90,000\\.00 per year\n\nBenefits:\n\n* 401(k)\n* 401(k) matching\n* Dental insurance\n* Health insurance\n* Health savings account\n* Life insurance\n* Paid time off\n* Vision insurance\n\nWork Location: In person",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience with SQL Server, Power BI, and ETL processes, which align well with the job's required qualifications, but lacks specific experience with SSRS.",
+    "id": "indeed-62"
+  },
+  {
+    "title": "Business Intelligence Developer",
+    "company": "Interclypse, Inc.",
+    "location": "Annapolis Junction, MD, US",
+    "url": "https://www.indeed.com/viewjob?jk=752c1a6a7b507f75",
+    "description": "Description:\n\nWelcome to Interclypse, where innovation meets passion. Every team member is a vital piece of our success story. We are not just a company, but a dynamic community driven by the shared vision of redefining excellence. At Interclypse, you will find more than a career \u2013 you will discover a vibrant ecosystem where your talents are celebrated, your ideas are embraced, and your potential is achieved. Every Interclypse team member can benefit based on their efforts and collectively benefit through the overall company\u2019s success. Join our mission to positively impact society, community, industry, and individuals by always \u201cDoing What is Right\u201d. Together, let's pioneer a future where greatness is achieved and exceeded.\n\n\nTo actualize this vision, Interclypse employs a growth mindset culture that empowers employees to rise in their careers by providing them with tools, mentorship, and a supportive environment to ensure long\\-term success.\n\n\nInterclypse is supporting several Maryland state agencies in the modernization and sustainment of critical systems. This exciting opportunity provides candidates with the ability to contribute to the long\\-term health and success of the state while continuing to learn and grow professionally within Interclypse\u2019s growth mindset culture.\n\n\nAll positions are required to be onsite at various locations in Maryland.\n\n\nMake a difference. Join our team by applying today!\n\n**Responsibilities:**\n\n\nResponsible for developing and operating business intelligence (BI) platforms, tools, and reports. The individual is responsible for the following tasks:\n\n\nA. Design, develop and maintain BI solutions, extract, transform, load (ETL) processes, and dashboards.\n\n\nB. Gather and analyze requirements from stakeholders to ensure the BI solution meets needs.\n\n\nC. Develop data models to support reporting and analytics.\n\n\nD. Implement ETL processes to analyze data from various source systems and data formats.\n\n\nE. Create interactive dashboards, reports, and visualizations.\n\n\nF. Collaboration with multiple teams to understand requirements and objectives.\n\n\nG. Administer testing and troubleshooting.\n\n\nH. Create and update documentation.\n\n\nRequirements:\n**Required Qualifications**\n\n* Bachelor\u2019s or Master's degree from an accredited college or university in computer science, statistics, mathematics, economics, or related field\n* Three (3\\) years of experience as a BI Developer\n* Experience as a BI developer or similar role with a strong understanding of data modeling and ETL processes\n* Proficient in SQL and experience with BI tools/software\n* Possess a strong understanding of data warehouse, data lakehouse, and data mart concepts\n\n**Why You Will Love** **Interclypse**\n\n* You want to work for an adaptive company that moves at your speed.\n* You want a healthy work\\-life balance.\n* You want to work with a passionate team on an important mission.\n* You want to work for an organization that values and appreciates you.\n* You want to work for an organization that invests in your growth.\n* You want the option for career mentorship, both in technology and in business.\n* You value a company with a strong culture of growth and support.\n\n**Employee Impact Program**\n\n\nEvery employee has the opportunity to be rewarded for the contributions they can make toward the long\\-term health of the company, our customers, and employees. This program in combination with our comprehensive benefits, time off and leave programs allow you to design a career and compensation program that enables unmatched flexibility while ensuring company, customer, and employee health and prosperity.\n\n**Benefits**\n\n* Personal Time Off (PTO) for vacations, holidays, illnesses\n* Parental Leave\n* Bereavement Leave\n* Jury Duty Leave\n* Retirement: Unlimited 401K match up to 8% of your salary up to the federal maximum\n* Financial education and planning support\n* Health Insurance (Medical, Dental, Vision)\n* Health Savings Account (HSA)\n* Medical and Dependent Care Flexible Spending Accounts (FSA)\n* Employee Assistance Program\n* Life Insurance\n* Accidental Death and Dismemberment Insurance\n* Disability: Short\\-term and long\\-term disability coverage\n* Educational support\n* Company apparel\n* Social events: Holiday Party, Spring Picnic, Fall Picnic, happy hours and more.\n* Access to group rates for voluntary benefits such as Accident, Hospital Indemnity, Critical Illness, Pet Insurance, and Identity Theft Protection\n\n**EOE AA M/F/Vet/Disability:**\n\n\nInterclypse is an Equal Opportunity/Affirmative Action employer. All qualified applicants will receive consideration for employment without regard to race, color, religion, creed, sex, sexual orientation, gender identity, national origin, disability, or protected Veteran status.\n\n\nThe base salary range provided is not adjusted for geographic differences associated with where the work is being performed. Actual salaries will vary depending on factors including but not limited to location, candidate\u2019s experience and education/training, internal peer equity, and market and business consideration.",
+    "match_score": 0.7,
+    "match_reason": "The candidate has strong experience in BI development, ETL processes, and SQL, but lacks the required 3 years of experience as a BI Developer.",
+    "id": "indeed-69"
+  }
+]

@@ -252,6 +252,76 @@
     }
 }
 
+.structured-card {
+    background-color: #1A1A1A;
+    border: 1px solid #282828;
+    border-radius: 16px;
+    padding: 16px;
+    width: 100%;
+    min-width: 350px;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* --- Calendar Card Specific Styles --- */
+.calendar-card .card-header h4 {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.event-item {
+    border-top: 1px solid var(--border-color);
+    padding-top: 12px;
+    margin-top: 4px;
+}
+
+.event-item:first-child {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
+}
+
+.event-time-range {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+.event-summary {
+    font-size: 1rem;
+    color: var(--off-white);
+    font-weight: 500;
+}
+
+/* --- NEW: Confirmation Card Styles --- */
+.confirmation-card.success .card-header {
+    color: var(--success-green);
+}
+
+.confirmation-card.error .card-header {
+    color: var(--error-red);
+}
+
+.confirmation-card .card-content p {
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin: 0;
+}
+
 .structured-list {
     list-style: none;
     padding-left: 0;
@@ -270,4 +340,88 @@
 
 .user-message .structured-list li::before {
     color: var(--dark-charcoal);
+}
+
+/* --- Structured Card Base (Required for all cards) --- */
+.structured-card {
+    background-color: #1A1A1A;
+    border: 1px solid #282828;
+    border-radius: 16px;
+    padding: 16px;
+    width: 100%;
+    min-width: 350px;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+
+/* --- News Card Specific Styles --- */
+.news-card .card-header h4 {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.article-item {
+    border-top: 1px solid var(--border-color);
+    padding-top: 12px;
+    margin-top: 8px;
+}
+
+.article-item:first-child {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
+}
+
+.article-header {
+    margin-bottom: 8px;
+}
+
+.article-source {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--subtle-gold);
+    text-transform: uppercase;
+}
+
+.article-headline {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--off-white);
+    margin: 4px 0;
+}
+
+.summary-points {
+    list-style-type: none;
+    padding-left: 0;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+}
+
+.summary-points li {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 4px;
+}
+
+.summary-points li::before {
+    content: '•';
+    color: var(--subtle-gold);
+    position: absolute;
+    left: 0;
+    top: 1px;
 }

@@ -70,6 +70,7 @@
 .nav-item {
     display: flex;
     align-items: center;
+    text-decoration: none;
     padding: 10px 16px;
     border-radius: 8px;
     font-family: var(--font-display);
@@ -83,8 +84,8 @@
 }
 
 .nav-item:hover {
-    color: var(--off-white);
-    background-color: rgba(255, 255, 255, 0.05);
+    color: red;
+    background-color: rgba(0, 0, 0, 0.05);
 }
 
 .nav-item.active {

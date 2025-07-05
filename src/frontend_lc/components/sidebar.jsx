@@ -94,17 +94,17 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
                 {navItems.map(item => {
                     const Icon = iconMap[item.name];
                     return (
-                        <motion.a
+                        <motion.div
                             key={item.id}
                             className={`nav-item ${activeTab === item.name ? 'active' : ''}`}
                             onClick={() => setActiveTab(item.name)}
                             variants={itemVariants}
-                            whileHover={{ scale: 1.02 }}
+                            whileHover={{ scale: 1.02, color: 'gold' }}
                             whileTap={{ scale: 0.98 }}
                         >
                             <Icon className="nav-icon" size={20} />
                             <span>{item.name}</span>
-                        </motion.a>
+                        </motion.div>
                     );
                 })}
             </motion.nav>

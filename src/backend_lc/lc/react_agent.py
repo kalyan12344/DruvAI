@@ -1,29 +1,30 @@
+# lc/react_agent.py
+# Note: Other imports and functions remain the same. This focuses on the prompt fix.
+
 from langchain.agents import AgentExecutor, create_structured_chat_agent
-from langchain_core.messages import HumanMessage # Keep if used elsewhere, not directly in run_agent
-from langchain_core.tools import Tool # Keep if used elsewhere
 from langchain import hub
 from lc.config import get_llm
 from lc import ALL_TOOLS
-from datetime import datetime, timedelta
-import re
+from datetime import datetime
 
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
- # Make sure this is correctly populated via lc/__init__.py
 today = datetime.utcnow().strftime("%Y-%m-%d")
-
 llm = get_llm()
+
+# --- THIS IS THE FIX ---
+# The SYSTEM_PROMPT is now extremely strict about the Final Answer format.
 
 SYSTEM_PROMPT = """
 # MISSION
-Your mission is to act as Druv, a proactive and intelligent voice-enabled AI personal assistant, to help the user efficiently and accurately accomplish their tasks.
+Your mission is to act as Druv, a proactive and intelligent AI personal assistant. Your primary goal is to use tools to gather information and then format that information into a structured JSON object for the frontend application.
 
-# CRITICAL RESPONSE PROTOCOL - MUST FOLLOW EXACTLY
-⚠️  **MANDATORY**: EVERY response must start with "Thought:" - NO EXCEPTIONS
-⚠️  **MANDATORY**: You must use EXACTLY one of the two formats below - NEVER respond conversationally
+# CRITICAL RESPONSE PROTOCOL - YOU MUST FOLLOW THIS EXACTLY
+⚠️  **MANDATORY**: EVERY response must start with "Thought:" - NO EXCEPTIONS.
+⚠️  **MANDATORY**: After your thought, you MUST use either an "Action" or a "Final Answer".
 
 ---
-**FORMAT 1: Using a Tool**
-Thought: [Your reasoning, step-by-step plan, and justification for using a specific tool.]
+### FORMAT 1: Using a Tool
+Use this format to call any tool, including a formatting tool.
+Thought: [Your step-by-step reasoning for using a specific tool.]
 Action:
 ```json
 {{
@@ -33,60 +34,41 @@ Action:
 ```
 
 ---
-**FORMAT 2: Responding to the User (ONLY when you have complete information)**
-Thought: [Your final reasoning before providing the answer. Summarize how you got the answer and why you are confident in it.]
-Final Answer: [This is the response shown to the user. Be concise, friendly, and professional. Use clear Markdown formatting.]
+### FORMAT 2: The Final Answer
+The Final Answer is your last step. Its format is NOT flexible.
 
-# EXAMPLES OF CORRECT RESPONSES:
+**RULE 1: DATA-BASED ANSWERS MUST BE JSON**
+If your answer is based on data returned from ANY tool (like calendar events, search results, etc.), the `Final Answer` **MUST** be the JSON object produced by a `format_` tool.
 
-**Example 1 - When checking conflicts:**
-Thought: The user wants to add an event but I need to check if they're free first. I found they have a shift from 6 PM to 9 PM today, so they're not free. I should tell the user they are not free.
-Final Answer: I found you already have a shift scheduled from 6:00 PM to 9:00 PM today in ibaco. Since you're not free, I didn't add the new event.
+**RULE 2: CONVERSATIONAL ANSWERS ARE RARE**
+The ONLY time you should provide a simple string in `Final Answer` is for a direct greeting (e.g., "Hi, how can I help?") or if you cannot use any tools to answer the user's question.
 
-**Example 2 - When using a tool:**
-Thought: I need to check what events the user has today before I can determine if they're free.
-Action:
-```json
-{{
-  "action": "get_events_on_date",
-  "action_input": {{ "date": "2025-06-08" }}
-}}
-```
+---
+# MANDATORY WORKFLOW & EXAMPLES
 
-# CORE DIRECTIVES
-1. **Format Compliance**: NEVER respond without "Thought:" at the start
-2. **Complete Information**: Only use "Final Answer:" when you have everything needed to fully respond
-3. **Error Handling**: If tools fail, acknowledge in Thought and provide Final Answer explaining the issue
-4. **Conditional Logic**: Always check conditions before acting (e.g., "if free" means check for existing events first)
+### Correct Workflow (Querying Data):
+1.  **Thought:** I need to get the user's calendar events.
+2.  **Action:** Use `get_events_on_date`.
+3.  **(Tool returns raw data: `{{'status': '...', 'events': [...]}}`)**
+4.  **Thought:** I have the raw event data. Now I must format it for the UI using the `format_calendar_view` tool. The output of this tool will be my final answer.
+5.  **Action:** Use `format_calendar_view`.
+6.  **(Tool returns structured JSON: `{{"response_type":"calendar_view",...}}`)**
+7.  **Thought:** I have received the structured JSON from the formatting tool. This IS the final answer. I must stop here.
+8.  **Final Answer:** `{{"response_type":"calendar_view", "events": [...]}}`
+
+### **INCORRECT** Workflow (What NOT to do):
+1.  ...steps 1-7 are correct...
+2.  **Thought:** I have the JSON, now I will write a nice sentence about it. **<-- THIS IS WRONG!**
+3.  **Final Answer:** "You have 2 events today..." **<-- THIS IS FORBIDDEN!**
 
 # CONTEXT
 Today's Date: {today}
-Available tools: {tools}
 
-⚠️  REMEMBER: Start EVERY response with "Thought:" and end with either Action or "Final Answer:"
+⚠️  REMEMBER: Your primary job is to provide structured JSON. Do not add conversational text after you have successfully formatted the data.
 """
 
-# SIMPLE ERROR HANDLER - This is the only addition you need
-def fix_parsing_error(error):
-    """Simple fix for parsing errors"""
-    error_str = str(error)
-    print(f"Caught parsing error: {error_str}")
-    
-    # Extract the actual response from the error
-    if "Could not parse LLM output:" in error_str:
-        # Find the response between "Could not parse LLM output:" and "For troubleshooting"
-        start = error_str.find("Could not parse LLM output:") + len("Could not parse LLM output:")
-        end = error_str.find("For troubleshooting")
-        if end == -1:
-            end = len(error_str)
-        
-        actual_response = error_str[start:end].strip()
-        print(f"Extracted response: {actual_response}")
-        
-        # Return the response directly - LangChain will use this as the final answer
-        return actual_response
-    
-    return "I encountered a formatting issue. Please try again."
+
+# The rest of your file remains the same...
 
 # Use the hub prompt which handles agent_scratchpad correctly
 prompt = hub.pull("hwchase17/structured-chat-agent")
@@ -103,43 +85,33 @@ agent = create_structured_chat_agent(
     prompt=custom_prompt
 )
 
-# THE KEY CHANGE: Add the error handler here
+# This error handler is still useful for other potential issues
+def fix_parsing_error(error):
+    error_str = str(error)
+    if "Could not parse LLM output:" in error_str:
+        actual_response = error_str.split("Could not parse LLM output:")[-1].strip()
+        return actual_response
+    return "I encountered a formatting issue. Please try again."
+
 SMART_AGENT = AgentExecutor.from_agent_and_tools(
     agent=agent,
     tools=ALL_TOOLS,
     verbose=True,
-    handle_parsing_errors=fix_parsing_error,  # <-- This is the fix
+    handle_parsing_errors=fix_parsing_error,
 )
 
-def run_agent(user_input: str | dict) -> str:
+def run_agent(user_input: str | dict) -> dict | str:
+    # This function's logic does not need to change.
     final_agent_input_str = ""
-
     if isinstance(user_input, dict):
         question = user_input.get("question")
-        page_content_from_input = user_input.get("page_content")
-
-        if not question:
-            return "Input dictionary is missing a 'question'. Please provide a question."
-        
-        final_agent_input_str = question # Start with the question
-
-        if page_content_from_input:
-            # Append page_content if it exists, clearly marking it for the agent
-            final_agent_input_str += f"\n\n[Context: The user has also provided the following page content to consider for this question]:\n{page_content_from_input}"
-    
-    elif isinstance(user_input, str):
-        final_agent_input_str = user_input
-    
+        page_content = user_input.get("page_content")
+        final_agent_input_str = question
+        if page_content:
+            final_agent_input_str += f"\n\n[Context from current page]:\n{page_content}"
     else:
-        return "Invalid input type. Please provide a string or a dictionary with 'question' and optionally 'page_content'."
+        final_agent_input_str = user_input
 
-    if not final_agent_input_str.strip(): # Check if effectively empty
-        return "Input is empty. Please provide a question."
-
-    agent_payload = {
-        "input": final_agent_input_str
-    }
-    print(f"Agent payload: {agent_payload}")  # Debugging line to see the payload structure
-    
+    agent_payload = {"input": final_agent_input_str}
     result = SMART_AGENT.invoke(agent_payload)
     return result.get("output", str(result))

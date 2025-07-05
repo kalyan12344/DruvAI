@@ -1,0 +1,390 @@
+/* --- Gmail Page --- */
+.gmail-page {
+    /* width: 100vw; */
+    height: 100%;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: row;
+}
+
+/* --- Container & Header --- */
+.gmail-container {
+    font-family: 'Inter', sans-serif;
+    padding: 30px;
+    background: rgb(0, 0, 0);
+    color: var(--off-white);
+    width: 850px;
+    height: 700px;
+    margin-left: 300px;
+    margin-top: 30px;
+    border-radius: 20px;
+    border: 1px solid #1c1c1c;
+    display: flex;
+    flex-direction: column;
+}
+
+.gmail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-shrink: 0;
+}
+
+.gmail-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 24px;
+}
+
+.gmail-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* --- NEW: Search Input Styles --- */
+.search-input {
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    color: var(--off-white);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 14px;
+    width: 200px;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--subtle-gold);
+}
+
+.search-results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 4px 12px 4px;
+    font-size: 13px;
+    color: var(--medium-gray);
+    border-bottom: 1px solid #2a2a2a;
+    margin-bottom: 12px;
+}
+
+/* --- Layout Panes & Email List --- */
+.gmail-split-container {
+    display: flex;
+    gap: 20px;
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.email-list-pane {
+    width: 40%;
+    min-width: 300px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.email-detail-pane {
+    flex-grow: 1;
+    border: 1px solid #1c1c1c;
+    border-radius: 12px;
+    background-color: #080808;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.email-list-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-right: 10px;
+}
+
+.email-item {
+    padding: 12px 16px;
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+    background-color: #101010;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.email-item:hover {
+    border-color: #444;
+    transform: translateY(-2px);
+    background-color: #1a1a1a;
+}
+
+.email-item.active {
+    border-color: var(--subtle-gold);
+    background-color: rgba(212, 175, 55, 0.1);
+}
+
+.email-sender {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 2px;
+}
+
+.email-subject {
+    font-size: 14px;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.email-snippet {
+    font-size: 13px;
+    color: var(--medium-gray);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* --- Email Detail View & AI Actions --- */
+.detail-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #2a2a2a;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-shrink: 0;
+}
+
+.detail-header-info {
+    flex-grow: 1;
+}
+
+.detail-subject {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.detail-from {
+    font-size: 14px;
+    color: var(--medium-gray);
+}
+
+.close-btn {
+    background: transparent;
+    border: none;
+    color: var(--medium-gray);
+    cursor: pointer;
+    padding: 4px;
+    margin-left: 16px;
+}
+
+.close-btn:hover {
+    color: var(--off-white);
+}
+
+.detail-body {
+    padding: 20px;
+    flex-grow: 1;
+    overflow-y: auto;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.detail-body * {
+    color: var(--off-white) !important;
+    background-color: transparent !important;
+}
+
+.detail-body a {
+    color: #58a6ff !important;
+    text-decoration: underline;
+}
+
+.detail-actions {
+    display: flex;
+    gap: 12px;
+    padding: 12px 20px;
+    border-bottom: 1px solid #2a2a2a;
+    flex-shrink: 0;
+}
+
+.action-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #222;
+    border: 1px solid #333;
+    color: var(--medium-gray);
+    padding: 8px 14px;
+    border-radius: 99px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.action-pill:hover:not(:disabled) {
+    border-color: #555;
+    color: var(--off-white);
+}
+
+.action-pill.primary {
+    background-color: rgba(212, 175, 55, 0.1);
+    border-color: var(--subtle-gold);
+    color: var(--subtle-gold);
+}
+
+.action-pill:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.ai-response-card {
+    margin: 0 20px 20px 20px;
+    padding: 12px;
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.ai-response-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: var(--medium-gray);
+    font-weight: 500;
+}
+
+.ai-response-header button {
+    background: none;
+    border: none;
+    color: var(--medium-gray);
+    cursor: pointer;
+}
+
+.ai-response-content {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.ai-draft-container {
+    padding: 20px;
+    margin-top: auto;
+    background-color: #111;
+    border-top: 1px solid #2a2a2a;
+    flex-shrink: 0;
+}
+
+.ai-draft-textarea {
+    width: 100%;
+    min-height: 120px;
+    background-color: transparent;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 12px;
+    color: var(--off-white);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    resize: vertical;
+    margin-bottom: 12px;
+}
+
+.ai-draft-textarea:focus {
+    outline: none;
+    border-color: var(--subtle-gold);
+}
+
+.ai-draft-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.action-pill.send {
+    background-color: #316dca;
+    border-color: #316dca;
+    color: white;
+}
+
+/* --- Modals & General --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #1a1a1a;
+    padding: 24px;
+    border-radius: 12px;
+    border: 1px solid #333;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    width: 90%;
+    max-width: 450px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.modal-content h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.modal-content p {
+    margin: -8px 0 0 0;
+    font-size: 13px;
+    color: var(--medium-gray);
+}
+
+.modal-input {
+    width: 100%;
+    padding: 10px 12px;
+    background-color: #111;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: var(--off-white);
+    font-size: 14px;
+}
+
+.modal-input:focus {
+    outline: none;
+    border-color: var(--subtle-gold);
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.centered-state {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--medium-gray);
+    font-size: 14px;
+    height: 100%;
+}
+
+.centered-state.error {
+    color: #E53E3E;
+}

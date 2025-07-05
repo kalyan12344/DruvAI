@@ -1,13 +1,10 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { FaChevronLeft, FaChevronRight, FaPlus, FaBrain } from "react-icons/fa";
-import { FcGoogle } from "react-icons/fc";
-import { SiGooglecalendar } from "react-icons/si"
-import googleCalendarIcon from "../assets/Google_Calendar_icon.svg";
-
-// --- FIX: Corrected the icon name from SiMicrosoftoutlook to SiMicrosoftOutlook ---
+import { SiGooglecalendar } from "react-icons/si";
 import { PiMicrosoftOutlookLogoLight } from "react-icons/pi";
 import { motion, AnimatePresence } from "framer-motion";
+import GCIMG from "../assets/Google_Calendar_icon.svg"
 import "../styles/calendar.css";
 
 // --- Helper Functions & Constants ---
@@ -23,40 +20,49 @@ const Calendar = () => {
     const [events, setEvents] = useState({});
     const [loading, setLoading] = useState(true);
 
-    const [connections, setConnections] = useState({ google: {}, outlook: {}, icloud: {} });
+    const [connections, setConnections] = useState({});
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     useEffect(() => {
         const fetchInitialData = async () => {
             try {
                 setLoading(true);
-
                 const [statusResponse, eventsResponse] = await Promise.all([
                     axios.get("http://127.0.0.1:8000/api/calendars/status"),
                     axios.get("http://127.0.0.1:8000/api/calendar/events"),
-
                 ]);
 
+                // Updated path for the new db.json structure
+                console.log(statusResponse)
+                const calendarConnection = statusResponse.data?.google;
+                console.log("google cal connection", calendarConnection)
+                if (calendarConnection && calendarConnection.connected) {
+                    setConnections(calendarConnection);
+                } else {
+                    setConnections({});
+                }
+
                 const eventsByDate = {};
-                eventsResponse.data.forEach((event) => {
-                    const eventDate = new Date(event.start.dateTime || `${event.start.date}T00:00:00`);
-                    const dateKey = eventDate.toDateString();
-                    if (!eventsByDate[dateKey]) {
-                        eventsByDate[dateKey] = { allDay: [], timed: [] };
-                    }
-                    const eventWithSource = { ...event, source: 'google' };
-                    if (event.start.dateTime) {
-                        eventsByDate[dateKey].timed.push(eventWithSource);
-                    } else {
-                        eventsByDate[dateKey].allDay.push(eventWithSource);
-                    }
-                });
+                if (Array.isArray(eventsResponse.data)) {
+                    eventsResponse.data.forEach((event) => {
+                        const eventDate = new Date(event.start.dateTime || `${event.start.date}T00:00:00`);
+                        const dateKey = eventDate.toDateString();
+                        if (!eventsByDate[dateKey]) {
+                            eventsByDate[dateKey] = { allDay: [], timed: [] };
+                        }
+                        const eventWithSource = { ...event, source: 'google' };
+                        if (event.start.dateTime) {
+                            eventsByDate[dateKey].timed.push(eventWithSource);
+                        } else {
+                            eventsByDate[dateKey].allDay.push(eventWithSource);
+                        }
+                    });
+                }
 
                 for (const dateKey in eventsByDate) {
                     eventsByDate[dateKey].timed.sort((a, b) => new Date(a.start.dateTime) - new Date(b.start.dateTime));
                 }
                 setEvents(eventsByDate);
-                setConnections(statusResponse.data);
 
             } catch (err) {
                 console.error("Error fetching initial data:", err);
@@ -68,15 +74,19 @@ const Calendar = () => {
     }, []);
 
     const handleConnectCalendar = (provider) => {
-        const authUrl = `http://127.0.0.1:8000/api/${provider}/auth/login`;
+        const authUrl = `http://127.0.0.1:8000/api/google/auth/login?service=${provider}`;
         const popup = window.open(authUrl, `${provider}-auth-popup`, 'width=600,height=700');
         setIsMenuOpen(false);
 
         const checkPopupClosed = setInterval(() => {
-            if (popup.closed) {
+            if (!popup || popup.closed) {
                 clearInterval(checkPopupClosed);
+                // Re-fetch status to update the UI after authentication attempt
                 axios.get("http://127.0.0.1:8000/api/calendars/status")
-                    .then(res => setConnections(res.data));
+                    .then(res => {
+                        // Also fix the path here for the refresh
+                        setConnections(res.data?.connected_calendars?.google || {});
+                    });
             }
         }, 1000);
     };
@@ -89,6 +99,7 @@ const Calendar = () => {
     const handleNextMonth = () => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
     const handleToday = () => {
         setCurrentDate(new Date());
+        setSelectedDate(new Date());
         setView('month');
     };
 
@@ -97,12 +108,9 @@ const Calendar = () => {
             <h2>Calendar</h2>
             <div className="calendar-actions">
                 <div className="connected-accounts">
-                    {connections.google?.connected && (
-                        <img src={googleCalendarIcon} alt="Google Calendar" className="icon" title={`Google Calendar Connected: ${connections.google.user_email}`} />
-                    )}
-                    {connections.outlook?.connected && (
-                        // --- FIX: Corrected the component name to SiMicrosoftOutlook ---
-                        <PiMicrosoftOutlookLogoLight size={18} className="icon" title={`Outlook Connected: ${connections.outlook.user_email}`} />
+                    {connections.connected && (
+                        // <SiGooglecalendar color="#4285F4" size={24} className="icon" title={`Google Calendar Connected: ${connections.user_email}`} />
+                        <img src={GCIMG} style={{ width: "24px", height: "24px" }} className="icon" title={`Google Calendar Connected: ${connections.user_email}`} />
                     )}
 
                     <div className="action-btn-wrapper">
@@ -117,11 +125,10 @@ const Calendar = () => {
                                     animate={{ opacity: 1, y: 0, scale: 1 }}
                                     exit={{ opacity: 0, y: -10, scale: 0.95 }}
                                 >
-                                    <button onClick={() => handleConnectCalendar('google')} disabled={connections.google?.connected}>
+                                    <button onClick={() => handleConnectCalendar('calendar')} disabled={connections.connected}>
                                         <SiGooglecalendar /> Connect Google Calendar
                                     </button>
                                     <button onClick={() => alert("Outlook integration coming soon!")} disabled>
-                                        {/* --- FIX: Corrected the component name to SiMicrosoftOutlook --- */}
                                         <PiMicrosoftOutlookLogoLight color="#0072C6" /> Connect Outlook Calendar
                                     </button>
                                 </motion.div>
@@ -147,12 +154,12 @@ const Calendar = () => {
         for (let day = 1; day <= daysInMonth; day++) {
             const dayDate = new Date(year, month, day);
             const dateKey = dayDate.toDateString();
-            const isToday = today.toDateString() === dateKey;
+            const isTodayFlag = today.toDateString() === dateKey;
             const dayEventData = events[dateKey];
             const hasEvents = dayEventData && (dayEventData.allDay.length > 0 || dayEventData.timed.length > 0);
 
             daysArray.push(
-                <motion.div key={`day-${day}`} onClick={() => handleDateClick(dayDate)} className={`calendar-day ${isToday ? "today" : ""}`} whileHover={{ scale: 1.05, y: -2 }} transition={{ type: 'spring', stiffness: 300 }}>
+                <motion.div key={`day-${day}`} onClick={() => handleDateClick(dayDate)} className={`calendar-day ${isTodayFlag ? "today" : ""}`} whileHover={{ scale: 1.05, y: -2 }} transition={{ type: 'spring', stiffness: 300 }}>
                     <span>{day}</span>
                     {hasEvents && (<div className="event-dots"><div className="event-dot dot-google"></div></div>)}
                 </motion.div>
@@ -218,7 +225,6 @@ const Calendar = () => {
         );
     };
 
-    // --- Main Return ---
     return (
         <div className="calendar-container">
             {renderHeader()}

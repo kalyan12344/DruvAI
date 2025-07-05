@@ -13,6 +13,8 @@ import Tasks from './frontend_lc/components/tasks.jsx';
 import Calendar from './frontend_lc/components/calendar.jsx';
 import SettingsTab from './frontend_lc/components/settings.jsx';
 import JobsTab from './frontend_lc/components/jobs.jsx';
+import TodoListWidget from './frontend_lc/components/todolist.jsx';
+import Gmail from './frontend_lc/components/gmail.jsx';
 
 function App() {
   // Initialize activeTab from localStorage or default to 'Druv AI'
@@ -33,6 +35,8 @@ function App() {
         return <Dashboard />;
       case 'My Tasks':
         return <Tasks />;
+      case 'Inbox':
+        return <Gmail />
       case 'Calendar':
         return <Calendar />;
       case 'Settings':

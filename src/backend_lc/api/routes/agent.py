@@ -14,5 +14,6 @@ class AgentQuery(BaseModel):
 @router.post("/ask")
 def ask_agent(query: AgentQuery):
     # run_agent already extracts the string output
+    print("user asked:",query.input)
     output_string = run_agent(query.input)
     return {"response": output_string} # Use the string directly

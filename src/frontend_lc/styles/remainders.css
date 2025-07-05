@@ -1,0 +1,200 @@
+/* --- Reminders Page Styles --- */
+
+
+.reminders-widget {
+    margin-left: 20px;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    background-color: var(--black);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    width: 500px;
+    height: 500px;
+    border-radius: 20px;
+}
+
+.widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-shrink: 0;
+}
+
+.widget-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+.add-button {
+    background-color: rgba(212, 175, 55, 0.1);
+    border: 1px solid var(--subtle-gold);
+    color: var(--subtle-gold);
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.add-button:hover {
+    background-color: var(--subtle-gold);
+    color: var(--black);
+}
+
+/* --- Add Reminder Form --- */
+.add-reminder-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px 4px;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+.reminder-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1rem;
+    outline: none;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.reminder-input:focus {
+    border-bottom-color: var(--subtle-gold);
+}
+
+.datetime-inputs {
+    display: flex;
+    gap: 12px;
+}
+
+.date-time-input {
+    flex-grow: 1;
+    background-color: var(--black);
+    border: 1px solid var(--border-color);
+    padding: 8px 10px;
+    border-radius: 6px;
+    color: var(--text-secondary);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+}
+
+.date-time-input::-webkit-calendar-picker-indicator {
+    filter: invert(0.6);
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.form-button {
+    color: var(--text-secondary);
+    background-color: var(--black);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.form-button:hover {
+    color: var(--subtle-gold);
+    border-color: var(--subtle-gold);
+}
+
+.form-button.primary {
+    background-color: var(--subtle-gold);
+    border-color: var(--subtle-gold);
+    color: var(--black);
+}
+
+/* --- Reminders List --- */
+.reminders-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.reminder-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 4px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.reminder-item:last-child {
+    border-bottom: none;
+}
+
+.reminder-icon {
+    color: var(--subtle-gold);
+    flex-shrink: 0;
+}
+
+.reminder-details {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.reminder-title {
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.reminder-time {
+    font-size: 13px;
+    color: var(--medium-gray);
+}
+
+.delete-reminder-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 14px;
+    opacity: 0;
+    transition: all 0.2s ease;
+    padding: 4px;
+}
+
+.reminder-item:hover .delete-reminder-btn {
+    opacity: 0.6;
+}
+
+.delete-reminder-btn:hover {
+    opacity: 1;
+    color: #ef4444;
+}
+
+/* --- Centered State --- */
+.centered-state {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--medium-gray);
+    height: 100%;
+}
+
+.centered-state.error {
+    color: #E53E3E;
+}
