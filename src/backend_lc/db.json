@@ -32,5 +32,31 @@
       "connected": true,
       "user_email": "kalyanraju90@gmail.com"
     }
-  }
+  },
+  "news_briefing_settings": {
+    "enabled": true,
+    "delivery_time": null,
+    "topics": [
+      "Latest AI news",
+      "Latest News in India",
+      "Latest news about shoes"
+    ]
+  },
+  "daily_briefings": [
+    {
+      "date": "2025-07-05",
+      "topic": "Latest AI news",
+      "summary": "- **Google Unveils AI Mode and Deep Search Enhancements**\n  - Google introduces advanced AI features in Search, including AI Mode and Deep Search, to provide more thorough and interactive responses.\n\n- **Android XR Glasses: Google's New AI-Powered Wearable**\n  - Google previewed Android XR glasses, integrating Gemini AI for a more natural and hands-free user experience.\n\n- **Gemini App Gets Major Upgrade with Video Generation Model**\n  - The Gemini app now includes Veo 3, a state-of-the-art video generation model with native support for sound effects and dialogue.\n\n- **Google Launches AI Filmmaking Tool 'Flow'**\n  - Google introduces Flow, an AI filmmaking tool designed to help storytellers create cinematic clips and scenes with advanced features.\n\n- **Google AI Ultra: New Subscription for Top-Tier AI Access**\n  - Google AI Ultra is a new subscription plan offering the highest usage limits and access to the most capable AI models and premium features."
+    },
+    {
+      "date": "2025-07-05",
+      "topic": "Latest News in India",
+      "summary": "- **India's Young Cricketer Sets Record with Fastest Century**\n  - Fourteen-year-old Vaibhav Suryavanshi hits the fastest century on record in youth one-day internationals for India against England.\n\n- **India Surges Towards Victory in Second Test Against England**\n  - England lose three top-order wickets before the close as India surge towards victory in the second Test.\n\n- **Tibetan Buddhist Leader Issues Landmark Announcement at 90**\n  - The exiled leader of Tibetan Buddhism issues a landmark announcement as he turns 90, ending years of uncertainty.\n\n- **Kumbh Mela Crush Death Toll Disputed**\n  - The Uttar Pradesh government says 37 people were killed in the Kumbh Mela crush, but the BBC has verified at least 82 deaths.\n\n- **Air India Crash: Families Desperate for News**\n  - BBC journalists heard the heart-wrenching stories of families desperate for news of their loved ones after a plane bound for London Gatwick carrying 242 people crashed after taking off from Ahmedabad in India."
+    },
+    {
+      "date": "2025-07-05",
+      "topic": "Latest news about shoes",
+      "summary": "- **Nike Unveils New Colorway for Upcoming Launch**\n  - The Nike Sabrina 3 \u201cAll-Star\u201d has been revealed, with official images now available for retailers.\n\n- **Jordan Brand Celebrates 40th Anniversary with Fall 2025 Releases**\n  - As the Jordan Brand marks its 40th anniversary, several new releases are planned for the fall of 2025.\n\n- **New Balance 2000 and 204L Set to Make Waves in Fall 2025**\n  - New Balance is introducing fresh formulations with the 2000 and 204L models, expected to gain significant attention.\n\n- **PUMA Basketball Faces Uncertainty After Tyrese Haliburton's Injury**\n  - The future of PUMA Basketball is in question following a heartbreaking Achilles injury to Tyrese Haliburton during the NBA Finals.\n\n- **adidas Superstar: A Cultural Icon Beyond Basketball**\n  - The adidas Superstar, originally a basketball shoe, has transcended its sport to become a cultural phenomenon."
+    }
+  ]
 }

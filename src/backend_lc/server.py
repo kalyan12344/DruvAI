@@ -22,6 +22,7 @@ from api.routes.contacts import router as contact_router
 from api.routes.tasks import router as tasks_router
 from api.routes.remainders import router as remainders_router
 from api.routes.notes import router as notes_router
+from api.routes.news import router as news_router
 
 
 
@@ -74,6 +75,8 @@ app.include_router(contact_router,prefix = "/api/contacts", tags = ["Contacts"])
 app.include_router(tasks_router,prefix = "/api/tasks", tags = ["Tasks"])
 app.include_router(remainders_router, prefix = "/api/reminders", tags = ["Remainders"])
 app.include_router(notes_router, prefix = "/api/notes", tags = ["Notes"])
+app.include_router(news_router, prefix = "/api/news", tags = ["News"])
+
 
 
 

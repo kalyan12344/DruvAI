@@ -1,0 +1,136 @@
+/* --- News Page: Adapted from gmail.css theme --- */
+
+.news-page {
+    overflow-y: scroll;
+    display: flex;
+    justify-content: center;
+    /* Center the container for a focused view */
+}
+
+/* --- Container & Header --- */
+.news-container {
+    font-family: 'Inter', sans-serif;
+    padding: 30px;
+    width: 750px;
+
+    background: rgb(0, 0, 0);
+    color: var(--off-white);
+    /* Consistent max-width */
+    height: fit-content;
+    height: 400px;
+    /* Consistent height */
+    margin-top: 30px;
+    border-radius: 20px;
+    border: 1px solid #2a2a2a;
+    display: flex;
+    flex-direction: column;
+}
+
+.news-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-shrink: 0;
+}
+
+.news-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 19px;
+}
+
+.news-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* --- Briefing List --- */
+.briefing-list-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    /* A bit more spacing between briefing items */
+    padding-right: 10px;
+}
+
+.briefing-item {
+    padding: 20px;
+    border: 1px solid #2a2a2a;
+    border-radius: 12px;
+    /* background-color: #101010; */
+    transition: all 0.2s ease-in-out;
+}
+
+/* .briefing-item:hover {
+    border-color: #444;
+    background-color: #1a1a1a;
+} */
+
+.briefing-topic {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--subtle-gold);
+    margin-bottom: 12px;
+    text-transform: capitalize;
+}
+
+.briefing-summary {
+    font-size: 14px;
+    line-height: 1.7;
+    /* color: var(--medium-gray); */
+    white-space: pre-wrap;
+    /* Important: preserves newlines from the summary */
+}
+
+
+/* --- Reusing Modal and Centered State Styles --- */
+/* These styles can be in a global CSS file, but are included here for completeness */
+/* They are identical to the ones in gmail.css */
+
+.modal-textarea {
+    width: 100%;
+    padding: 10px 12px;
+    background-color: #111;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: var(--off-white);
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    resize: vertical;
+}
+
+.modal-textarea:focus {
+    outline: none;
+    border-color: var(--subtle-gold);
+}
+
+.centered-state {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    /* Allow button to stack */
+    align-items: center;
+    justify-content: center;
+    color: var(--medium-gray);
+    font-size: 14px;
+    height: 100%;
+    text-align: center;
+    padding: 20px;
+}
+
+.centered-state.error {
+    color: #E53E3E;
+}
+
+.mt-4 {
+    margin-top: 1rem;
+}
+
+/* Make sure your index.css or a global stylesheet has the definitions for */
+/* .modal-overlay, .modal-content, .modal-actions, .action-pill, .action-btn, etc. */
+/* If not, you can copy them directly from your gmail.css file. */
