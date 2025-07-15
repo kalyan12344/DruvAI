@@ -1,0 +1,206 @@
+/* --- Main container to center the auth card --- */
+.auth-page-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    background-color: #000;
+    font-family: 'Inter', sans-serif;
+}
+
+/* --- The main card holding the form --- */
+.auth-card {
+    background-color: #0D0D0D;
+    border: 1px solid #2a2a2a;
+    border-radius: 20px;
+    padding: 40px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    color: var(--off-white, #f0f0f0);
+}
+
+/* --- Header section with logo and title --- */
+.auth-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.auth-logo-icon {
+    color: var(--subtle-gold, #d4af37);
+    font-size: 32px;
+    margin-bottom: 12px;
+}
+
+.auth-header h1 {
+    font-size: 28px;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+}
+
+.auth-header p {
+    font-size: 14px;
+    color: var(--medium-gray, #a0a0a0);
+    margin: 0;
+}
+
+/* --- Form and Input Styling --- */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.input-group {
+    position: relative;
+}
+
+.input-group .input-icon {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+    color: var(--medium-gray, #a0a0a0);
+    font-size: 14px;
+}
+
+.input-group input {
+    width: 100%;
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 14px 14px 14px 45px;
+    /* Left padding for icon */
+    color: var(--off-white, #f0f0f0);
+    font-size: 16px;
+    transition: border-color 0.2s ease;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--subtle-gold, #d4af37);
+
+}
+
+/* --- Button Styling --- */
+.auth-button {
+    background-color: var(--subtle-gold, #d4af37);
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 10px;
+}
+
+.auth-button:hover:not(:disabled) {
+    background-color: #c09d2e;
+}
+
+.auth-button:disabled {
+    background-color: #555;
+    color: #999;
+    cursor: not-allowed;
+}
+
+/* --- Divider Styling --- */
+.auth-divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: var(--medium-gray, #a0a0a0);
+    font-size: 12px;
+    margin: 25px 0;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #333;
+}
+
+.auth-divider:not(:empty)::before {
+    margin-right: .5em;
+}
+
+.auth-divider:not(:empty)::after {
+    margin-left: .5em;
+}
+
+/* --- Google Button Styling --- */
+.google-auth-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    background-color: #1a1a1a;
+    color: var(--off-white, #f0f0f0);
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.google-auth-button:hover:not(:disabled) {
+    background-color: #222;
+    border-color: #555;
+}
+
+.google-auth-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* --- Toggle link between Sign In/Sign Up --- */
+.auth-toggle {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 14px;
+    color: var(--medium-gray, #a0a0a0);
+}
+
+.auth-toggle button {
+    background: none;
+    border: none;
+    color: var(--subtle-gold, #d4af37);
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 8px;
+    padding: 0;
+    font-size: 14px;
+}
+
+.auth-toggle button:hover {
+    text-decoration: underline;
+}
+
+/* --- Message Styling --- */
+.auth-error,
+.auth-success {
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.auth-error {
+    color: #E53E3E;
+    background-color: rgba(229, 62, 62, 0.1);
+    border: 1px solid #E53E3E;
+}
+
+.auth-success {
+    color: #48BB78;
+    background-color: rgba(72, 187, 120, 0.1);
+    border: 1px solid #48BB78;
+}

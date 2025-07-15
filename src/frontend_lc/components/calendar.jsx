@@ -1,94 +1,99 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FaChevronLeft, FaChevronRight, FaPlus, FaBrain } from "react-icons/fa";
 import { SiGooglecalendar } from "react-icons/si";
 import { PiMicrosoftOutlookLogoLight } from "react-icons/pi";
 import { motion, AnimatePresence } from "framer-motion";
-import GCIMG from "../assets/Google_Calendar_icon.svg"
+import GCIMG from "../assets/Google_Calendar_icon.svg";
+import { useAuth } from '../context/authcontext'; // Assumes you have this hook
 import "../styles/calendar.css";
 
-// --- Helper Functions & Constants ---
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const today = new Date();
 
-// --- Main Calendar Component ---
 const Calendar = () => {
     const [view, setView] = useState('month');
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [events, setEvents] = useState({});
     const [loading, setLoading] = useState(true);
-
     const [connections, setConnections] = useState({});
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const { getAuthToken } = useAuth();
+
+    const fetchInitialData = async () => {
+        setLoading(true);
+        try {
+            const token = await getAuthToken();
+            if (!token) throw new Error("User not authenticated");
+            const headers = { 'Authorization': `Bearer ${token}` };
+
+            const [statusResponse, eventsResponse] = await Promise.all([
+                axios.get("http://127.0.0.1:8000/api/calendar/status", { headers }),
+                axios.get("http://127.0.0.1:8000/api/calendar/events", { headers }),
+            ]);
+
+            setConnections(statusResponse.data.google || {});
+
+            const eventsByDate = {};
+            if (Array.isArray(eventsResponse.data)) {
+                eventsResponse.data.forEach((event) => {
+                    const eventDate = new Date(event.start.dateTime || `${event.start.date}T00:00:00`);
+                    const dateKey = eventDate.toDateString();
+                    if (!eventsByDate[dateKey]) {
+                        eventsByDate[dateKey] = { allDay: [], timed: [] };
+                    }
+                    const eventWithSource = { ...event, source: 'google' };
+                    if (event.start.dateTime) {
+                        eventsByDate[dateKey].timed.push(eventWithSource);
+                    } else {
+                        eventsByDate[dateKey].allDay.push(eventWithSource);
+                    }
+                });
+            }
+
+            for (const dateKey in eventsByDate) {
+                eventsByDate[dateKey].timed.sort((a, b) => new Date(a.start.dateTime) - new Date(b.start.dateTime));
+            }
+            setEvents(eventsByDate);
+
+        } catch (err) {
+            console.error("Error fetching initial data:", err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchInitialData = async () => {
-            try {
-                setLoading(true);
-                const [statusResponse, eventsResponse] = await Promise.all([
-                    axios.get("http://127.0.0.1:8000/api/calendars/status"),
-                    axios.get("http://127.0.0.1:8000/api/calendar/events"),
-                ]);
-
-                // Updated path for the new db.json structure
-                console.log(statusResponse)
-                const calendarConnection = statusResponse.data?.google;
-                console.log("google cal connection", calendarConnection)
-                if (calendarConnection && calendarConnection.connected) {
-                    setConnections(calendarConnection);
-                } else {
-                    setConnections({});
-                }
-
-                const eventsByDate = {};
-                if (Array.isArray(eventsResponse.data)) {
-                    eventsResponse.data.forEach((event) => {
-                        const eventDate = new Date(event.start.dateTime || `${event.start.date}T00:00:00`);
-                        const dateKey = eventDate.toDateString();
-                        if (!eventsByDate[dateKey]) {
-                            eventsByDate[dateKey] = { allDay: [], timed: [] };
-                        }
-                        const eventWithSource = { ...event, source: 'google' };
-                        if (event.start.dateTime) {
-                            eventsByDate[dateKey].timed.push(eventWithSource);
-                        } else {
-                            eventsByDate[dateKey].allDay.push(eventWithSource);
-                        }
-                    });
-                }
-
-                for (const dateKey in eventsByDate) {
-                    eventsByDate[dateKey].timed.sort((a, b) => new Date(a.start.dateTime) - new Date(b.start.dateTime));
-                }
-                setEvents(eventsByDate);
-
-            } catch (err) {
-                console.error("Error fetching initial data:", err);
-            } finally {
-                setLoading(false);
-            }
-        };
         fetchInitialData();
     }, []);
 
-    const handleConnectCalendar = (provider) => {
-        const authUrl = `http://127.0.0.1:8000/api/google/auth/login?service=${provider}`;
-        const popup = window.open(authUrl, `${provider}-auth-popup`, 'width=600,height=700');
+    const handleConnectCalendar = async (provider) => {
         setIsMenuOpen(false);
+        try {
+            const token = await getAuthToken();
+            if (!token) throw new Error("User not authenticated");
 
-        const checkPopupClosed = setInterval(() => {
-            if (!popup || popup.closed) {
-                clearInterval(checkPopupClosed);
-                // Re-fetch status to update the UI after authentication attempt
-                axios.get("http://127.0.0.1:8000/api/calendars/status")
-                    .then(res => {
-                        // Also fix the path here for the refresh
-                        setConnections(res.data?.connected_calendars?.google || {});
-                    });
-            }
-        }, 1000);
+            // 1. Get the secure auth URL from the backend
+            const response = await axios.get(`http://127.0.0.1:8000/api/google/auth/login-url?service=${provider}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const { authorization_url } = response.data;
+
+            // 2. Open the popup with the received URL
+            const popup = window.open(authorization_url, `${provider}-auth-popup`, 'width=600,height=700');
+
+            // 3. Check for popup closure to refresh data
+            const checkPopupClosed = setInterval(() => {
+                if (!popup || popup.closed) {
+                    clearInterval(checkPopupClosed);
+                    fetchInitialData(); // Re-fetch all data to update UI
+                }
+            }, 1000);
+        } catch (error) {
+            console.error("Failed to initiate Google authentication:", error);
+        }
     };
 
     const handleDateClick = (date) => {
@@ -109,7 +114,6 @@ const Calendar = () => {
             <div className="calendar-actions">
                 <div className="connected-accounts">
                     {connections.connected && (
-                        // <SiGooglecalendar color="#4285F4" size={24} className="icon" title={`Google Calendar Connected: ${connections.user_email}`} />
                         <img src={GCIMG} style={{ width: "24px", height: "24px" }} className="icon" title={`Google Calendar Connected: ${connections.user_email}`} />
                     )}
 

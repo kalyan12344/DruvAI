@@ -1,7 +1,7 @@
 import React from 'react';
 import '../styles/hero.css';
 import "../../assets/hero2.png"
-import FeatureCards from './featurecards';
+// import FeatureCards from './featurecards';
 import CardStack from './featurecards';
 import { useNavigate } from 'react-router-dom';
 
@@ -9,7 +9,7 @@ const HeroSection = () => {
     const navigate = useNavigate();
 
     const handlestart = () => {
-        navigate('/dashboard');
+        navigate('/auth');
     }
 
     return (

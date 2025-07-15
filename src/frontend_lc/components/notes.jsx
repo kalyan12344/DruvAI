@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Book, Plus, Search, Bold, Italic, Underline, Trash2 } from 'lucide-react';
+import { useAuth } from '../context/authcontext'; // Import the useAuth hook
 import '../styles/notes.css';
 
 // Custom hook for debouncing
@@ -27,33 +28,40 @@ const Notes = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [isSaving, setIsSaving] = useState(false);
     const [wordCount, setWordCount] = useState(0);
-
-    // Modal States
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [noteToDelete, setNoteToDelete] = useState(null);
 
     const editorRef = useRef(null);
-    const debouncedContent = useDebounce(selectedNote?.content, 1500); // Auto-save after 1.5s
+    const debouncedContent = useDebounce(selectedNote?.content, 1500);
+
+    // --- Authentication ---
+    const { getAuthToken } = useAuth(); // Use the real getAuthToken function from context
 
     // --- API Calls & Effects ---
-
     useEffect(() => {
         fetchNotes();
     }, []);
 
     useEffect(() => {
-        if (debouncedContent !== null && selectedNote?.id && selectedNote.content !== undefined) {
+        if (debouncedContent !== undefined && selectedNote?.id) {
             handleSaveNote();
         }
     }, [debouncedContent]);
 
     const fetchNotes = async () => {
         setLoading(true);
+        setError(null);
         try {
-            const response = await axios.get('http://127.0.0.1:8000/api/notes/notes');
+            const token = await getAuthToken();
+            console.log(token)
+            if (!token) throw new Error("Authentication token not found.");
+
+            const response = await axios.get('http://127.0.0.1:8000/api/notes/notes', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
             setNotes(response.data || []);
         } catch (err) {
-            setError("Could not load notes.");
+            setError("Could not load notes. Please log in again.");
         } finally {
             setLoading(false);
         }
@@ -61,12 +69,16 @@ const Notes = () => {
 
     const handleSelectNote = async (noteId) => {
         if (selectedNote?.id === noteId) return;
-        // Instantly update the UI to feel faster
         const noteData = notes.find(n => n.id === noteId);
         setSelectedNote(noteData);
 
         try {
-            const response = await axios.get(`http://127.0.0.1:8000/api/notes/notes/${noteId}`);
+            const token = await getAuthToken();
+            if (!token) throw new Error("Authentication token not found.");
+
+            const response = await axios.get(`http://127.0.0.1:8000/api/notes/${noteId}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
             setSelectedNote(response.data);
             if (editorRef.current) {
                 editorRef.current.innerHTML = response.data.content;
@@ -79,10 +91,18 @@ const Notes = () => {
 
     const handleCreateNote = async () => {
         try {
+            const token = await getAuthToken();
+            console.log(token)
+
+            if (!token) throw new Error("Authentication token not found.");
+
             const response = await axios.post('http://127.0.0.1:8000/api/notes/notes', {
                 title: "New Note",
                 content: "",
+            }, {
+                headers: { 'Authorization': `Bearer ${token}` }
             });
+
             const newNote = response.data;
             setNotes([newNote, ...notes]);
             handleSelectNote(newNote.id);
@@ -94,14 +114,20 @@ const Notes = () => {
     const handleSaveNote = async () => {
         if (!selectedNote) return;
         setIsSaving(true);
-        const snippet = editorRef.current ? editorRef.current.innerText.substring(0, 20) : "";
+        const snippet = editorRef.current ? editorRef.current.innerText.substring(0, 100) : "";
 
         try {
-            const response = await axios.put(`http://127.0.0.1:8000/api/notes/notes/${selectedNote.id}`, {
+            const token = await getAuthToken();
+            if (!token) throw new Error("Authentication token not found.");
+
+            const response = await axios.put(`http://127.0.0.1:8000/api/notes/${selectedNote.id}`, {
                 title: selectedNote.title,
                 content: selectedNote.content,
                 snippet: snippet
+            }, {
+                headers: { 'Authorization': `Bearer ${token}` }
             });
+
             setSelectedNote(prev => ({ ...prev, updated_at: response.data.updated_at }));
             const newNotes = notes.map(n => n.id === response.data.id ? { ...n, title: response.data.title, snippet: snippet, updated_at: response.data.updated_at } : n);
             newNotes.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
@@ -121,7 +147,13 @@ const Notes = () => {
     const confirmDelete = async () => {
         if (!noteToDelete) return;
         try {
-            await axios.delete(`http://127.0.0.1:8000/api/notes/notes/${noteToDelete.id}`);
+            const token = await getAuthToken();
+            if (!token) throw new Error("Authentication token not found.");
+
+            await axios.delete(`http://127.0.0.1:8000/api/notes/${noteToDelete.id}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
             const newNotes = notes.filter(n => n.id !== noteToDelete.id);
             setNotes(newNotes);
             if (selectedNote?.id === noteToDelete.id) {
@@ -134,6 +166,8 @@ const Notes = () => {
             setNoteToDelete(null);
         }
     };
+
+    // --- Editor & UI Handlers ---
 
     const updateWordCount = (text) => {
         if (!text || text.trim() === '') {
@@ -193,17 +227,11 @@ const Notes = () => {
                                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                                 layout
                             >
-
                                 <span className="note-item-title">{note.title}</span>
-
                                 <span className="note-item-snippet">{note.snippet || "No additional text"}</span>
                                 <button className="delete-note-btn" onClick={(e) => { e.stopPropagation(); handleDeleteNote(note); }}><Trash2 size={14} /></button>
-
-
                             </motion.div>
-
                         ))}
-
                     </AnimatePresence>
                 </div>
                 <button className="new-note-btn" onClick={handleCreateNote}>
@@ -231,7 +259,6 @@ const Notes = () => {
                             </div>
                         </div>
                         <div className="note-editor-wrapper">
-                            {/* Title input is now inside the scrollable wrapper */}
                             <input type="text" className="title-input-main" value={selectedNote.title} onChange={handleTitleChange} onBlur={handleSaveNote} />
                             <div ref={editorRef} className="note-editor" contentEditable suppressContentEditableWarning onInput={handleContentChange} />
                         </div>

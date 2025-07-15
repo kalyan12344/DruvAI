@@ -15,6 +15,7 @@ import SettingsTab from './frontend_lc/components/settings.jsx';
 import JobsTab from './frontend_lc/components/jobs.jsx';
 import TodoListWidget from './frontend_lc/components/todolist.jsx';
 import Gmail from './frontend_lc/components/gmail.jsx';
+import Auth from './frontend_lc/components/auth.jsx';
 
 function App() {
   // Initialize activeTab from localStorage or default to 'Druv AI'
@@ -52,6 +53,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/auth" element={<Auth />} />
         <Route
           path="/dashboard"
           element={

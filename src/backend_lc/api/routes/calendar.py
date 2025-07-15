@@ -1,36 +1,34 @@
-# api/routes/calendar.py
-
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
+from firebase_admin import firestore
 from lc.calendar import get_all_events
-import json
+from api.routes.auth import User, get_current_user
 
 router = APIRouter()
 
 @router.get("/events")
-def fetch_events_endpoint():
-    """
-    FastAPI endpoint to fetch all upcoming Google Calendar events.
-    """
+def fetch_events_endpoint(current_user: User = Depends(get_current_user)):
+    """Fetches calendar events for the authenticated user."""
     try:
-        with open("db.json", 'r') as f:
-            db_data = json.load(f)
-            is_google_connected = db_data.get("connected_calendars", {}).get("google", {}).get("connected", False) # 
-        if(is_google_connected):
-            all_events = get_all_events(max_results=250)
-            return all_events
-        else:
-            return "connect google calender to fetch events"
+        # Pass the authenticated user's ID to the logic function
+        print("userID",current_user)
+        return get_all_events(user_id=current_user.uid)
     except Exception as e:
-        print(f"Error fetching calendar events: {e}")
-        raise HTTPException(
-            status_code=500, 
-            detail="Failed to fetch calendar events from Google."
-        )
-
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/status")
-async def get_calendar_connection_status():
-    with open("db.json", 'r') as f:
-        db_data = json.load(f)
-        print(db_data.get("connected_calendars.google", {}))
-    return db_data.get("connected_calendars", {})
+def get_connection_status(current_user: User = Depends(get_current_user)):
+    """Checks Firestore for the user's calendar connection status."""
+    try:
+        db = firestore.client()
+        user_doc = db.collection('users').document(current_user.uid).get()
+        if not user_doc.exists:
+            return {"google": {"connected": False}}
+        
+        user_data = user_doc.to_dict()
+        creds = user_data.get("google_credentials", {}).get("calendar_token")
+        
+        if creds:
+            return {"google": {"connected": True, "user_email": user_data.get("email")}}
+        return {"google": {"connected": False}}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

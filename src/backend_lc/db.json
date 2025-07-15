@@ -1,5 +1,5 @@
 {
-  "jobs_feature_enabled": true,
+  "jobs_feature_enabled": false,
   "connected_calendars": {
     "google": {
       "connected": true,
