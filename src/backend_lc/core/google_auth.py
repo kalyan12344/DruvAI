@@ -1,11 +1,15 @@
 import json
+import os
 from firebase_admin import firestore, auth
 from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request as GoogleAuthRequest
 from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
 
-CLIENT_SECRETS_FILE = 'credentials.json' # Or client_secret.json
+google_creds = os.environ.get("GOOGLE_CREDENTIALS")
+CLIENT_SECRETS_FILE =  json.loads(google_creds)
+
+
 REDIRECT_URI = 'http://127.0.0.1:8000/api/google/auth/callback'
 
 SERVICE_SCOPES = {

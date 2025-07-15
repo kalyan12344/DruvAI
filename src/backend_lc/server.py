@@ -7,16 +7,25 @@ from firebase_admin import credentials
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from lc.job_processor import process_and_cache_jobs
+import os
+import json
 
 # --- 1. Initialize Firebase FIRST ---
 try:
-    cred = credentials.Certificate("firebase-service-account.json")
-    # This must be the first Firebase-related call
+    # Get credentials JSON from env
+    creds_json = os.environ.get("FIREBASE_CREDENTIALS")
+
+    # Write it temporarily to a file (needed by firebase_admin)
+    with open("firebase-creds.json", "w") as f:
+        f.write(creds_json)
+
+    # Use the file to initialize Firebase
+    cred = credentials.Certificate("firebase-creds.json")
     firebase_admin.initialize_app(cred)
+
     print("✅ Firebase Admin SDK initialized successfully.")
+
 except Exception as e:
-    # This error handling is important. If an app is already initialized,
-    # it prevents a crash on reload.
     if 'already exists' not in str(e):
         print(f"🔥 CRITICAL: Failed to initialize Firebase Admin SDK: {e}")
         exit()
