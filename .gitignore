@@ -37,6 +37,8 @@ src/backend_lc/ctoken.json
 src/backend_lc/token_gmail.json
 src/backend_lc/token_calendar.json
 src/backend_lc/token_people.json
+src/backend_lc/firebase-service-account.json
+src/backend_lc/firebase-service-account.json
 
 src/backend/.env
 
