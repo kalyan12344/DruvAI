@@ -1,0 +1,16 @@
+# src/backend_lc/Dockerfile
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# install deps
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# copy the rest of the backend code
+COPY . .
+
+# Cloud Run injects $PORT; expose it and start Gunicorn
+ENV PORT=8080
+EXPOSE 8080
+CMD ["gunicorn", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "server:app", "-b", "0.0.0.0:$PORT"]
