@@ -34,6 +34,6 @@
     EXPOSE 8080
     
     # ---- 8. Start Gunicorn with an async Uvicorn worker -----------------
-    # Adjust "server:app" if your module/object names differ.
-    CMD ["gunicorn", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "server:app", "-b", "0.0.0.0:$PORT"]
-    
+    # Gunicorn will automatically listen on the $PORT variable.
+    # The "-b" flag is not needed when deploying to Cloud Run.
+    CMD ["gunicorn", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "server:app"]
