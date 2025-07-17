@@ -23,6 +23,9 @@ steps:
       - '--region=us-central1'
       - '--platform=managed'
       - '--allow-unauthenticated' # Add this line to allow public access
+
+options:
+  logging: CLOUD_LOGGING_ONLY
       
 # This specifies the image that will be available after all build steps are complete.
 images:
