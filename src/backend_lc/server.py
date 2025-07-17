@@ -1,96 +1,96 @@
 import uvicorn
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.sessions import SessionMiddleware
 import firebase_admin
+from firebase_admin import credentials
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
+from lc.job_processor import process_and_cache_jobs
 import os
 import json
-from fastapi import FastAPI
-from starlette.middleware.sessions import SessionMiddleware
-from starlette.middleware.cors import CORSMiddleware
-from firebase_admin import credentials
 
 # --- 1. Initialize Firebase FIRST ---
-# This is the most critical step. It must run before any other
-# code in your application tries to access Firebase services.
 try:
-    # For deploying to Google Cloud Run, it's best practice to store your
-    # credentials as a secret environment variable.
-    creds_json_str = os.getenv("FIREBASE_CREDENTIALS_JSON")
-    
-    if creds_json_str:
-        # If the environment variable is found, load credentials from it
-        creds_dict = json.loads(creds_json_str)
-        cred = credentials.Certificate(creds_dict)
-    else:
-        # Fallback for local development: use the JSON file
-        cred = credentials.Certificate("firebase-service-account.json")
+    # Get credentials JSON from env
+    creds_json = os.environ.get("FIREBASE_CREDENTIALS")
 
-    # Get the storage bucket from an environment variable for security
-    storage_bucket = os.getenv("FIREBASE_STORAGE_BUCKET")
-    if not storage_bucket:
-        raise ValueError("FIREBASE_STORAGE_BUCKET environment variable not set.")
+    # Write it temporarily to a file (needed by firebase_admin)
+    with open("firebase-creds.json", "w") as f:
+        f.write(creds_json)
 
-    firebase_admin.initialize_app(cred, {'storageBucket': storage_bucket})
+    # Use the file to initialize Firebase
+    cred = credentials.Certificate("firebase-creds.json")
+    firebase_admin.initialize_app(cred)
+
     print("✅ Firebase Admin SDK initialized successfully.")
 
-except FileNotFoundError:
-    print("🔥 CRITICAL: 'firebase-service-account.json' not found for local development.")
-    exit()
 except Exception as e:
-    print(f"🔥 CRITICAL: Failed to initialize Firebase Admin SDK: {e}")
-    exit()
-
+    if 'already exists' not in str(e):
+        print(f"🔥 CRITICAL: Failed to initialize Firebase Admin SDK: {e}")
+        exit()
 
 # --- 2. Import your routers AFTER Firebase is initialized ---
-from api.routes import (
-    agent, auth, calendar, contacts, gmail,
-    google_auth, jobs, news, notes,
-    remainders, resume
-)
-# Note: The user's file list did not include 'settings' or 'webhooks',
-# so they are commented out to prevent import errors.
-# from api.routes.settings import router as settings_router
-# from api.routes.webhooks import router as webhook_router
+from api.routes.agent import router as agent_router
+from api.routes.calendar import router as calendar_router
+from api.routes.webhooks import router as webhook_router
+from api.routes.resume import router as resume_router
+from api.routes.settings import router as settings_router
+from api.routes.jobs import router as jobs_router
+from api.routes.google_auth import router as google_auth_router
+from api.routes.gmail import router as gmail_router
+from api.routes.contacts import router as contact_router
+from api.routes.tasks import router as tasks_router
+from api.routes.remainders import router as remainders_router
+from api.routes.notes import router as notes_router
+from api.routes.news import router as news_router
+# This router from your previous files is needed for get_current_user
+from api.routes.auth import router as auth_router
 
 
 # --- 3. Create the FastAPI app and add middleware ---
-app = FastAPI(
-    title="DruvAI API v2 (Multi-User)",
-    description="API for all DruvAI services, now with user-specific data powered by Firebase."
-)
+scheduler = AsyncIOScheduler()
+app = FastAPI(title="Druv AI")
 
-# Add CORS middleware to allow requests from your frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Best to restrict this to your actual frontend URL in production
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-# Add session middleware - required for the Google OAuth state management
-app.add_middleware(SessionMiddleware, secret_key="your-super-strong-and-secret-key-here")
+app.add_middleware(SessionMiddleware, secret_key="your_super_secret_random_string")
 
 
-# --- 4. Include All API Routers ---
-app.include_router(auth.router, prefix="/api/auth", tags=["User Authentication"])
-app.include_router(google_auth.router, prefix="/api/google/auth", tags=["Google Service Connection"])
-app.include_router(agent.router, prefix="/api/agent", tags=["Smart Agent"])
-app.include_router(calendar.router, prefix="/api/calendar", tags=["Calendar"])
-app.include_router(contacts.router, prefix="/api/contacts", tags=["Contacts"])
-app.include_router(gmail.router, prefix="/api/gmail", tags=["Gmail"])
-app.include_router(jobs.router, prefix="/api/jobs", tags=["Jobs"])
-app.include_router(news.router, prefix="/api/news", tags=["News"])
-app.include_router(notes.router, prefix="/api/notes", tags=["Notes"])
-app.include_router(remainders.router, prefix="/api/reminders", tags=["Reminders"])
-app.include_router(resume.router, prefix="/api/resume", tags=["Resume"])
-# app.include_router(settings_router, prefix="/api/settings", tags=["Settings"])
-# app.include_router(webhook_router, prefix="/api/webhooks", tags=["Webhooks"])
+# --- 4. Add your lifecycle events and routers ---
+@app.on_event("startup")
+async def startup_event():
+    scheduler.add_job(
+        process_and_cache_jobs,
+        trigger=CronTrigger(hour=6, minute=6),
+        id="daily_job_processing",
+        name="Daily Job Scraping and Caching",
+        replace_existing=True
+    )
+    scheduler.start()
+    print("APScheduler started.")
 
+@app.on_event("shutdown")
+async def shutdown_event():
+    scheduler.shutdown()
+    print("APScheduler shut down.")
 
-# --- 5. Add a Health Check Endpoint ---
-@app.get("/api/ping")
-def ping():
-    """A simple endpoint to verify that the server is running."""
-    return {"status": "ok"}
+# Add all the routers to your application
+app.include_router(auth_router, prefix="/api/auth", tags=["User Authentication"]) # Make sure auth router is included
+app.include_router(agent_router, prefix="/agent", tags=["Agent"])
+app.include_router(calendar_router, prefix="/api/calendar", tags=["Calendar"])
+app.include_router(webhook_router, prefix="/api/webhooks", tags=["Webhooks"])
+app.include_router(resume_router, prefix="/api/resume", tags=["Resume"])
+app.include_router(jobs_router, prefix="/api/jobs", tags=["Jobs"])
+app.include_router(settings_router, prefix="/api/settings", tags=["Settings"])
+app.include_router(google_auth_router, prefix="/api/google/auth", tags=["Google Auth"])
+app.include_router(notes_router, prefix="/api/notes", tags=["Notes"])
+# ... include all other routers ...
 
-# The uvicorn.run command is removed.
-# For deployment, the server will be started by the CMD instruction in your Dockerfile.
-# For local development, run: uvicorn server:app --host 0.0.0.0 --port 8000 --reload
+if __name__ == "__main__":
+    uvicorn.run("server:app", host="0.0.0.0", port=8080, reload=True)
