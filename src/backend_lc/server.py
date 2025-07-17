@@ -11,6 +11,9 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from lc.job_processor import process_and_cache_jobs
 import uvicorn
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # --- Load Secrets from Environment ---
 # This key MUST be set in your deployment environment.
@@ -116,3 +119,71 @@ if __name__ == "__main__":
     uvicorn.run("server:app", host="0.0.0.0", port=8080, reload=True)
 
 
+# import os
+# import sys
+# import json
+# from dotenv import load_dotenv
+
+# load_dotenv()
+
+# print("--- STARTING SERVER.PY (DEBUG MODE) ---")
+
+# # Wrap the entire application setup in a try/except block to find the hidden error
+# try:
+#     from fastapi import FastAPI
+#     from starlette.middleware.sessions import SessionMiddleware
+#     from fastapi.middleware.cors import CORSMiddleware
+#     import firebase_admin
+#     from firebase_admin import credentials
+
+#     # --- 1. Check for Environment Variables ---
+#     print("Checking environment variables...")
+#     FIREBASE_CREDS_JSON = os.environ.get("FIREBASE_CREDENTIALS")
+#     SESSION_SECRET = os.environ.get("SESSION_SECRET_KEY")
+
+#     if not FIREBASE_CREDS_JSON:
+#         raise ValueError("DEBUG ERROR: The FIREBASE_CREDENTIALS environment variable is not set.")
+#     if not SESSION_SECRET:
+#         raise ValueError("DEBUG ERROR: The SESSION_SECRET_KEY environment variable is not set.")
+#     print("All required environment variables seem to be present.")
+
+#     # --- 2. Initialize Firebase ---
+#     print("Initializing Firebase...")
+#     creds_dict = json.loads(FIREBASE_CREDS_JSON)
+#     cred = credentials.Certificate(creds_dict)
+#     if not firebase_admin._apps:
+#         firebase_admin.initialize_app(cred)
+#     print("✅ Firebase initialized successfully.")
+
+#     # --- 3. Create FastAPI App ---
+#     print("Creating FastAPI app...")
+#     app = FastAPI(title="Druv AI")
+#     app.add_middleware(SessionMiddleware, secret_key=SESSION_SECRET)
+#     app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
+#     print("✅ FastAPI app created.")
+
+#     # --- 4. Import and Include Routers ---
+#     print("Importing routers...")
+#     from api.routes.auth import router as auth_router
+#     # Add your other router imports here if needed for testing
+#     app.include_router(auth_router, prefix="/api/auth", tags=["User Authentication"])
+#     print("✅ Routers imported and included.")
+    
+#     @app.get("/api/ping", tags=["Health Check"])
+#     def ping():
+#         return {"status": "ok"}
+
+#     print("--- SERVER.PY LOADED SUCCESSFULLY ---")
+
+# except Exception as e:
+#     # This block will catch ANY error during startup and print it clearly.
+#     print("🔥🔥🔥 AN ERROR OCCURRED DURING STARTUP 🔥🔥🔥", file=sys.stderr)
+#     import traceback
+#     traceback.print_exc(file=sys.stderr)
+    
+#     # We create a dummy app so Gunicorn doesn't crash, allowing us to see the log.
+#     from fastapi import FastAPI
+#     app = FastAPI()
+#     @app.get("/{full_path:path}")
+#     def error_handler(full_path: str):
+#         return {"error": "Application failed to start. Please check the container logs for a traceback."}
