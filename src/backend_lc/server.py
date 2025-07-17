@@ -16,24 +16,28 @@ SESSION_SECRET = os.environ.get("SESSION_SECRET_KEY")
 
 # --- 1. Initialize Firebase FIRST ---
 try:
-    # Get credentials JSON from env
-    creds_json = os.environ.get("FIREBASE_CREDENTIALS")
+    # Get the credentials JSON string from the environment variable
+    creds_json_string = os.environ.get("FIREBASE_CREDENTIALS")
 
-    # Write it temporarily to a file (needed by firebase_admin)
-    with open("firebase-creds.json", "w") as f:
-        f.write(creds_json)
+    if not creds_json_string:
+        raise ValueError("FIREBASE_CREDENTIALS environment variable not set.")
 
-    # Use the file to initialize Firebase
-    cred = credentials.Certificate("firebase-creds.json")
+    # Parse the JSON string into a Python dictionary
+    creds_dict = json.loads(creds_json_string)
+    
+    # Initialize the app with the credentials dictionary
+    cred = credentials.Certificate(creds_dict)
     firebase_admin.initialize_app(cred)
 
     print("✅ Firebase Admin SDK initialized successfully.")
 
 except Exception as e:
-    if 'already exists' not in str(e):
+    # This prevents the app from crashing on re-deployments
+    if 'already exists' in str(e).lower():
+        print("✅ Firebase Admin SDK already initialized.")
+    else:
         print(f"🔥 CRITICAL: Failed to initialize Firebase Admin SDK: {e}")
         exit()
-
 # --- 2. Import your routers AFTER Firebase is initialized ---
 from api.routes.agent import router as agent_router
 from api.routes.calendar import router as calendar_router
