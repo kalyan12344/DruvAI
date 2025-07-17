@@ -1,8 +1,8 @@
-# This file defines the build and deployment steps for Google Cloud Build.
-
 steps:
   # 1. Build the container image
+  # The 'dir' property tells Cloud Build to run this step inside the 'src/backend' folder.
   - name: 'gcr.io/cloud-builders/docker'
+    dir: 'src/backend' # Add this line
     args: ['build', '-t', 'gcr.io/${PROJECT_ID}/druv-backend:$COMMIT_SHA', '.']
 
   # 2. Push the container image to Google Container Registry
@@ -21,10 +21,8 @@ steps:
       - '--platform=managed'
       - '--allow-unauthenticated'
 
-# This specifies the image that will be available after all build steps are complete.
 images:
   - 'gcr.io/${PROJECT_ID}/druv-backend:$COMMIT_SHA'
 
-# Use Cloud Logging Only to resolve the logging permissions issue.
 options:
   logging: CLOUD_LOGGING_ONLY
