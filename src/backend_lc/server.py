@@ -131,24 +131,62 @@
 
 #test 2
 
+# import os
+# from fastapi import FastAPI
+# from starlette.middleware.sessions import SessionMiddleware
+# from fastapi.middleware.cors import CORSMiddleware
+# from dotenv import load_dotenv
+
+# load_dotenv()
+
+# SESSION_SECRET = os.environ.get("SESSION_SECRET_KEY")
+
+# app = FastAPI(title="Druv AI")
+
+# if not SESSION_SECRET:
+#     raise ValueError("ERROR: SESSION_SECRET_KEY environment variable is not set.")
+
+# app.add_middleware(SessionMiddleware, secret_key=SESSION_SECRET)
+# app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
+
+# @app.get("/api/ping", tags=["Health Check"])
+# def ping():
+#     return {"status": "ok", "message": "Step 2: Middleware is working!"} 
+
+#test 3 ------------------------------------------------------------
 import os
+import json
 from fastapi import FastAPI
 from starlette.middleware.sessions import SessionMiddleware
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
+import firebase_admin
+from firebase_admin import credentials
 
 load_dotenv()
 
 SESSION_SECRET = os.environ.get("SESSION_SECRET_KEY")
+FIREBASE_CREDS_JSON = os.environ.get("FIREBASE_CREDENTIALS")
 
+# --- Firebase Initialization ---
+try:
+    if not FIREBASE_CREDS_JSON:
+        raise ValueError("ERROR: FIREBASE_CREDENTIALS environment variable is not set.")
+    
+    creds_dict = json.loads(FIREBASE_CREDS_JSON)
+    cred = credentials.Certificate(creds_dict)
+    if not firebase_admin._apps:
+        firebase_admin.initialize_app(cred)
+    print("✅ Firebase initialized.")
+except Exception as e:
+    print(f"🔥 Firebase initialization failed: {e}")
+    raise
+
+# --- FastAPI App ---
 app = FastAPI(title="Druv AI")
-
-if not SESSION_SECRET:
-    raise ValueError("ERROR: SESSION_SECRET_KEY environment variable is not set.")
-
 app.add_middleware(SessionMiddleware, secret_key=SESSION_SECRET)
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 
 @app.get("/api/ping", tags=["Health Check"])
 def ping():
-    return {"status": "ok", "message": "Step 2: Middleware is working!"} 
+    return {"status": "ok", "message": "Step 3: Firebase is working!"}
