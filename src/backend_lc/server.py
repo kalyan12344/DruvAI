@@ -1,5 +1,8 @@
-import uvicorn
-from fastapi import FastAPI
+import os
+import json
+import firebase_admin
+from firebase_admin import credentials
+from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 import firebase_admin
@@ -7,14 +10,13 @@ from firebase_admin import credentials
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from lc.job_processor import process_and_cache_jobs
-import os
-import json
+import uvicorn
 
 # --- Load Secrets from Environment ---
 # This key MUST be set in your deployment environment.
 SESSION_SECRET = os.environ.get("SESSION_SECRET_KEY")
 
-# --- 1. Initialize Firebase FIRST ---
+# --- 1. Initialize Firebase FIRST (Robust Method) ---
 try:
     # Get the credentials JSON string from the environment variable
     creds_json_string = os.environ.get("FIREBASE_CREDENTIALS")
@@ -28,7 +30,6 @@ try:
     # Initialize the app with the credentials dictionary
     cred = credentials.Certificate(creds_dict)
     firebase_admin.initialize_app(cred)
-
     print("✅ Firebase Admin SDK initialized successfully.")
 
 except Exception as e:
@@ -52,12 +53,9 @@ from api.routes.tasks import router as tasks_router
 from api.routes.remainders import router as remainders_router
 from api.routes.notes import router as notes_router
 from api.routes.news import router as news_router
-# This router from your previous files is needed for get_current_user
 from api.routes.auth import router as auth_router
 
-
 # --- 3. Create the FastAPI app and add middleware ---
-scheduler = AsyncIOScheduler()
 app = FastAPI(title="Druv AI")
 
 if not SESSION_SECRET:
@@ -66,7 +64,7 @@ if not SESSION_SECRET:
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"], # For production, it's best to restrict this to your frontend's domain
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -74,6 +72,7 @@ app.add_middleware(
 # The secret key is now loaded from the environment variable
 app.add_middleware(SessionMiddleware, secret_key=SESSION_SECRET)
 
+scheduler = AsyncIOScheduler()
 
 # --- 4. Add your lifecycle events and routers ---
 @app.on_event("startup")
@@ -93,8 +92,8 @@ async def shutdown_event():
     scheduler.shutdown()
     print("APScheduler shut down.")
 
-# Add all the routers to your application
-app.include_router(auth_router, prefix="/api/auth", tags=["User Authentication"]) # Make sure auth router is included
+# --- 6. Add all your application routers ---
+app.include_router(auth_router, prefix="/api/auth", tags=["User Authentication"])
 app.include_router(agent_router, prefix="/agent", tags=["Agent"])
 app.include_router(calendar_router, prefix="/api/calendar", tags=["Calendar"])
 app.include_router(webhook_router, prefix="/api/webhooks", tags=["Webhooks"])
@@ -103,7 +102,15 @@ app.include_router(jobs_router, prefix="/api/jobs", tags=["Jobs"])
 app.include_router(settings_router, prefix="/api/settings", tags=["Settings"])
 app.include_router(google_auth_router, prefix="/api/google/auth", tags=["Google Auth"])
 app.include_router(notes_router, prefix="/api/notes", tags=["Notes"])
-# ... include all other routers ...
+# ... include all other routers as needed ...
 
+# --- 7. Health check endpoint for deployment environment ---
+@app.get("/api/ping", tags=["Health Check"])
+def ping():
+    """A simple health check endpoint to confirm the service is running."""
+    return {"status": "ok"}
+
+# --- This block is for local development only ---
+# It is NOT used when deploying with Gunicorn on Cloud Run.
 if __name__ == "__main__":
     uvicorn.run("server:app", host="0.0.0.0", port=8080, reload=True)
