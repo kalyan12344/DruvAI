@@ -118,12 +118,37 @@
 # if __name__ == "__main__":
 #     uvicorn.run("server:app", host="0.0.0.0", port=8080, reload=True)
 
+#test 1
 
+# from fastapi import FastAPI
+
+# app = FastAPI(title="Druv AI - Test")
+
+# @app.get("/api/ping", tags=["Health Check"])
+# def ping():
+#     """A simple health check endpoint."""
+#     return {"status": "ok", "message": "Minimal test server is running!"}
+
+#test 2
+
+import os
 from fastapi import FastAPI
+from starlette.middleware.sessions import SessionMiddleware
+from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
 
-app = FastAPI(title="Druv AI - Test")
+load_dotenv()
+
+SESSION_SECRET = os.environ.get("SESSION_SECRET_KEY")
+
+app = FastAPI(title="Druv AI")
+
+if not SESSION_SECRET:
+    raise ValueError("ERROR: SESSION_SECRET_KEY environment variable is not set.")
+
+app.add_middleware(SessionMiddleware, secret_key=SESSION_SECRET)
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 
 @app.get("/api/ping", tags=["Health Check"])
 def ping():
-    """A simple health check endpoint."""
-    return {"status": "ok", "message": "Minimal test server is running!"}
+    return {"status": "ok", "message": "Step 2: Middleware is working!"} 
