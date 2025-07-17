@@ -2,31 +2,29 @@
 
 steps:
   # 1. Build the container image
-  # This step uses the Docker builder to build an image and tag it with the commit SHA.
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/${_PROJECT_ID}/druv-backend:$COMMIT_SHA', '.']
+    args: ['build', '-t', 'gcr.io/${PROJECT_ID}/druv-backend:$COMMIT_SHA', '.']
 
   # 2. Push the container image to Google Container Registry
-  # This step pushes the built image to the registry so Cloud Run can access it.
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/${_PROJECT_ID}/druv-backend:$COMMIT_SHA']
+    args: ['push', 'gcr.io/${PROJECT_ID}/druv-backend:$COMMIT_SHA']
 
   # 3. Deploy the container image to Cloud Run
-  # This step uses the gcloud builder to deploy the image to your Cloud Run service.
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args:
       - 'run'
       - 'deploy'
-      - 'druv-backend' # Your service name
-      - '--image=gcr.io/${_PROJECT_ID}/druv-backend:$COMMIT_SHA'
+      - 'druv-backend'
+      - '--image=gcr.io/${PROJECT_ID}/druv-backend:$COMMIT_SHA'
       - '--region=us-central1'
       - '--platform=managed'
-      - '--allow-unauthenticated' # Add this line to allow public access
+      - '--allow-unauthenticated'
 
-options:
-  logging: CLOUD_LOGGING_ONLY
-      
 # This specifies the image that will be available after all build steps are complete.
 images:
-  - 'gcr.io/${_PROJECT_ID}/druv-backend:$COMMIT_SHA'
+  - 'gcr.io/${PROJECT_ID}/druv-backend:$COMMIT_SHA'
+
+# Use Cloud Logging Only to resolve the logging permissions issue.
+options:
+  logging: CLOUD_LOGGING_ONLY
