@@ -23,7 +23,7 @@
         rm -rf /var/lib/apt/lists/*
     
     # ---- 5. Install Playwright browsers & deps --------------------------
-    RUN playwright install --with-deps
+    # RUN playwright install --with-deps
     
     # ---- 6. Copy application source code --------------------------------
     # (Build context is src/backend_lc/, so this brings in backend only.)
