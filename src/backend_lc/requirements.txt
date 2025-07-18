@@ -19,3 +19,4 @@ openpyxl
 pdfminer_six
 python_docx
 playwright
+lxml_html_clean
