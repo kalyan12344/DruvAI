@@ -470,7 +470,7 @@ try:
     from api.routes.agent import router as agent_router
     from api.routes.calendar import router as calendar_router
     from api.routes.webhooks import router as webhook_router
-    from api.routes.resume import router as resume_router
+    # from api.routes.resume import router as resume_router
     from api.routes.settings import router as settings_router
     # from api.routes.jobs import router as jobs_router
     from api.routes.google_auth import router as google_auth_router
@@ -532,7 +532,7 @@ app.include_router(auth_router, prefix="/api/auth", tags=["User Authentication"]
 app.include_router(agent_router, prefix="/agent", tags=["Agent"])
 app.include_router(calendar_router, prefix="/api/calendar", tags=["Calendar"])
 app.include_router(webhook_router, prefix="/api/webhooks", tags=["Webhooks"])
-app.include_router(resume_router, prefix="/api/resume", tags=["Resume"])
+# app.include_router(resume_router, prefix="/api/resume", tags=["Resume"])
 # app.include_router(jobs_router, prefix="/api/jobs", tags=["Jobs"])
 app.include_router(settings_router, prefix="/api/settings", tags=["Settings"])
 app.include_router(google_auth_router, prefix="/api/google/auth", tags=["Google Auth"])
