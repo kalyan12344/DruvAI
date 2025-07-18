@@ -407,18 +407,42 @@
 
 
 # test 7 ------------------------------------------------------------ 
+import os
+import json
 from fastapi import FastAPI
 from starlette.middleware.sessions import SessionMiddleware
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
+import firebase_admin
+from firebase_admin import credentials
 
-app = FastAPI(title="Middleware Test")
+load_dotenv()
 
-# We are using a hardcoded key for this test.
-TEMPORARY_SECRET = "a-random-string-for-testing"
-app.add_middleware(SessionMiddleware, secret_key=TEMPORARY_SECRET)
+# --- Firebase Initialization ---
+FIREBASE_CREDS_JSON = os.environ.get("FIREBASE_CREDENTIALS")
+try:
+    if not FIREBASE_CREDS_JSON:
+        raise ValueError("ERROR: FIREBASE_CREDENTIALS environment variable is not set.")
+    
+    creds_dict = json.loads(FIREBASE_CREDS_JSON)
+    cred = credentials.Certificate(creds_dict)
+    if not firebase_admin._apps:
+        firebase_admin.initialize_app(cred)
+    print("✅ Firebase initialized.")
+except Exception as e:
+    print(f"🔥 Firebase initialization failed: {e}")
+    raise
+
+# --- FastAPI App & Middleware ---
+app = FastAPI(title="Middleware and Firebase Test")
+
+SESSION_SECRET = os.environ.get("SESSION_SECRET_KEY")
+if not SESSION_SECRET:
+    raise ValueError("ERROR: SESSION_SECRET_KEY is not set")
+
+app.add_middleware(SessionMiddleware, secret_key=SESSION_SECRET)
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
-print("✅ Middleware added successfully.")
 
 @app.get("/api/ping", tags=["Health Check"])
 def ping():
-    return {"status": "ok", "message": "Middleware test is running!"}
+    return {"status": "ok", "message": "Middleware and Firebase test is running!"}
