@@ -18,3 +18,4 @@ Requests
 openpyxl
 pdfminer_six
 python_docx
+playwright
