@@ -408,134 +408,51 @@
 
 # test 7 ------------------------------------------------------------ 
 import os
-import json
-import firebase_admin
-from firebase_admin import credentials
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from starlette.middleware.sessions import SessionMiddleware
-from starlette.requests import Request
-from dotenv import load_dotenv
 
-# Load .env file for local development (ensure this is not used in production Cloud Run)
-load_dotenv()
+app = FastAPI(title="Druv AI - Minimal Test")
 
-# --- Environment Variable Loading ---
-# These MUST be set in your Cloud Run service configuration.
-# Use FIREBASE_CREDENTIALS for consistency with previous suggested code.
-FIREBASE_CREDS_JSON = os.environ.get("FIREBASE_CREDENTIALS")
-SESSION_SECRET = os.environ.get("SESSION_SECRET_KEY")
-CRON_API_KEY = os.environ.get("CRON_SECRET_API_KEY") # A secret key to protect the job endpoint
-
-
-# --- Initialize Firebase FIRST (Robust Method) ---
-try:
-    if not FIREBASE_CREDS_JSON:
-        raise ValueError("CRITICAL: FIREBASE_CREDENTIALS environment variable is not set.")
-
-    # Parse the JSON string from the env variable into a Python dict
-    creds_dict = json.loads(FIREBASE_CREDS_JSON)
-
-    # Initialize the app with the credentials dictionary
-    cred = credentials.Certificate(creds_dict)
-    if not firebase_admin._apps: # Prevents re-initialization if running in a reloader
-        firebase_admin.initialize_app(cred)
-    print("✅ Firebase Admin SDK initialized successfully.")
-
-except json.JSONDecodeError as e:
-    print(f"🔥 CRITICAL: Failed to decode FIREBASE_CREDENTIALS. Invalid JSON format: {e}")
-    # In production, you might want to exit the container on such a critical failure
-    exit(1)
-except Exception as e:
-    print(f"🔥 CRITICAL: An unexpected error occurred during Firebase initialization: {e}")
-    exit(1)
-
-
-# --- Import your routers AFTER Firebase is initialized ---
-# Make sure these paths are correct for your project structure
-from api.routes.agent import router as agent_router
-from api.routes.calendar import router as calendar_router
-from api.routes.webhooks import router as webhook_router
-from api.routes.resume import router as resume_router
-from api.routes.settings import router as settings_router
-from api.routes.jobs import router as jobs_router
-from api.routes.google_auth import router as google_auth_router
-from api.routes.gmail import router as gmail_router
-from api.routes.contacts import router as contact_router
-from api.routes.tasks import router as tasks_router
-from api.routes.remainders import router as remainders_router
-from api.routes.notes import router as notes_router
-from api.routes.news import router as news_router
-from api.routes.auth import router as auth_router
-
-# --- Create the FastAPI app and add middleware ---
-app = FastAPI(title="Druv AI")
-
-# Use the secret key from an environment variable for security
-if not SESSION_SECRET:
-    print("🔥 WARNING: SESSION_SECRET_KEY not set. Using a default insecure key for development.")
-    SESSION_SECRET = "a_default_insecure_secret_key" # DO NOT use this in production
-
+# Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Restrict this to your frontend's domain in production
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app.add_middleware(SessionMiddleware, secret_key=SESSION_SECRET)
 
-# --- Define a function to protect your scheduled job endpoint ---
-async def verify_api_key(request: Request):
-    """A dependency to verify a secret API key in the request header."""
-    api_key = request.headers.get("x-api-key")
-    if not CRON_API_KEY or api_key != CRON_API_KEY:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or missing API Key for cron job.")
+@app.get("/")
+def root():
+    """Root endpoint."""
+    return {
+        "message": "Hello from Cloud Run!",
+        "service": "Druv AI Backend",
+        "status": "running"
+    }
 
-# --- Create an endpoint for your scheduled job ---
-# This assumes you have lc.job_processor.process_and_cache_jobs
-@app.post("/api/tasks/run-daily-job", tags=["Scheduled Tasks"], dependencies=[Depends(verify_api_key)])
-async def trigger_process_and_cache_jobs():
-    """
-    This endpoint is triggered by an external cron service to run the daily job processing task.
-    It is protected by a secret API key.
-    """
-    from lc.job_processor import process_and_cache_jobs
-    try:
-        print("Scheduler triggered: Starting daily job processing...")
-        await process_and_cache_jobs()
-        print("✅ Daily job processing finished successfully.")
-        return {"status": "success", "message": "Job processing triggered successfully."}
-    except Exception as e:
-        print(f"🔥 Daily job processing failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Job processing failed: {e}")
-
-# --- Add all your application routers ---
-app.include_router(auth_router, prefix="/api/auth", tags=["User Authentication"])
-app.include_router(agent_router, prefix="/agent", tags=["Agent"])
-app.include_router(calendar_router, prefix="/api/calendar", tags=["Calendar"])
-app.include_router(webhook_router, prefix="/api/webhooks", tags=["Webhooks"])
-app.include_router(resume_router, prefix="/api/resume", tags=["Resume"])
-app.include_router(jobs_router, prefix="/api/jobs", tags=["Jobs"])
-app.include_router(settings_router, prefix="/api/settings", tags=["Settings"])
-app.include_router(google_auth_router, prefix="/api/google/auth", tags=["Google Auth"])
-app.include_router(gmail_router, prefix="/api/gmail", tags=["Gmail"])
-app.include_router(contact_router, prefix="/api/contacts", tags=["Contacts"])
-app.include_router(tasks_router, prefix="/api/tasks", tags=["Tasks"])
-app.include_router(remainders_router, prefix="/api/remainders", tags=["Remainders"])
-app.include_router(notes_router, prefix="/api/notes", tags=["Notes"])
-app.include_router(news_router, prefix="/api/news", tags=["News"])
-# You had a duplicate calendar_router previously, ensure it's correct
-# app.include_router(calendar_router, prefix = "/api/calendars", tags = ["Calendar Status"])
-
-# --- Health check endpoint for deployment environment ---
-@app.get("/api/ping", tags=["Health Check"])
+@app.get("/api/ping")
 def ping():
-    """A simple health check endpoint to confirm the service is running."""
-    return {"status": "ok"}
+    """Health check endpoint."""
+    return {
+        "status": "ok", 
+        "message": "Minimal test server is running!",
+        "port": os.environ.get("PORT", "8080")
+    }
 
-# The uvicorn.run part should be in your Dockerfile's CMD or entrypoint, not server.py
-# if __name__ == "__main__":
-#     import uvicorn
-#     port = int(os.environ.get("PORT", 8080))
-#     uvicorn.run("server:app", host="0.0.0.0", port=port, reload=True) # `reload=True` is for local dev
+@app.get("/api/test")
+def test():
+    """Test endpoint with environment info."""
+    return {
+        "status": "success",
+        "port": os.environ.get("PORT", "Not set"),
+        "python_version": os.sys.version,
+        "environment": "Cloud Run" if os.environ.get("PORT") else "Local"
+    }
+
+# For local development
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.environ.get("PORT", 8080))
+    print(f"Starting server on port {port}")
+    uvicorn.run(app, host="0.0.0.0", port=port)
