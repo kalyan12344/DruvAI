@@ -418,12 +418,13 @@ from firebase_admin import credentials
 
 load_dotenv()
 
-# --- Firebase Initialization ---
+# --- Startup Code ---
+SESSION_SECRET = os.environ.get("SESSION_SECRET_KEY")
 FIREBASE_CREDS_JSON = os.environ.get("FIREBASE_CREDENTIALS")
+
 try:
     if not FIREBASE_CREDS_JSON:
-        raise ValueError("ERROR: FIREBASE_CREDENTIALS environment variable is not set.")
-    
+        raise ValueError("ERROR: FIREBASE_CREDENTIALS not set.")
     creds_dict = json.loads(FIREBASE_CREDS_JSON)
     cred = credentials.Certificate(creds_dict)
     if not firebase_admin._apps:
@@ -433,16 +434,17 @@ except Exception as e:
     print(f"🔥 Firebase initialization failed: {e}")
     raise
 
-# --- FastAPI App & Middleware ---
-app = FastAPI(title="Middleware and Firebase Test")
-
-SESSION_SECRET = os.environ.get("SESSION_SECRET_KEY")
-if not SESSION_SECRET:
-    raise ValueError("ERROR: SESSION_SECRET_KEY is not set")
-
+app = FastAPI(title="Druv AI")
 app.add_middleware(SessionMiddleware, secret_key=SESSION_SECRET)
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 
+# --- Routers are commented out for this test ---
+# from api.routes.agent import router as agent_router
+# ...
+
+# app.include_router(agent_router, prefix="/agent", tags=["Agent"])
+# ...
+
 @app.get("/api/ping", tags=["Health Check"])
 def ping():
-    return {"status": "ok", "message": "Middleware and Firebase test is running!"}
+    return {"status": "ok", "message": "Step 1: Base is running!"}
