@@ -408,43 +408,58 @@
 
 # test 7 ------------------------------------------------------------ 
 import os
+import sys
 import json
-from fastapi import FastAPI
-from starlette.middleware.sessions import SessionMiddleware
-from fastapi.middleware.cors import CORSMiddleware
-from dotenv import load_dotenv
-import firebase_admin
-from firebase_admin import credentials
 
-load_dotenv()
-
-# --- Startup Code ---
-SESSION_SECRET = os.environ.get("SESSION_SECRET_KEY")
-FIREBASE_CREDS_JSON = os.environ.get("FIREBASE_CREDENTIALS")
+print("--- STARTING SERVER.PY (FINAL DEBUG MODE) ---")
 
 try:
+    from fastapi import FastAPI
+    from starlette.middleware.sessions import SessionMiddleware
+    from fastapi.middleware.cors import CORSMiddleware
+    from dotenv import load_dotenv
+    import firebase_admin
+    from firebase_admin import credentials
+
+    load_dotenv()
+    print("Imports successful.")
+
+    # --- Startup Code ---
+    SESSION_SECRET = os.environ.get("SESSION_SECRET_KEY")
+    FIREBASE_CREDS_JSON = os.environ.get("FIREBASE_CREDENTIALS")
+    print("Environment variables loaded.")
+
     if not FIREBASE_CREDS_JSON:
-        raise ValueError("ERROR: FIREBASE_CREDENTIALS not set.")
+        raise ValueError("DEBUG: FIREBASE_CREDENTIALS not set.")
+    if not SESSION_SECRET:
+        raise ValueError("DEBUG: SESSION_SECRET_KEY not set.")
+
     creds_dict = json.loads(FIREBASE_CREDS_JSON)
     cred = credentials.Certificate(creds_dict)
     if not firebase_admin._apps:
         firebase_admin.initialize_app(cred)
     print("✅ Firebase initialized.")
+
+    app = FastAPI(title="Druv AI")
+    app.add_middleware(SessionMiddleware, secret_key=SESSION_SECRET)
+    app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
+    print("✅ FastAPI app created with middleware.")
+
+    @app.get("/api/ping", tags=["Health Check"])
+    def ping():
+        return {"status": "ok"}
+
+    print("--- SERVER.PY LOADED SUCCESSFULLY ---")
+
 except Exception as e:
-    print(f"🔥 Firebase initialization failed: {e}")
-    raise
-
-app = FastAPI(title="Druv AI")
-app.add_middleware(SessionMiddleware, secret_key=SESSION_SECRET)
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
-
-# --- Routers are commented out for this test ---
-# from api.routes.agent import router as agent_router
-# ...
-
-# app.include_router(agent_router, prefix="/agent", tags=["Agent"])
-# ...
-
-@app.get("/api/ping", tags=["Health Check"])
-def ping():
-    return {"status": "ok", "message": "Step 1: Base is running!"}
+    # This block will catch ANY error during startup and print it clearly.
+    print("🔥🔥🔥 AN ERROR OCCURRED DURING STARTUP 🔥🔥🔥", file=sys.stderr)
+    import traceback
+    traceback.print_exc(file=sys.stderr)
+    
+    # Create a dummy app so Gunicorn doesn't crash, allowing us to see the log.
+    from fastapi import FastAPI
+    app = FastAPI()
+    @app.get("/{full_path:path}")
+    def error_handler(full_path: str):
+        return {"error": "Application failed to start. Check logs for traceback."}
