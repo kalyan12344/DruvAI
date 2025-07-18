@@ -4,3 +4,17 @@ gunicorn
 itsdangerous
 python-dotenv
 firebase-admin
+google-api-python-client
+google-auth-oauthlib
+langchain
+langchain_core
+langchain_openai
+langgraph
+beautifulsoup4
+jobspy
+newspaper3k
+pandas
+Requests
+openpyxl
+pdfminer_six
+python_docx
