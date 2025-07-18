@@ -1,34 +1,22 @@
-FROM python:3.11-slim
+# ---- 1. Base image --------------------------------------------------
+    FROM python:3.11-slim
 
-# Environment variables
-ENV PYTHONUNBUFFERED=1
-ENV PYTHONDONTWRITEBYTECODE=1
-
-WORKDIR /app
-
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    gcc \
-    g++ \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install Python dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy application code
-COPY . .
-
-# Create non-root user for security
-RUN groupadd -r appuser && useradd -r -g appuser appuser
-RUN chown -R appuser:appuser /app
-USER appuser
-
-# Expose port (Cloud Run will set PORT env var)
-EXPOSE 8080
-
-# CRITICAL: Use PORT environment variable for Cloud Run
-# Cloud Run sets PORT dynamically, must bind to 0.0.0.0:$PORT
-CMD exec gunicorn --bind 0.0.0.0:$PORT --workers 4 --worker-class uvicorn.workers.UvicornWorker --timeout 120 --preload server:app
+    # Prevent Python stdout buffering (nice for Cloud Run logs)
+    ENV PYTHONUNBUFFERED=1
+    
+    # ---- 2. Set working directory ---------------------------------------
+    WORKDIR /app
+    
+    # ---- 3. Copy and install Python deps --------------------------------
+    COPY requirements.txt .
+    RUN pip install --no-cache-dir -r requirements.txt
+    
+    # ---- 4. Copy application source code --------------------------------
+    COPY . .
+    
+    # ---- 5. Expose the port your app will listen on ---------------------
+    EXPOSE 8080
+    
+    # ---- 6. Start Gunicorn with an async Uvicorn worker -----------------
+    # Gunicorn will automatically listen on the $PORT variable provided by Cloud Run.
+    CMD ["gunicorn", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "server:app"]
