@@ -367,7 +367,46 @@
 
 
 
-#test 6 ------------------------------------------------------------
+# #test 6 ------------------------------------------------------------ not working
+# import os
+# import json
+# from fastapi import FastAPI
+# from starlette.middleware.sessions import SessionMiddleware
+# from fastapi.middleware.cors import CORSMiddleware
+# from dotenv import load_dotenv
+# import firebase_admin
+# from firebase_admin import credentials
+
+# load_dotenv()
+
+# # --- All the startup code we've confirmed is working ---
+# SESSION_SECRET = os.environ.get("SESSION_SECRET_KEY")
+# FIREBASE_CREDS_JSON = os.environ.get("FIREBASE_CREDENTIALS")
+
+# try:
+#     if not FIREBASE_CREDS_JSON:
+#         raise ValueError("ERROR: FIREBASE_CREDENTIALS environment variable is not set.")
+    
+#     creds_dict = json.loads(FIREBASE_CREDS_JSON)
+#     cred = credentials.Certificate(creds_dict)
+#     if not firebase_admin._apps:
+#         firebase_admin.initialize_app(cred)
+#     print("✅ Firebase initialized.")
+# except Exception as e:
+#     print(f"🔥 Firebase initialization failed: {e}")
+#     raise
+
+# app = FastAPI(title="Druv AI")
+# app.add_middleware(SessionMiddleware, secret_key=SESSION_SECRET)
+# app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
+
+# # Health check endpoint
+# @app.get("/api/ping", tags=["Health Check"])
+# def ping():
+#     return {"status": "ok", "message": "Full application is running!"}
+
+
+# test 7 ------------------------------------------------------------ 
 import os
 import json
 from fastapi import FastAPI
@@ -380,7 +419,6 @@ from firebase_admin import credentials
 load_dotenv()
 
 # --- All the startup code we've confirmed is working ---
-SESSION_SECRET = os.environ.get("SESSION_SECRET_KEY")
 FIREBASE_CREDS_JSON = os.environ.get("FIREBASE_CREDENTIALS")
 
 try:
@@ -397,43 +435,14 @@ except Exception as e:
     raise
 
 app = FastAPI(title="Druv AI")
-app.add_middleware(SessionMiddleware, secret_key=SESSION_SECRET)
+
+# --- TEMPORARY DEBUGGING STEP ---
+# We are using a hardcoded key to test if the environment variable is the problem.
+TEMPORARY_SECRET = "a-random-string-for-testing"
+app.add_middleware(SessionMiddleware, secret_key=TEMPORARY_SECRET)
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
-
-# --- Import and Include Your Routers ---
-# This is the new section we are adding for this test
-# from api.routes.agent import router as agent_router
-# from api.routes.calendar import router as calendar_router
-# from api.routes.webhooks import router as webhook_router
-# from api.routes.resume import router as resume_router
-# from api.routes.settings import router as settings_router
-# from api.routes.jobs import router as jobs_router
-# from api.routes.google_auth import router as google_auth_router
-# from api.routes.gmail import router as gmail_router
-# from api.routes.contacts import router as contact_router
-# from api.routes.tasks import router as tasks_router
-# from api.routes.remainders import router as remainders_router
-# from api.routes.notes import router as notes_router
-# from api.routes.news import router as news_router
-# from api.routes.auth import router as auth_router
-
-# # Add all of your app.include_router calls
-# app.include_router(auth_router, prefix="/api/auth", tags=["User Authentication"])
-# app.include_router(agent_router, prefix="/agent", tags=["Agent"])
-# app.include_router(calendar_router, prefix="/api/calendar", tags=["Calendar"])
-# app.include_router(webhook_router, prefix="/api/webhooks", tags=["Webhooks"])
-# app.include_router(resume_router, prefix="/api/resume", tags=["Resume"])
-# app.include_router(jobs_router, prefix="/api/jobs", tags=["Jobs"])
-# app.include_router(settings_router, prefix="/api/settings", tags=["Settings"])
-# app.include_router(google_auth_router, prefix="/api/google/auth", tags=["Google Auth"])
-# app.include_router(notes_router, prefix="/api/notes", tags=["Notes"])
-# app.include_router(gmail_router, prefix="/api/gmail", tags=["Gmail"])
-# app.include_router(contact_router, prefix="/api/contacts", tags=["Contacts"])
-# app.include_router(tasks_router, prefix="/api/tasks", tags=["Tasks"])
-# app.include_router(remainders_router, prefix="/api/remainders", tags=["Remainders"])
-# app.include_router(news_router, prefix="/api/news", tags=["News"])
 
 # Health check endpoint
 @app.get("/api/ping", tags=["Health Check"])
 def ping():
-    return {"status": "ok", "message": "Full application is running!"}
+    return {"status": "ok", "message": "Test with hardcoded secret is running!"}
