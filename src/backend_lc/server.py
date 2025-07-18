@@ -118,7 +118,7 @@
 # if __name__ == "__main__":
 #     uvicorn.run("server:app", host="0.0.0.0", port=8080, reload=True)
 
-#test 1
+#test 1 working
 
 # from fastapi import FastAPI
 
@@ -129,7 +129,7 @@
 #     """A simple health check endpoint."""
 #     return {"status": "ok", "message": "Minimal test server is running!"}
 
-#test 2
+#test 2 working
 
 # import os
 # from fastapi import FastAPI
@@ -153,7 +153,7 @@
 # def ping():
 #     return {"status": "ok", "message": "Step 2: Middleware is working!"} 
 
-#test 3 ------------------------------------------------------------
+#test 3 ------------------------------------------------------------working
 # import os
 # import json
 # from fastapi import FastAPI
@@ -192,7 +192,7 @@
 #     return {"status": "ok", "message": "Step 3: Firebase is working!"}
 
 
-#test 4 final ------------------------------------------------------------
+#test 4 final ------------------------------------------------------------ not working 
 # import os
 # import json
 # import firebase_admin
@@ -319,7 +319,7 @@
 #     uvicorn.run("server:app", host="0.0.0.0", port=8080, reload=True)
 
 
-#test 5 firebase ------------------------------------------------------------
+#test 5 firebase ------------------------------------------------------------ working
 # import os
 # import json
 # from fastapi import FastAPI
@@ -402,36 +402,36 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, 
 
 # --- Import and Include Your Routers ---
 # This is the new section we are adding for this test
-from api.routes.agent import router as agent_router
-from api.routes.calendar import router as calendar_router
-from api.routes.webhooks import router as webhook_router
-from api.routes.resume import router as resume_router
-from api.routes.settings import router as settings_router
-from api.routes.jobs import router as jobs_router
-from api.routes.google_auth import router as google_auth_router
-from api.routes.gmail import router as gmail_router
-from api.routes.contacts import router as contact_router
-from api.routes.tasks import router as tasks_router
-from api.routes.remainders import router as remainders_router
-from api.routes.notes import router as notes_router
-from api.routes.news import router as news_router
-from api.routes.auth import router as auth_router
+# from api.routes.agent import router as agent_router
+# from api.routes.calendar import router as calendar_router
+# from api.routes.webhooks import router as webhook_router
+# from api.routes.resume import router as resume_router
+# from api.routes.settings import router as settings_router
+# from api.routes.jobs import router as jobs_router
+# from api.routes.google_auth import router as google_auth_router
+# from api.routes.gmail import router as gmail_router
+# from api.routes.contacts import router as contact_router
+# from api.routes.tasks import router as tasks_router
+# from api.routes.remainders import router as remainders_router
+# from api.routes.notes import router as notes_router
+# from api.routes.news import router as news_router
+# from api.routes.auth import router as auth_router
 
-# Add all of your app.include_router calls
-app.include_router(auth_router, prefix="/api/auth", tags=["User Authentication"])
-app.include_router(agent_router, prefix="/agent", tags=["Agent"])
-app.include_router(calendar_router, prefix="/api/calendar", tags=["Calendar"])
-app.include_router(webhook_router, prefix="/api/webhooks", tags=["Webhooks"])
-app.include_router(resume_router, prefix="/api/resume", tags=["Resume"])
-app.include_router(jobs_router, prefix="/api/jobs", tags=["Jobs"])
-app.include_router(settings_router, prefix="/api/settings", tags=["Settings"])
-app.include_router(google_auth_router, prefix="/api/google/auth", tags=["Google Auth"])
-app.include_router(notes_router, prefix="/api/notes", tags=["Notes"])
-app.include_router(gmail_router, prefix="/api/gmail", tags=["Gmail"])
-app.include_router(contact_router, prefix="/api/contacts", tags=["Contacts"])
-app.include_router(tasks_router, prefix="/api/tasks", tags=["Tasks"])
-app.include_router(remainders_router, prefix="/api/remainders", tags=["Remainders"])
-app.include_router(news_router, prefix="/api/news", tags=["News"])
+# # Add all of your app.include_router calls
+# app.include_router(auth_router, prefix="/api/auth", tags=["User Authentication"])
+# app.include_router(agent_router, prefix="/agent", tags=["Agent"])
+# app.include_router(calendar_router, prefix="/api/calendar", tags=["Calendar"])
+# app.include_router(webhook_router, prefix="/api/webhooks", tags=["Webhooks"])
+# app.include_router(resume_router, prefix="/api/resume", tags=["Resume"])
+# app.include_router(jobs_router, prefix="/api/jobs", tags=["Jobs"])
+# app.include_router(settings_router, prefix="/api/settings", tags=["Settings"])
+# app.include_router(google_auth_router, prefix="/api/google/auth", tags=["Google Auth"])
+# app.include_router(notes_router, prefix="/api/notes", tags=["Notes"])
+# app.include_router(gmail_router, prefix="/api/gmail", tags=["Gmail"])
+# app.include_router(contact_router, prefix="/api/contacts", tags=["Contacts"])
+# app.include_router(tasks_router, prefix="/api/tasks", tags=["Tasks"])
+# app.include_router(remainders_router, prefix="/api/remainders", tags=["Remainders"])
+# app.include_router(news_router, prefix="/api/news", tags=["News"])
 
 # Health check endpoint
 @app.get("/api/ping", tags=["Health Check"])
