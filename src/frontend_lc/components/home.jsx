@@ -5,8 +5,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Mic, Sparkles, Calendar, CheckCircle2, AlertTriangle, ExternalLink, Newspaper } from 'lucide-react';
 import '../styles/home.css'; // This component will now use the new styles
 import axios from "axios";
+import { auth } from '../../firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 
-const api = axios.create({ baseURL: "http://localhost:8000/agent" });
+const api = axios.create({ baseURL: "https://druv-backend-338967818277.us-central1.run.app/agent" });
 
 // Suggestion chips to engage the user
 const suggestionChips = [
@@ -120,6 +122,15 @@ const Home = () => {
     const [isTyping, setIsTyping] = useState(false);
     const messagesEndRef = useRef(null);
     const hasUserSentMessage = messages.some(msg => msg.sender === 'user');
+
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+            setUser(firebaseUser);
+        });
+        return () => unsubscribe();
+    }, []);
 
     // --- This single function now handles all message types ---
     const renderMessageContent = (msg) => {

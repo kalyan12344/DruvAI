@@ -30,13 +30,15 @@ const Auth = () => {
 
         try {
             if (isLoginView) {
-                await signInWithEmailAndPassword(auth, email, password);
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                console.log("User details after login:", userCredential.user);
                 setSuccess('Login successful! Redirecting...');
                 setTimeout(() => {
                     navigate(`/dashboard`)
                 }, 2000);
             } else {
-                await createUserWithEmailAndPassword(auth, email, password);
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                console.log("User details after signup:", userCredential.user);
                 setSuccess('Account created! Redirecting...');
                 setTimeout(() => {
                     navigate(`/dashboard`)
@@ -62,7 +64,8 @@ const Auth = () => {
         setSuccess(''); // Clear previous messages
         const provider = new GoogleAuthProvider();
         try {
-            await signInWithPopup(auth, provider);
+            const userCredential = await signInWithPopup(auth, provider);
+            console.log("User details after Google sign-in:", userCredential.user);
             setSuccess('Login successful! Redirecting...');
             // --- THIS IS THE FIX ---
             // Add the same redirect logic to the Google sign-in handler.

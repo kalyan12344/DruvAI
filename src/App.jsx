@@ -16,12 +16,16 @@ import JobsTab from './frontend_lc/components/jobs.jsx';
 import TodoListWidget from './frontend_lc/components/todolist.jsx';
 import Gmail from './frontend_lc/components/gmail.jsx';
 import Auth from './frontend_lc/components/auth.jsx';
+import { auth } from './firebase';
+
+
 
 function App() {
   // Initialize activeTab from localStorage or default to 'Druv AI'
   const [activeTab, setActiveTab] = useState(() => {
     return localStorage.getItem('activeTab') || 'Druv AI';
   });
+  const user = auth.currentUser;
 
   // Save to localStorage whenever activeTab changes
   useEffect(() => {
@@ -31,9 +35,9 @@ function App() {
   const renderActiveTab = () => {
     switch (activeTab) {
       case 'Home':
-        return <Home />;
-      case 'Druv AI':
         return <Dashboard />;
+      case 'Druv AI':
+        return < Home />;
       case 'My Tasks':
         return <Tasks />;
       case 'Inbox':
@@ -59,7 +63,7 @@ function App() {
           element={
             <JobsFeatureProvider>
               <div className="app-container">
-                <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+                <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} user={user} />
                 <div className="content">{renderActiveTab()}</div>
               </div>
             </JobsFeatureProvider>

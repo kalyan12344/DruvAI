@@ -31,7 +31,7 @@ const TodoListWidget = () => {
         setLoading(true);
         setError(null);
         try {
-            const response = await axios.get('http://127.0.0.1:8000/api/tasks/retrieve');
+            const response = await axios.get('https://druv-backend-338967818277.us-central1.run.app/api/tasks/retrieve');
             setTasks(response.data || []);
         } catch (err) {
             console.error("Error fetching tasks:", err);
@@ -53,7 +53,7 @@ const TodoListWidget = () => {
         };
 
         try {
-            const response = await axios.post('http://127.0.0.1:8000/api/tasks/add', newTaskPayload);
+            const response = await axios.post('https://druv-backend-338967818277.us-central1.run.app/api/tasks/add', newTaskPayload);
             setTasks(prevTasks => [response.data, ...prevTasks]);
             // Reset form
             setNewTaskText('');
@@ -70,7 +70,7 @@ const TodoListWidget = () => {
     const handleToggleTask = async (task) => {
         const newStatus = task.status === 'Completed' ? 'To Do' : 'Completed';
         try {
-            const response = await axios.put(`http://127.0.0.1:8000/api/tasks/update/${task.id}`, {
+            const response = await axios.put(`https://druv-backend-338967818277.us-central1.run.app/api/tasks/update/${task.id}`, {
                 status: newStatus
             });
             setTasks(tasks.map(t => (t.id === task.id ? response.data : t)));

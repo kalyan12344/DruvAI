@@ -56,7 +56,7 @@ const Notes = () => {
             console.log(token)
             if (!token) throw new Error("Authentication token not found.");
 
-            const response = await axios.get('http://127.0.0.1:8000/api/notes/notes', {
+            const response = await axios.get('https://druv-backend-338967818277.us-central1.run.app/api/notes/notes', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             setNotes(response.data || []);
@@ -76,7 +76,7 @@ const Notes = () => {
             const token = await getAuthToken();
             if (!token) throw new Error("Authentication token not found.");
 
-            const response = await axios.get(`http://127.0.0.1:8000/api/notes/${noteId}`, {
+            const response = await axios.get(`https://druv-backend-338967818277.us-central1.run.app/api/notes/${noteId}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             setSelectedNote(response.data);
@@ -96,7 +96,7 @@ const Notes = () => {
 
             if (!token) throw new Error("Authentication token not found.");
 
-            const response = await axios.post('http://127.0.0.1:8000/api/notes/notes', {
+            const response = await axios.post('https://druv-backend-338967818277.us-central1.run.app/api/notes/notes', {
                 title: "New Note",
                 content: "",
             }, {
@@ -120,7 +120,7 @@ const Notes = () => {
             const token = await getAuthToken();
             if (!token) throw new Error("Authentication token not found.");
 
-            const response = await axios.put(`http://127.0.0.1:8000/api/notes/${selectedNote.id}`, {
+            const response = await axios.put(`https://druv-backend-338967818277.us-central1.run.app/api/notes/${selectedNote.id}`, {
                 title: selectedNote.title,
                 content: selectedNote.content,
                 snippet: snippet

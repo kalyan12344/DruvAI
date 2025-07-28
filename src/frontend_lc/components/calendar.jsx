@@ -30,8 +30,8 @@ const Calendar = () => {
             const headers = { 'Authorization': `Bearer ${token}` };
 
             const [statusResponse, eventsResponse] = await Promise.all([
-                axios.get("http://127.0.0.1:8000/api/calendar/status", { headers }),
-                axios.get("http://127.0.0.1:8000/api/calendar/events", { headers }),
+                axios.get("https://druv-backend-338967818277.us-central1.run.app/api/calendar/status", { headers }),
+                axios.get("https://druv-backend-338967818277.us-central1.run.app/api/calendar/events", { headers }),
             ]);
 
             setConnections(statusResponse.data.google || {});
@@ -76,7 +76,7 @@ const Calendar = () => {
             if (!token) throw new Error("User not authenticated");
 
             // 1. Get the secure auth URL from the backend
-            const response = await axios.get(`http://127.0.0.1:8000/api/google/auth/login-url?service=${provider}`, {
+            const response = await axios.get(`https://druv-backend-338967818277.us-central1.run.app/api/google/auth/login-url?service=${provider}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const { authorization_url } = response.data;

@@ -9,8 +9,17 @@ import '../styles/sidebar.css';
 import {
     LayoutDashboard, Bot, CheckSquare, Inbox, Calendar, BarChart2, Briefcase, Settings, Sparkles
 } from 'lucide-react';
+var displayName = '';
+const Sidebar = ({ activeTab, setActiveTab, user }) => {
+    if (user.displayName === null) {
+        const match = user.email.match(/^([^@]+)/);
+        displayName = match ? match[1] : "";
 
-const Sidebar = ({ activeTab, setActiveTab }) => {
+    }
+    else {
+        displayName = user.displayName;
+    }
+    console.log(user.displayName);
     const { jobsEnabled } = useJobsFeature();
 
     // Mapping strings to actual icon components
@@ -78,9 +87,9 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
             animate="visible"
         >
             <div className="profile">
-                <div className="avatar">CW</div>
+                <div className="avatar">{displayName ? displayName[0] : 'U'}</div>
                 <div className="profile-info">
-                    <div className="profile-name">Courtney Wilson</div>
+                    <div className="profile-name">{displayName}</div>
                     <div className="profile-status"><span className="dot"></span>Online</div>
                 </div>
             </div>

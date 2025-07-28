@@ -1,7 +1,9 @@
 import React from 'react';
 import '../styles/header.css';
+import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
+    const navigate = useNavigate();
     return (
         <>
             <div style={{ position: 'absolute', top: "-30%", left: 0, width: '100%', height: '100%', zIndex: -1 }}>
@@ -26,7 +28,7 @@ const Header = () => {
                         <a href="#" className="nav-it">Pricing</a></div>
                 </nav>
 
-                <div className="signin-bt">Sign In</div>
+                <div className="signin-bt" onClick={() => navigate('/auth')}>Sign In</div>
 
             </header></>
     );

@@ -455,10 +455,10 @@ try:
         logger.info("Firebase Admin SDK already initialized.")
 
 except json.JSONDecodeError as e:
-    logger.critical(f"🔥 CRITICAL: Failed to decode FIREBASE_CREDENTIALS. Invalid JSON format: {e}. Exiting.")
+    logger.critical(f" CRITICAL: Failed to decode FIREBASE_CREDENTIALS. Invalid JSON format: {e}. Exiting.")
     exit(1)
 except Exception as e:
-    logger.critical(f"🔥 CRITICAL: An unexpected error occurred during Firebase initialization: {e}. Exiting.")
+    logger.critical(f" CRITICAL: An unexpected error occurred during Firebase initialization: {e}. Exiting.")
     exit(1)
 
 logger.info("Firebase initialization block completed.")
@@ -481,18 +481,16 @@ try:
     from api.routes.notes import router as notes_router
     from api.routes.news import router as news_router
     from api.routes.auth import router as auth_router
-    # ... any other routers you have ...
 
     logger.info("API routers imported successfully.")
 except ImportError as e:
-    logger.critical(f"🔥 CRITICAL: Failed to import one or more routers: {e}. Check your 'api.routes' directory and module names. Exiting.")
+    logger.critical(f" CRITICAL: Failed to import one or more routers: {e}. Check your 'api.routes' directory and module names. Exiting.")
     exit(1)
 except Exception as e:
-    logger.critical(f"🔥 CRITICAL: An unexpected error occurred during router import: {e}. Exiting.")
+    logger.critical(f" CRITICAL: An unexpected error occurred during router import: {e}. Exiting.")
     exit(1)
 
 
-# --- Create the FastAPI app and add middleware ---
 logger.info("Creating FastAPI app instance and adding middleware...")
 app = FastAPI(title="Druv AI")
 
@@ -506,28 +504,25 @@ app.add_middleware(
 app.add_middleware(SessionMiddleware, secret_key=SESSION_SECRET)
 logger.info("FastAPI app created and middleware added.")
 
-# --- Define a function to protect your scheduled job endpoint ---
 async def verify_api_key(request: Request):
     api_key = request.headers.get("x-api-key")
     if not CRON_API_KEY or api_key != CRON_API_KEY:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or missing API Key for cron job.")
 
-# --- Create an endpoint for your scheduled job ---
 @app.post("/api/tasks/run-daily-job", tags=["Scheduled Tasks"], dependencies=[Depends(verify_api_key)])
 async def trigger_process_and_cache_jobs():
     from lc.job_processor import process_and_cache_jobs
     try:
         logger.info("Scheduler triggered: Starting daily job processing...")
         await process_and_cache_jobs()
-        logger.info("✅ Daily job processing finished successfully.")
+        logger.info(" Daily job processing finished successfully.")
         return {"status": "success", "message": "Job processing triggered successfully."}
     except Exception as e:
-        logger.error(f"🔥 Daily job processing failed: {e}")
+        logger.error(f" Daily job processing failed: {e}")
         raise HTTPException(status_code=500, detail=f"Job processing failed: {e}")
 
 # --- Add all your application routers ---
 logger.info("Including application routers...")
-# UNCOMMENT ALL YOUR ACTUAL app.include_router CALLS HERE:
 app.include_router(auth_router, prefix="/api/auth", tags=["User Authentication"])
 app.include_router(agent_router, prefix="/agent", tags=["Agent"])
 app.include_router(calendar_router, prefix="/api/calendar", tags=["Calendar"])
