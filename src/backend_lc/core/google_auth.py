@@ -1,3 +1,4 @@
+# core/google_auth.py
 import json
 import os
 from firebase_admin import firestore, auth
@@ -6,29 +7,21 @@ from google.auth.transport.requests import Request as GoogleAuthRequest
 from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
 
-# --- Load Secrets from Environment Variables (More Secure for Deployment) ---
-# In your Cloud Run service, you will set these variables.
-GOOGLE_SECRETS_JSON = os.environ.get("GOOGLE_CREDENTIALS")
-if not GOOGLE_SECRETS_JSON:
-    raise ValueError("CRITICAL: GOOGLE_CREDENTIALS environment variable is not set.")
+google_creds = os.environ.get("GOOGLE_CREDENTIALS")
+CLIENT_SECRETS_FILE =  json.loads(google_creds)
 
-# This is now a dictionary, not a file path
-CLIENT_SECRETS_DICT = json.loads(GOOGLE_SECRETS_JSON)
 
-# The Redirect URI should also be an environment variable
-REDIRECT_URI = os.environ.get("GOOGLE_REDIRECT_URI", 'http://127.0.0.1:8000/api/google/auth/callback')
-
+REDIRECT_URI = 'http://127.0.0.1:8000/api/google/auth/callback'
 
 SERVICE_SCOPES = {
     'calendar': ['https://www.googleapis.com/auth/calendar.events'],
     'gmail': ['https://www.googleapis.com/auth/gmail.modify'],
     'contacts': ['https://www.googleapis.com/auth/contacts.readonly']
-}
-
-db = firestore.client()
+}   
 
 def _get_credentials_for_user(user_id: str, service: str):
-    """Fetches a user's stored Google credentials from Firestore and refreshes if needed."""
+    """Fetches a user's stored Google credentials from Firestore."""
+    db = firestore.client()
     user_ref = db.collection('users').document(user_id)
     user_doc = user_ref.get()
 
@@ -41,35 +34,34 @@ def _get_credentials_for_user(user_id: str, service: str):
     if not creds_dict:
         raise ValueError(f"User has not authenticated with Google {service.capitalize()}.")
 
-    creds = Credentials.from_authorized_user_info(creds_dict)
+    creds = Credentials.from_authorized_user_info(creds_dict, SERVICE_SCOPES[service])
 
     if creds and creds.expired and creds.refresh_token:
-        print(f"Refreshing token for user {user_id}, service: {service}")
         creds.refresh(GoogleAuthRequest())
         user_ref.set({
             "google_credentials": {f"{service}_token": json.loads(creds.to_json())}
         }, merge=True)
-        print(f"Refreshed and saved new token for user {user_id}.")
+        print(f"Refreshed token for user {user_id} and service {service}")
 
     return creds
 
-def get_service_for_user(user_id: str, service_name: str, version: str):
-    """Builds a Google API service object for a specific user."""
-    creds = _get_credentials_for_user(user_id, service_name.lower())
-    return build(service_name, version, credentials=creds)
+def get_calendar_service(user_id: str):
+    creds = _get_credentials_for_user(user_id, "calendar")
+    return build('calendar', 'v3', credentials=creds)
+
+def get_gmail_service(user_id: str):
+    creds = _get_credentials_for_user(user_id, "gmail")
+    return build('gmail', 'v1', credentials=creds)
+
+def get_people_service(user_id: str):
+    creds = _get_credentials_for_user(user_id, "contacts")
+    return build('people', 'v1', credentials=creds)
 
 
 def get_google_auth_url(user_id: str, service: str):
     """Generates an auth URL with the user's ID embedded in the state."""
-    # --- THIS IS THE FIX ---
-    # Use from_client_config() to load from a dictionary instead of a file.
-    flow = Flow.from_client_config(
-        CLIENT_SECRETS_DICT,
-        scopes=SERVICE_SCOPES[service],
-        redirect_uri=REDIRECT_URI
-    )
-    # --- END OF FIX ---
-
+    # Ensure client_secrets is a dict, not a file path
+    flow = Flow.from_client_config(CLIENT_SECRETS_FILE, scopes=SERVICE_SCOPES[service], redirect_uri=REDIRECT_URI)
     authorization_url, state = flow.authorization_url(
         access_type='offline',
         prompt='consent',
@@ -83,19 +75,13 @@ def process_google_callback(code: str, state: str):
         user_id, service = state.split("::")
     except ValueError:
         raise ValueError("Invalid state parameter.")
-
-    # --- THIS IS THE FIX ---
-    # Also use from_client_config() here for consistency.
-    flow = Flow.from_client_config(
-        CLIENT_SECRETS_DICT,
-        scopes=SERVICE_SCOPES[service],
-        redirect_uri=REDIRECT_URI
-    )
-    # --- END OF FIX ---
-
+        
+    # Ensure client_secrets is a dict, not a file path
+    flow = Flow.from_client_config(CLIENT_SECRETS_FILE, scopes=SERVICE_SCOPES[service], redirect_uri=REDIRECT_URI)
     flow.fetch_token(code=code)
     credentials = flow.credentials
 
+    db = firestore.client()
     user_ref = db.collection('users').document(user_id)
     user_info = auth.get_user(user_id)
     

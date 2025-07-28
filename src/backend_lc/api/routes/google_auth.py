@@ -1,7 +1,8 @@
+#api/routes/google_auth.py
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import HTMLResponse
 from core.google_auth import get_google_auth_url, process_google_callback
-from api.routes.auth import User, get_current_user # Assumes auth.py exists
+from api.routes.auth import User, get_current_user 
 
 router = APIRouter()
 

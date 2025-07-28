@@ -1,13 +1,14 @@
+#api/routes/remainders.py
 import json
 import uuid
 from datetime import datetime, timedelta, time
 from typing import List, Optional
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Depends
 from pydantic import BaseModel, Field
 
-# Import the Google Calendar service getter
 from core.google_auth import get_calendar_service
+from api.routes.auth import User, get_current_user
 
 router = APIRouter()
 
@@ -15,7 +16,6 @@ router = APIRouter()
 REMINDERS_DB_FILE = "reminders.json"
 
 # --- Pydantic Models for Data Validation ---
-
 class Reminder(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     title: str
@@ -24,7 +24,6 @@ class Reminder(BaseModel):
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 # --- Helper Functions for File I/O ---
-
 def read_reminders() -> List[Reminder]:
     """Reads all reminders from the reminders.json file."""
     try:
@@ -40,38 +39,31 @@ def write_reminders(reminders: List[Reminder]):
         json.dump([r.dict() for r in reminders], f, indent=4, default=str)
 
 # --- API Endpoints for Reminder Management ---
-
 @router.post("/add", response_model=Reminder, status_code=status.HTTP_201_CREATED)
-def create_reminder(reminder: Reminder):
+def create_reminder(reminder: Reminder, current_user: User = Depends(get_current_user)):
     """
-    Creates a new reminder, saves it locally, AND adds it to Google Calendar.
+    Creates a new reminder, saves it locally, AND adds it to the authenticated user's Google Calendar.
     """
-    # 1. Save the reminder to our local JSON database
     reminders = read_reminders()
     reminders.append(reminder)
     write_reminders(reminders)
-    print(f"--- Reminder '{reminder.title}' saved locally. ---")
+    print(f"--- Reminder '{reminder.title}' saved locally for user {current_user.uid}. ---")
 
-    # 2. Create the corresponding event on Google Calendar
     try:
-        print(f"--- Adding reminder to Google Calendar... ---")
-        calendar_service = get_calendar_service()
+        print(f"--- Adding reminder to Google Calendar for user {current_user.uid}... ---")
+        calendar_service = get_calendar_service(user_id=current_user.uid)
         
-        # Events are created with a start and end time.
-        # For a reminder, we can make it a 30-minute event.
         event_body = {
             'summary': f"Reminder: {reminder.title}",
             'start': {
                 'dateTime': reminder.remind_at.isoformat(),
-                'timeZone': 'America/Chicago', # IMPORTANT: Should be user-configurable in a real app
+                'timeZone': 'America/Chicago',
             },
             'end': {
                 'dateTime': (reminder.remind_at + timedelta(minutes=30)).isoformat(),
                 'timeZone': 'America/Chicago',
             },
-            'reminders': {
-                'useDefault': True, # Use the user's default calendar notification settings
-            },
+            'reminders': { 'useDefault': True },
         }
         
         created_event = calendar_service.events().insert(
@@ -82,11 +74,7 @@ def create_reminder(reminder: Reminder):
         print(f"--- Google Calendar event created successfully. Event ID: {created_event.get('id')} ---")
 
     except Exception as e:
-        # If the calendar event fails, we still have the reminder saved locally.
-        # A real app might have retry logic or mark the reminder as "sync failed".
-        print(f"--- CRITICAL ERROR: Could not create Google Calendar event. {e} ---")
-        # We don't raise an HTTPException here because the reminder was still created successfully in our system.
-        # The frontend will still get a success response.
+        print(f"--- CRITICAL ERROR: Could not create Google Calendar event for user {current_user.uid}. {e} ---")
         pass
 
     return reminder
@@ -94,15 +82,12 @@ def create_reminder(reminder: Reminder):
 @router.get("/list", response_model=List[Reminder])
 def get_all_reminders():
     """Retrieves a list of all reminders."""
-    reminders = read_reminders()
-    # Sort by reminder date, soonest first
-    return reminders
+    return read_reminders()
 
 @router.delete("/delete/{reminder_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_reminder(reminder_id: str):
+def delete_reminder(reminder_id: str, current_user: User = Depends(get_current_user)):
     """
-    Deletes a reminder by its ID and also deletes the corresponding event from 
-    Google Calendar by searching for its title on the correct date.
+    Deletes a reminder and the corresponding event from the authenticated user's Google Calendar.
     """
     reminders = read_reminders()
     reminder_to_delete = next((r for r in reminders if r.id == reminder_id), None)
@@ -110,17 +95,14 @@ def delete_reminder(reminder_id: str):
     if not reminder_to_delete:
         raise HTTPException(status_code=404, detail="Reminder not found")
 
-    # --- UPDATED: New logic to find and delete the event by title and date ---
     try:
-        print(f"--- Attempting to find and delete Google Calendar event for: '{reminder_to_delete.title}' ---")
-        calendar_service = get_calendar_service()
+        print(f"--- Attempting to delete Google Calendar event for user: {current_user.uid} ---")
+        calendar_service = get_calendar_service(user_id=current_user.uid)
 
-        # Define the time range for the search (the entire day of the reminder)
         reminder_date = reminder_to_delete.remind_at.date()
-        time_min = datetime.combine(reminder_date, time.min).isoformat() + 'Z' # Z for UTC
-        time_max = datetime.combine(reminder_date, time.max).isoformat() + 'Z' # Z for UTC
+        time_min = datetime.combine(reminder_date, time.min).isoformat() + 'Z'
+        time_max = datetime.combine(reminder_date, time.max).isoformat() + 'Z'
 
-        # List all events on that day
         events_result = calendar_service.events().list(
             calendarId='primary',
             timeMin=time_min,
@@ -130,8 +112,7 @@ def delete_reminder(reminder_id: str):
         ).execute()
         events = events_result.get('items', [])
 
-        # Find the specific event by matching the summary (title)
-        event_to_delete_calendar = None # Use a different variable name to avoid shadowing
+        event_to_delete_calendar = None
         expected_title = f"Reminder: {reminder_to_delete.title}"
         for event in events:
             if event.get('summary') == expected_title:
@@ -139,19 +120,16 @@ def delete_reminder(reminder_id: str):
                 break
         
         if event_to_delete_calendar:
-            # If we found the event, delete it using its ID
             event_id = event_to_delete_calendar['id']
             print(f"--- Found matching event. Deleting event ID: {event_id} ---")
             calendar_service.events().delete(calendarId='primary', eventId=event_id).execute()
             print("--- Google Calendar event deleted successfully. ---")
         else:
-            print(f"--- INFO: No matching Google Calendar event found for '{expected_title}' on {reminder_date}. It might have been deleted already. ---")
+            print(f"--- INFO: No matching Google Calendar event found for '{expected_title}' on {reminder_date}. ---")
 
     except Exception as e:
-        print(f"--- WARNING: An unexpected error occurred while deleting calendar event. {e} ---")
+        print(f"--- WARNING: An unexpected error occurred while deleting calendar event for user {current_user.uid}. {e} ---")
 
-    # Finally, remove the reminder from our local database regardless of calendar success
     reminders.remove(reminder_to_delete)
     write_reminders(reminders)
-    
     return
