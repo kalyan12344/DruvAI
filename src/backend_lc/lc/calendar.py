@@ -129,9 +129,66 @@ def create_event(user_id: str, description: str) -> str:
     service.events().insert(calendarId="primary", body=body).execute()
     return f"✅ '{title}' created on {date}{' at '+time if time!='00:00' else ''}"
 
+
+class RangeArgs(BaseModel):
+    user_id: str = Field(..., description="The ID of the user for whom to find events.")
+    request: str = Field(..., description="A natural language date range, like 'next week' or 'June 1-5'.")
+
+@tool(args_schema=RangeArgs)
+def get_events_in_range(user_id: str, request: str) -> str:
+    """Interpret a natural date range and list events inside it for a specific user."""
+    try:
+        # Get the service for the correct user
+        service = get_calendar_service(user_id=user_id)
+        
+        # Ask the LLM to parse the date range
+        prompt = f"""Today is {TODAY}.
+Extract start_date and end_date (YYYY-MM-DD) from the text below.
+
+"{request}"
+
+Respond ONLY as JSON:
+{{"start_date":"YYYY-MM-DD","end_date":"YYYY-MM-DD"}}
+"""
+        response_content = get_llm().invoke(prompt).content.strip()
+        
+        dates = json.loads(response_content)
+        s, e = dates["start_date"], dates["end_date"]
+        
+        # Create timezone-aware datetime objects for the query
+        start_dt = datetime.strptime(f"{s} 00:00:00", "%Y-%m-%d %H:%M:%S").astimezone(CHICAGO_TZ)
+        end_dt = datetime.strptime(f"{e} 23:59:59", "%Y-%m-%d %H:%M:%S").astimezone(CHICAGO_TZ)
+
+        items = service.events().list(
+            calendarId="primary",
+            timeMin=start_dt.isoformat(),
+            timeMax=end_dt.isoformat(),
+            singleEvents=True, 
+            orderBy="startTime"
+        ).execute().get("items", [])
+        
+        if not items:
+            return f"No events found between {s} and {e}."
+        
+        # Format the output string
+        event_strings = []
+        for it in items:
+            start_time = it['start'].get('dateTime', it['start'].get('date'))
+            summary = it.get('summary', '(No title)')
+            event_strings.append(f"{start_time} – {summary}")
+
+        return "📅 Events: " + " | ".join(event_strings)
+        
+    except Exception as e:
+        error_msg = f"Error processing date range '{request}': {str(e)}"
+        print(error_msg)
+        return error_msg
+
 class DeleteArgs(BaseModel):
     user_id: str = Field(..., description="The ID of the user for whom to delete the event.")
     instruction: str = Field(..., description="Instruction to delete an event, e.g., \"'Event Title' on YYYY-MM-DD\"")
+
+
 
 @tool(args_schema=DeleteArgs)
 def delete_event(user_id: str, instruction: str) -> str:
