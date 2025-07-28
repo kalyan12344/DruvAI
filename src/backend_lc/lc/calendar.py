@@ -218,3 +218,30 @@ def delete_event(user_id: str, instruction: str) -> str:
         return f"🗑️ Successfully deleted event: '{event_to_delete.get('summary', final_title)}' on {date_str}."
     else:
         return f"❌ No event found with the exact title '{final_title}' on {date_str} to delete."
+
+
+@tool
+def _parse_date_fallback(request: str) -> dict:
+    """Fallback date parsing for common expressions when LLM fails."""
+    today = datetime.now(CHICAGO_TZ).date()
+    request_lower = request.lower()
+
+    if "today" in request_lower:
+        start_date = end_date = today
+    elif "tomorrow" in request_lower:
+        start_date = end_date = today + timedelta(days=1)
+    elif "this week" in request_lower:
+        start_date = today - timedelta(days=(today.weekday() + 1) % 7)
+        end_date = start_date + timedelta(days=6)
+    elif "next week" in request_lower:
+        start_of_this_week = today - timedelta(days=(today.weekday() + 1) % 7)
+        start_date = start_of_this_week + timedelta(days=7)
+        end_date = start_date + timedelta(days=6)
+    else:
+        # Default if unable to parse
+        start_date = end_date = today
+
+    return {
+        "start_date": start_date.strftime('%Y-%m-%d'),
+        "end_date": end_date.strftime('%Y-%m-%d')
+    }
