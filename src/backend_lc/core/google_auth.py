@@ -12,7 +12,7 @@ if not google_creds_json:
     raise ValueError("The GOOGLE_CREDENTIALS environment variable is not set.")
 CLIENT_SECRETS_FILE = json.loads(google_creds_json)
 
-REDIRECT_URI = 'http://127.0.0.1:8000/api/google/auth/callback'
+REDIRECT_URI = 'https://druv-backend-338967818277.us-central1.run.app/api/google/auth/callback'
 SERVICE_SCOPES = {
     'calendar': ['https://www.googleapis.com/auth/calendar.events'],
     'gmail': ['https://www.googleapis.com/auth/gmail.modify'],

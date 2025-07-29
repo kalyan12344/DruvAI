@@ -1,165 +1,38 @@
-/* --- Main container for the entire tasks view --- */
+/* This file ONLY controls the overall page layout and widget containers */
+
 .tasks-page-container {
-    width: 100%;
-    height: 100%;
+
+    height: 100vh;
     padding: 30px;
     overflow-y: auto;
     box-sizing: border-box;
+    display: flex;
+    flex-wrap: wrap;
+
 }
 
-/* --- Flex layout for the widgets --- */
 .tasks-layout {
+
+
     display: flex;
     flex-direction: row;
-    flex-wrap: wrap;
-    /* Allows widgets to wrap on smaller screens */
     gap: 30px;
+    margin-left: 300px;
     align-items: flex-start;
-    /* Aligns widgets to the top */
+    flex-wrap: wrap;
 }
 
-/* --- Styling for each individual widget card --- */
-
-
-/* --- NEW: Header section within a widget --- */
-.widget-header {
+/* This creates the flexible "card" that each component lives inside */
+.task-widget {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+    flex-direction: column;
+    height: 500px;
+    flex: 1;
+    min-width: 450px;
+
+    /* These styles are taken from your original files to preserve the look */
+
+    color: #EAEAEA;
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
 }
-
-.widget-header h2 {
-    font-size: 20px;
-    font-weight: 600;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: var(--off-white);
-}
-
-/* --- NEW: Content area for lists, enabling scroll --- */
-.widget-content {
-    flex-grow: 1;
-    overflow-y: auto;
-    padding-right: 10px;
-    /* Space for scrollbar */
-}
-
-/* --- NEW: Styling for individual items in a list --- */
-.task-list-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 4px;
-    border-bottom: 1px solid #2a2a2a;
-    cursor: pointer;
-}
-
-.task-list-item:last-child {
-    border-bottom: none;
-}
-
-.task-list-item .item-icon {
-    color: var(--medium-gray);
-}
-
-.task-list-item .item-text {
-    flex-grow: 1;
-}
-
-.item-main-text {
-    color: var(--off-white);
-    font-size: 14px;
-}
-
-.item-sub-text {
-    color: var(--medium-gray);
-    font-size: 12px;
-}
-
-/* --- NEW: Specific styles for widget controls --- */
-.widget-action-btn {
-    background-color: #1a1a1a;
-    border: 1px solid #333;
-    color: var(--medium-gray);
-    border-radius: 8px;
-    padding: 6px 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-}
-
-.widget-action-btn:hover {
-    border-color: #555;
-    color: var(--off-white);
-}
-
-.widget-search-input {
-    width: 100%;
-    background-color: #1a1a1a;
-    border: 1px solid #333;
-    color: var(--off-white);
-    border-radius: 8px;
-    padding: 8px 12px;
-    font-size: 14px;
-    margin-bottom: 20px;
-}
-
-.widget-search-input:focus {
-    outline: none;
-    border-color: var(--subtle-gold);
-}
-
-.widget-add-btn {
-    width: 100%;
-    background-color: #1a1a1a;
-    border: 1px solid #333;
-    color: var(--medium-gray);
-    border-radius: 8px;
-    padding: 10px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    margin-top: auto;
-    /* Pushes the button to the bottom */
-    transition: all 0.2s ease;
-}
-
-.widget-add-btn:hover {
-    background-color: #222;
-    border-color: #555;
-    color: var(--off-white);
-}
-
-
-/* --- NEW: Custom Scrollbar Styling --- */
-.widget-content::-webkit-scrollbar {
-    width: 6px;
-}
-
-.widget-content::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.widget-content::-webkit-scrollbar-thumb {
-    background-color: #333;
-    border-radius: 10px;
-}
-
-.widget-content::-webkit-scrollbar-thumb:hover {
-    background-color: #555;
-}
-
-
-/* --- Assuming you have these variables in a global CSS file (like index.css) --- */
-/*
-:root {
-    --off-white: #f0f0f0;
-    --medium-gray: #a0a0a0;
-    --subtle-gold: #d4af37;
-}
-*/

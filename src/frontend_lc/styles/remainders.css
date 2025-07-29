@@ -2,18 +2,17 @@
 
 
 .reminders-widget {
-    margin-left: 20px;
-    margin-top: 20px;
     display: flex;
     flex-direction: column;
     padding: 24px;
-    background-color: var(--black);
-    border: 1px solid var(--border-color);
     color: var(--text-primary);
-    width: 500px;
-    height: 500px;
+    width: 600px;
+    height: 100%;
+    background-color: #000000a4;
+    border: 1px solid #2e2e2e;
     border-radius: 20px;
 }
+
 
 .widget-header {
     display: flex;

@@ -19,20 +19,20 @@
 /* --- Main Page Container --- */
 .notes-page-container {
     display: flex;
-    height: 500px;
-    width: 700px;
-    margin: 40px 300px;
-    background-color: var(--black);
+    height: 100%;
+    width: 600px;
     color: var(--text-primary);
     font-family: 'Inter', sans-serif;
-    border-radius: 20px;
-    border: 1px solid var(--border-color);
     overflow: hidden;
+    background-color: #000000a4;
+    border: 1px solid #2e2e2e;
+    border-radius: 20px;
+
 }
 
 /* --- Left Pane: Note List --- */
 .notes-list-pane {
-    width: 250px;
+    width: 170px;
     flex-shrink: 0;
     border-right: 1px solid var(--border-color);
     display: flex;

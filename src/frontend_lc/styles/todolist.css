@@ -19,380 +19,374 @@
     --priority-low: #4da6ff;
 }
 
-.tasks-page {
-    margin-left: 280px;
-}
+
 
 /* --- V2 Widget Container --- */
 .todo-widget-v2 {
-    margin-left: 20px;
-    margin-top: 20px;
     display: flex;
     flex-direction: column;
     padding: 24px;
-    background-color: var(--black);
-    border: 1px solid var(--border-color);
-    min-height: 400px;
     color: var(--text-primary);
-    width: 500px;
+    width: 600px;
     height: 500px;
+    background-color: #000000a4;
+    border: 1px solid #2e2e2e;
     border-radius: 20px;
-}
 
-/* --- V2 Header & Search --- */
-.widget-header-v2 {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
+    /* --- V2 Header & Search --- */
+    .widget-header-v2 {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
 
-.widget-title {
-    font-family: 'Poppins', sans-serif;
-    font-size: 1.25rem;
-    font-weight: 500;
-}
+    .widget-title {
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.25rem;
+        font-weight: 500;
+    }
 
-.search-container {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
+    .search-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
 
-.search-icon {
-    position: absolute;
-    right: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-secondary);
-}
+    .search-icon {
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-secondary);
+    }
 
-.search-input {
-    background-color: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    color: var(--text-primary);
-    padding: 10px 14px 10px 40px;
-    font-size: 0.9rem;
-    outline: none;
-    transition: all 0.2s ease;
-}
+    .search-input {
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        color: var(--text-primary);
+        padding: 10px 14px 10px 40px;
+        font-size: 0.9rem;
+        outline: none;
+        transition: all 0.2s ease;
+    }
 
-.search-input:focus {
-    border-color: var(--subtle-gold);
-    background-color: rgba(212, 175, 55, 0.05);
-}
+    .search-input:focus {
+        border-color: var(--subtle-gold);
+        background-color: rgba(212, 175, 55, 0.05);
+    }
 
-/* --- V2 Toolbar --- */
-.widget-toolbar {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid var(--border-color);
-}
+    /* --- V2 Toolbar --- */
+    .widget-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--border-color);
+    }
 
-.add-task-button,
-.more-options-button {
-    background-color: var(--black);
-    border: 1px solid var(--border-color);
-    color: var(--text-secondary);
-    width: 28px;
-    height: 28px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
+    .add-task-button,
+    .more-options-button {
+        background-color: var(--black);
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
 
-.add-task-button:hover,
-.more-options-button:hover {
-    border-color: var(--subtle-gold);
-    color: var(--subtle-gold);
-    background-color: rgba(212, 175, 55, 0.1);
-}
+    .add-task-button:hover,
+    .more-options-button:hover {
+        border-color: var(--subtle-gold);
+        color: var(--subtle-gold);
+        background-color: rgba(212, 175, 55, 0.1);
+    }
 
-/* --- V2 Filter Dropdown --- */
-.filter-dropdown-container {
-    position: relative;
-}
+    /* --- V2 Filter Dropdown --- */
+    .filter-dropdown-container {
+        position: relative;
+    }
 
-.filter-dropdown {
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background-color: var(--black);
-    border: 1px solid var(--border-color);
-    padding: 8px 14px;
-    border-radius: 8px;
-    font-weight: 500;
-    color: var(--text-secondary);
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
+    .filter-dropdown {
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background-color: var(--black);
+        border: 1px solid var(--border-color);
+        padding: 8px 14px;
+        border-radius: 8px;
+        font-weight: 500;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
 
-.filter-dropdown:hover {
-    border-color: var(--subtle-gold);
-    color: var(--subtle-gold);
-    background-color: rgba(212, 175, 55, 0.1);
-}
+    .filter-dropdown:hover {
+        border-color: var(--subtle-gold);
+        color: var(--subtle-gold);
+        background-color: rgba(212, 175, 55, 0.1);
+    }
 
-.filter-dropdown:hover svg path {
-    stroke: var(--subtle-gold);
-}
+    .filter-dropdown:hover svg path {
+        stroke: var(--subtle-gold);
+    }
 
-.filter-dropdown-menu {
-    position: absolute;
-    top: calc(100% + 5px);
-    left: 0;
-    z-index: 10;
-    background-color: #191919;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 6px;
-    width: 120px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
+    .filter-dropdown-menu {
+        position: absolute;
+        top: calc(100% + 5px);
+        left: 0;
+        z-index: 10;
+        background-color: #191919;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 6px;
+        width: 120px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
 
-.dropdown-item {
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-size: 12px;
-    cursor: pointer;
-}
+    .dropdown-item {
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        cursor: pointer;
+    }
 
-.dropdown-item:hover {
-    background-color: var(--subtle-gold);
-    color: var(--black);
-}
+    .dropdown-item:hover {
+        background-color: var(--subtle-gold);
+        color: var(--black);
+    }
 
-.more-options-button {
-    margin-left: auto;
-}
-
-
-/* --- V2 Add Task Form (Conditional) --- */
-.add-task-form-v2 {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 16px 4px 10px 10px;
-    overflow: hidden;
-    height: 60px;
-    margin-top: 10px;
-}
-
-.main-input-wrapper input {
-    width: 100%;
-    background: transparent;
-    border: none;
-    margin-top: 12px;
-    padding-bottom: 5px;
-    color: var(--text-primary);
-    font-size: smaller;
-    outline: none;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.main-input-wrapper input:focus {
-    border-bottom: 1px solid var(--subtle-gold);
-}
-
-.sub-inputs-wrapper {
-    margin-bottom: 4px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.date-input-container,
-.priority-input-container {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background-color: var(--black);
-    border: 1px solid var(--border-color);
-    padding: 6px 10px;
-    border-radius: 6px;
-    color: var(--text-secondary);
-    font-size: 0.85rem;
-}
-
-.date-input,
-.priority-select {
-    background: transparent;
-    border: none;
-    outline: none;
-    color: var(--text-secondary);
-    font-family: 'Inter', sans-serif;
-    font-size: 0.85rem;
-}
-
-.priority-select {
-    cursor: pointer;
-}
-
-.date-input::-webkit-calendar-picker-indicator {
-    filter: invert(0.6);
-}
-
-.submit-task-button {
-    margin-left: auto;
-    color: var(--text-secondary);
-    background-color: var(--black);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    padding: 8px 16px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.submit-task-button:hover {
-    color: var(--subtle-gold);
-    border: 1px solid var(--subtle-gold);
-    background-color: rgba(212, 175, 55, 0.1);
-}
-
-/* --- V2 Task List --- */
-.task-list-v2 {
-    flex-grow: 1;
-    overflow-y: auto;
-    margin-top: 10px;
-}
-
-.task-item-v2 {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 14px 4px;
-    border-bottom: 1px solid var(--border-color);
-    cursor: pointer;
-}
-
-.task-item-v2:last-child {
-    border-bottom: none;
-}
-
-.round-checkbox {
-    width: 18px;
-    height: 18px;
-    border: 2px solid var(--text-secondary);
-    border-radius: 50%;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-}
-
-.task-item-v2:hover .round-checkbox {
-    border-color: var(--subtle-gold);
-}
-
-.round-checkbox.completed {
-    background-color: var(--subtle-gold);
-    border-color: var(--subtle-gold);
-}
-
-.round-checkbox .lucide-check {
-    color: var(--black);
-}
-
-.task-details {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    align-items: flex-start;
-}
-
-.task-text-v2 {
-    color: var(--text-primary);
-    transition: color 0.2s ease;
-    font-size: 14px;
-}
-
-.task-text-v2.completed {
-    color: var(--text-secondary);
-    text-decoration: line-through;
-}
-
-.task-end-date {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-    background-color: rgba(255, 255, 255, 0.05);
-    padding: 2px 8px;
-    border-radius: 6px;
-    font-size: 12px;
-}
-
-.task-end-date .lucide-calendar {
-    flex-shrink: 0;
-}
-
-.priority-indicator {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    margin-left: auto;
-}
-
-.priority-high {
-    background-color: var(--priority-high);
-}
-
-.priority-medium {
-    background-color: var(--priority-medium);
-}
-
-.priority-low {
-    background-color: var(--priority-low);
-}
+    .more-options-button {
+        margin-left: auto;
+    }
 
 
-/* --- NEW: Delete Button Styles --- */
-.delete-task-btn-v2 {
-    background: transparent;
-    border: none;
-    color: var(--text-secondary);
-    cursor: pointer;
-    opacity: 0;
-    /* Hidden by default */
-    transition: opacity 0.2s ease, color 0.2s ease;
-    padding: 4px;
-    margin-left: 8px;
-    /* Add some space from the priority indicator */
-}
+    /* --- V2 Add Task Form (Conditional) --- */
+    .add-task-form-v2 {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 16px 4px 10px 10px;
+        overflow: hidden;
+        height: 60px;
+        margin-top: 10px;
+    }
 
-.task-item-v2:hover .delete-task-btn-v2 {
-    opacity: 0.6;
-    /* Becomes visible on hover of the task item */
-}
+    .main-input-wrapper input {
+        width: 100%;
+        background: transparent;
+        border: none;
+        margin-top: 12px;
+        padding-bottom: 5px;
+        color: var(--text-primary);
+        font-size: smaller;
+        outline: none;
+        border-bottom: 1px solid var(--border-color);
+    }
 
-.delete-task-btn-v2:hover {
-    opacity: 1;
-    color: var(--priority-high);
-    /* Use the high priority red color for delete */
-}
+    .main-input-wrapper input:focus {
+        border-bottom: 1px solid var(--subtle-gold);
+    }
 
-/* --- Centered State for Loading/Error --- */
-.centered-state {
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-secondary);
-    height: 100%;
-}
+    .sub-inputs-wrapper {
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
 
-.centered-state.error {
-    color: var(--priority-high);
-}
+    .date-input-container,
+    .priority-input-container {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background-color: var(--black);
+        border: 1px solid var(--border-color);
+        padding: 6px 10px;
+        border-radius: 6px;
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+    }
+
+    .date-input,
+    .priority-select {
+        background: transparent;
+        border: none;
+        outline: none;
+        color: var(--text-secondary);
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+    }
+
+    .priority-select {
+        cursor: pointer;
+    }
+
+    .date-input::-webkit-calendar-picker-indicator {
+        filter: invert(0.6);
+    }
+
+    .submit-task-button {
+        margin-left: auto;
+        color: var(--text-secondary);
+        background-color: var(--black);
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        padding: 8px 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .submit-task-button:hover {
+        color: var(--subtle-gold);
+        border: 1px solid var(--subtle-gold);
+        background-color: rgba(212, 175, 55, 0.1);
+    }
+
+    /* --- V2 Task List --- */
+    .task-list-v2 {
+        flex-grow: 1;
+        overflow-y: auto;
+        margin-top: 10px;
+    }
+
+    .task-item-v2 {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 14px 4px;
+        border-bottom: 1px solid var(--border-color);
+        cursor: pointer;
+    }
+
+    .task-item-v2:last-child {
+        border-bottom: none;
+    }
+
+    .round-checkbox {
+        width: 18px;
+        height: 18px;
+        border: 2px solid var(--text-secondary);
+        border-radius: 50%;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+    }
+
+    .task-item-v2:hover .round-checkbox {
+        border-color: var(--subtle-gold);
+    }
+
+    .round-checkbox.completed {
+        background-color: var(--subtle-gold);
+        border-color: var(--subtle-gold);
+    }
+
+    .round-checkbox .lucide-check {
+        color: var(--black);
+    }
+
+    .task-details {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        align-items: flex-start;
+    }
+
+    .task-text-v2 {
+        color: var(--text-primary);
+        transition: color 0.2s ease;
+        font-size: 14px;
+    }
+
+    .task-text-v2.completed {
+        color: var(--text-secondary);
+        text-decoration: line-through;
+    }
+
+    .task-end-date {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        background-color: rgba(255, 255, 255, 0.05);
+        padding: 2px 8px;
+        border-radius: 6px;
+        font-size: 12px;
+    }
+
+    .task-end-date .lucide-calendar {
+        flex-shrink: 0;
+    }
+
+    .priority-indicator {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        margin-left: auto;
+    }
+
+    .priority-high {
+        background-color: var(--priority-high);
+    }
+
+    .priority-medium {
+        background-color: var(--priority-medium);
+    }
+
+    .priority-low {
+        background-color: var(--priority-low);
+    }
+
+
+    /* --- NEW: Delete Button Styles --- */
+    .delete-task-btn-v2 {
+        background: transparent;
+        border: none;
+        color: var(--text-secondary);
+        cursor: pointer;
+        opacity: 0;
+        /* Hidden by default */
+        transition: opacity 0.2s ease, color 0.2s ease;
+        padding: 4px;
+        margin-left: 8px;
+        /* Add some space from the priority indicator */
+    }
+
+    .task-item-v2:hover .delete-task-btn-v2 {
+        opacity: 0.6;
+        /* Becomes visible on hover of the task item */
+    }
+
+    .delete-task-btn-v2:hover {
+        opacity: 1;
+        color: var(--priority-high);
+        /* Use the high priority red color for delete */
+    }
+
+    /* --- Centered State for Loading/Error --- */
+    .centered-state {
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-secondary);
+        height: 100%;
+    }
+
+    .centered-state.error {
+        color: var(--priority-high);
+    }

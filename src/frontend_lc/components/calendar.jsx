@@ -5,7 +5,7 @@ import { SiGooglecalendar } from "react-icons/si";
 import { PiMicrosoftOutlookLogoLight } from "react-icons/pi";
 import { motion, AnimatePresence } from "framer-motion";
 import GCIMG from "../assets/Google_Calendar_icon.svg";
-import { useAuth } from '../context/authcontext'; // Assumes you have this hook
+import { useAuth } from '../context/authcontext';
 import "../styles/calendar.css";
 
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -18,48 +18,51 @@ const Calendar = () => {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [events, setEvents] = useState({});
     const [loading, setLoading] = useState(true);
-    const [connections, setConnections] = useState({});
+    const [connectionStatus, setConnectionStatus] = useState(null);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const { getAuthToken } = useAuth();
 
     const fetchInitialData = async () => {
         setLoading(true);
+        setEvents({}); // Clear previous events
         try {
             const token = await getAuthToken();
             if (!token) throw new Error("User not authenticated");
             const headers = { 'Authorization': `Bearer ${token}` };
 
-            const [statusResponse, eventsResponse] = await Promise.all([
-                axios.get("https://druv-backend-338967818277.us-central1.run.app/api/calendar/status", { headers }),
-                axios.get("https://druv-backend-338967818277.us-central1.run.app/api/calendar/events", { headers }),
-            ]);
+            // 1. First, check the connection status
+            const statusResponse = await axios.get("https://druv-backend-338967818277.us-central1.run.app/api/calendar/status", { headers });
+            console.log(statusResponse)
+            const googleStatus = statusResponse.data.google || { connected: false };
+            setConnectionStatus(googleStatus);
 
-            setConnections(statusResponse.data.google || {});
-
-            const eventsByDate = {};
-            if (Array.isArray(eventsResponse.data)) {
-                eventsResponse.data.forEach((event) => {
-                    const eventDate = new Date(event.start.dateTime || `${event.start.date}T00:00:00`);
-                    const dateKey = eventDate.toDateString();
-                    if (!eventsByDate[dateKey]) {
-                        eventsByDate[dateKey] = { allDay: [], timed: [] };
-                    }
-                    const eventWithSource = { ...event, source: 'google' };
-                    if (event.start.dateTime) {
-                        eventsByDate[dateKey].timed.push(eventWithSource);
-                    } else {
-                        eventsByDate[dateKey].allDay.push(eventWithSource);
-                    }
-                });
+            // 2. ONLY if connected, fetch the events
+            if (googleStatus.connected) {
+                const eventsResponse = await axios.get("https://druv-backend-338967818277.us-central1.run.app/api/calendar/events", { headers });
+                const eventsByDate = {};
+                if (Array.isArray(eventsResponse.data)) {
+                    eventsResponse.data.forEach((event) => {
+                        const eventDate = new Date(event.start.dateTime || `${event.start.date}T00:00:00`);
+                        const dateKey = eventDate.toDateString();
+                        if (!eventsByDate[dateKey]) {
+                            eventsByDate[dateKey] = { allDay: [], timed: [] };
+                        }
+                        const eventWithSource = { ...event, source: 'google' };
+                        if (event.start.dateTime) {
+                            eventsByDate[dateKey].timed.push(eventWithSource);
+                        } else {
+                            eventsByDate[dateKey].allDay.push(eventWithSource);
+                        }
+                    });
+                }
+                for (const dateKey in eventsByDate) {
+                    eventsByDate[dateKey].timed.sort((a, b) => new Date(a.start.dateTime) - new Date(b.start.dateTime));
+                }
+                setEvents(eventsByDate);
             }
-
-            for (const dateKey in eventsByDate) {
-                eventsByDate[dateKey].timed.sort((a, b) => new Date(a.start.dateTime) - new Date(b.start.dateTime));
-            }
-            setEvents(eventsByDate);
-
         } catch (err) {
             console.error("Error fetching initial data:", err);
+            setConnectionStatus({ connected: false }); // Assume not connected on error
         } finally {
             setLoading(false);
         }
@@ -75,20 +78,17 @@ const Calendar = () => {
             const token = await getAuthToken();
             if (!token) throw new Error("User not authenticated");
 
-            // 1. Get the secure auth URL from the backend
             const response = await axios.get(`https://druv-backend-338967818277.us-central1.run.app/api/google/auth/login-url?service=${provider}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const { authorization_url } = response.data;
 
-            // 2. Open the popup with the received URL
             const popup = window.open(authorization_url, `${provider}-auth-popup`, 'width=600,height=700');
 
-            // 3. Check for popup closure to refresh data
             const checkPopupClosed = setInterval(() => {
                 if (!popup || popup.closed) {
                     clearInterval(checkPopupClosed);
-                    fetchInitialData(); // Re-fetch all data to update UI
+                    fetchInitialData();
                 }
             }, 1000);
         } catch (error) {
@@ -113,8 +113,8 @@ const Calendar = () => {
             <h2>Calendar</h2>
             <div className="calendar-actions">
                 <div className="connected-accounts">
-                    {connections.connected && (
-                        <img src={GCIMG} style={{ width: "24px", height: "24px" }} className="icon" title={`Google Calendar Connected: ${connections.user_email}`} />
+                    {connectionStatus?.connected && (
+                        <img src={GCIMG} style={{ width: "24px", height: "24px" }} className="icon" title={`Google Calendar Connected: ${connectionStatus.user_email}`} />
                     )}
 
                     <div className="action-btn-wrapper">
@@ -129,7 +129,7 @@ const Calendar = () => {
                                     animate={{ opacity: 1, y: 0, scale: 1 }}
                                     exit={{ opacity: 0, y: -10, scale: 0.95 }}
                                 >
-                                    <button onClick={() => handleConnectCalendar('calendar')} disabled={connections.connected}>
+                                    <button onClick={() => handleConnectCalendar('calendar')} disabled={connectionStatus?.connected}>
                                         <SiGooglecalendar /> Connect Google Calendar
                                     </button>
                                     <button onClick={() => alert("Outlook integration coming soon!")} disabled>
@@ -229,15 +229,28 @@ const Calendar = () => {
         );
     };
 
+    const renderConnectPrompt = () => (
+        <div className="centered-state">
+            <div className="connect-prompt">
+
+                <h3>Connect your Calendar</h3>
+                <p>See all your events in one place by connecting your Calendars.</p>
+
+            </div>
+        </div>
+    );
+
     return (
         <div className="calendar-container">
             {renderHeader()}
             {loading ? (
-                <div className="centered-state">Loading Calendar...</div>
-            ) : (
+                <div className="centered-state">Loading...</div>
+            ) : connectionStatus?.connected ? (
                 <AnimatePresence mode="wait">
                     {view === 'month' ? renderMonthView() : renderDayView()}
                 </AnimatePresence>
+            ) : (
+                renderConnectPrompt()
             )}
         </div>
     );
