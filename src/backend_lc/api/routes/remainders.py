@@ -1,135 +1,99 @@
-#api/routes/remainders.py
-import json
+# api/routes/remainders.py
 import uuid
-from datetime import datetime, timedelta, time
-from typing import List, Optional
+from datetime import datetime
+from typing import List
 
 from fastapi import APIRouter, HTTPException, status, Depends
 from pydantic import BaseModel, Field
+from firebase_admin import firestore
 
 from core.google_auth import get_calendar_service
 from api.routes.auth import User, get_current_user
 
 router = APIRouter()
 
-# --- Data Storage ---
-REMINDERS_DB_FILE = "reminders.json"
-
-# --- Pydantic Models for Data Validation ---
+# --- Pydantic Model ---
 class Reminder(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     title: str
     remind_at: datetime
-    status: str = "Pending" # Pending, Completed
+    status: str = "Pending"
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
-# --- Helper Functions for File I/O ---
-def read_reminders() -> List[Reminder]:
-    """Reads all reminders from the reminders.json file."""
-    try:
-        with open(REMINDERS_DB_FILE, 'r') as f:
-            reminders_data = json.load(f)
-            return [Reminder(**r) for r in reminders_data]
-    except (FileNotFoundError, json.JSONDecodeError):
-        return []
+# --- API Endpoints using Firestore ---
 
-def write_reminders(reminders: List[Reminder]):
-    """Writes the full list of reminders to the reminders.json file."""
-    with open(REMINDERS_DB_FILE, 'w') as f:
-        json.dump([r.dict() for r in reminders], f, indent=4, default=str)
-
-# --- API Endpoints for Reminder Management ---
 @router.post("/add", response_model=Reminder, status_code=status.HTTP_201_CREATED)
 def create_reminder(reminder: Reminder, current_user: User = Depends(get_current_user)):
     """
-    Creates a new reminder, saves it locally, AND adds it to the authenticated user's Google Calendar.
+    Creates a new reminder in Firestore under the user's document AND adds it to their Google Calendar.
     """
-    reminders = read_reminders()
-    reminders.append(reminder)
-    write_reminders(reminders)
-    print(f"--- Reminder '{reminder.title}' saved locally for user {current_user.uid}. ---")
-
+    db = firestore.client()
     try:
-        print(f"--- Adding reminder to Google Calendar for user {current_user.uid}... ---")
+        # Save reminder to the user's 'reminders' subcollection in Firestore
+        reminder_ref = db.collection('users').document(current_user.uid).collection('reminders').document(reminder.id)
+        reminder_ref.set(reminder.dict())
+        print(f"--- Reminder '{reminder.title}' saved to Firestore for user {current_user.uid}. ---")
+
+        # Add the corresponding event to Google Calendar
         calendar_service = get_calendar_service(user_id=current_user.uid)
-        
         event_body = {
             'summary': f"Reminder: {reminder.title}",
-            'start': {
-                'dateTime': reminder.remind_at.isoformat(),
-                'timeZone': 'America/Chicago',
-            },
-            'end': {
-                'dateTime': (reminder.remind_at + timedelta(minutes=30)).isoformat(),
-                'timeZone': 'America/Chicago',
-            },
-            'reminders': { 'useDefault': True },
+            'start': {'dateTime': reminder.remind_at.isoformat(), 'timeZone': 'America/Chicago'},
+            'end': {'dateTime': (reminder.remind_at + timedelta(minutes=30)).isoformat(), 'timeZone': 'America/Chicago'},
+            'reminders': {'useDefault': True},
         }
-        
-        created_event = calendar_service.events().insert(
-            calendarId='primary', 
-            body=event_body
-        ).execute()
-        
-        print(f"--- Google Calendar event created successfully. Event ID: {created_event.get('id')} ---")
+        calendar_service.events().insert(calendarId='primary', body=event_body).execute()
+        print(f"--- Google Calendar event created successfully. ---")
 
     except Exception as e:
-        print(f"--- CRITICAL ERROR: Could not create Google Calendar event for user {current_user.uid}. {e} ---")
-        pass
+        print(f"--- CRITICAL ERROR: {e} ---")
+        raise HTTPException(status_code=500, detail=str(e))
 
     return reminder
 
 @router.get("/list", response_model=List[Reminder])
-def get_all_reminders():
-    """Retrieves a list of all reminders."""
-    return read_reminders()
+def get_all_reminders(current_user: User = Depends(get_current_user)):
+    """Retrieves a list of all reminders for the authenticated user from Firestore."""
+    db = firestore.client()
+    reminders_ref = db.collection('users').document(current_user.uid).collection('reminders').order_by("remind_at").stream()
+    
+    reminders = [doc.to_dict() for doc in reminders_ref]
+    return reminders
 
 @router.delete("/delete/{reminder_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_reminder(reminder_id: str, current_user: User = Depends(get_current_user)):
-    """
-    Deletes a reminder and the corresponding event from the authenticated user's Google Calendar.
-    """
-    reminders = read_reminders()
-    reminder_to_delete = next((r for r in reminders if r.id == reminder_id), None)
+    """Deletes a reminder from Firestore and also from Google Calendar."""
+    db = firestore.client()
+    reminder_ref = db.collection('users').document(current_user.uid).collection('reminders').document(reminder_id)
+    
+    reminder_doc = reminder_ref.get()
+    if not reminder_doc.exists:
+        raise HTTPException(status_code=404, detail="Reminder not found in Firestore")
 
-    if not reminder_to_delete:
-        raise HTTPException(status_code=404, detail="Reminder not found")
-
+    reminder_to_delete = Reminder(**reminder_doc.to_dict())
+    
     try:
-        print(f"--- Attempting to delete Google Calendar event for user: {current_user.uid} ---")
+        # Delete from Google Calendar first
         calendar_service = get_calendar_service(user_id=current_user.uid)
-
-        reminder_date = reminder_to_delete.remind_at.date()
-        time_min = datetime.combine(reminder_date, time.min).isoformat() + 'Z'
-        time_max = datetime.combine(reminder_date, time.max).isoformat() + 'Z'
-
-        events_result = calendar_service.events().list(
-            calendarId='primary',
-            timeMin=time_min,
-            timeMax=time_max,
-            singleEvents=True,
-            orderBy='startTime'
-        ).execute()
+        
+        time_min = reminder_to_delete.remind_at.date().isoformat() + "T00:00:00Z"
+        time_max = reminder_to_delete.remind_at.date().isoformat() + "T23:59:59Z"
+        
+        events_result = calendar_service.events().list(calendarId='primary', timeMin=time_min, timeMax=time_max, singleEvents=True).execute()
         events = events_result.get('items', [])
-
-        event_to_delete_calendar = None
+        
         expected_title = f"Reminder: {reminder_to_delete.title}"
         for event in events:
             if event.get('summary') == expected_title:
-                event_to_delete_calendar = event
+                calendar_service.events().delete(calendarId='primary', eventId=event['id']).execute()
+                print(f"--- Google Calendar event deleted successfully. ---")
                 break
         
-        if event_to_delete_calendar:
-            event_id = event_to_delete_calendar['id']
-            print(f"--- Found matching event. Deleting event ID: {event_id} ---")
-            calendar_service.events().delete(calendarId='primary', eventId=event_id).execute()
-            print("--- Google Calendar event deleted successfully. ---")
-        else:
-            print(f"--- INFO: No matching Google Calendar event found for '{expected_title}' on {reminder_date}. ---")
+        # Finally, delete from Firestore
+        reminder_ref.delete()
 
     except Exception as e:
-        print(f"--- WARNING: An unexpected error occurred while deleting calendar event for user {current_user.uid}. {e} ---")
-
-    reminders.remove(reminder_to_delete)
-    write_reminders(reminders)
-    return
+        print(f"--- WARNING: An unexpected error occurred during deletion. {e} ---")
+        # Still attempt to delete from Firestore even if calendar fails
+        reminder_ref.delete()
+        raise HTTPException(status_code=500, detail=f"Error during deletion process: {e}")

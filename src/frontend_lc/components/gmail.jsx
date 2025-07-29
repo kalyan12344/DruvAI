@@ -82,7 +82,7 @@ const Gmail = () => {
     };
 
     const handleConnectGmail = () => {
-        const authUrl = `http://127.0.0.1:8000/api/google/auth/login?service=gmail`;
+        const authUrl = `https://druv-backend-338967818277.us-central1.run.app/api/google/auth/login?service=gmail`;
         const popup = window.open(authUrl, `gmail-auth-popup`, 'width=600,height=700');
         setIsMenuOpen(false);
         const checkPopupClosed = setInterval(() => {
