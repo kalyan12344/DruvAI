@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 var displayName = '';
 const Sidebar = ({ activeTab, setActiveTab, user }) => {
+    // console.log(user)
     if (user.displayName === null) {
         const match = user.email.match(/^([^@]+)/);
         displayName = match ? match[1] : "";

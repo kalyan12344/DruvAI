@@ -17,18 +17,25 @@ def fetch_events_endpoint(current_user: User = Depends(get_current_user)):
 
 @router.get("/status")
 def get_connection_status(current_user: User = Depends(get_current_user)):
-    """Checks Firestore for the user's calendar connection status."""
+    """Checks Firestore for the user's simplified calendar connection status."""
     try:
         db = firestore.client()
         user_doc = db.collection('users').document(current_user.uid).get()
+        
         if not user_doc.exists:
-            return {"google": {"connected": False}}
+            # If the user has no document, they are not connected
+            return {"google": {"connected": False, "email": None}}
         
         user_data = user_doc.to_dict()
-        creds = user_data.get("google_credentials", {}).get("calendar_token")
         
-        if creds:
-            return {"google": {"connected": True, "user_email": user_data.get("email")}}
-        return {"google": {"connected": False}}
+        # Read directly from the new 'calendars' map
+        # Provide a default value if the map or key doesn't exist yet
+        google_status = user_data.get("calendars", {}).get("google", {
+            "connected": False,
+            "email": None
+        })
+        
+        return {"google": google_status}
+        
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

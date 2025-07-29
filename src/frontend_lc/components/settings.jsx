@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useJobsFeature } from '../context/jobfeaturecontext.jsx';
+import { useAuth } from '../context/authcontext.jsx';
 import ResumeUploadOverlay from './resumeoverlay.jsx';
 import '../styles/settings.css';
 
+const API_BASE_URL = "https://druv-backend-338967818277.us-central1.run.app";
+
 const SettingsTab = () => {
-    // --- State from Jobs Context ---
     const {
         jobsEnabled,
         setJobsEnabled,
@@ -14,16 +16,21 @@ const SettingsTab = () => {
         setIsResumeModalOpen
     } = useJobsFeature();
 
-    // --- Local State for this Component ---
+    const { getAuthToken } = useAuth();
     const [newsEnabled, setNewsEnabled] = useState(false);
     const [savingJobs, setSavingJobs] = useState(false);
     const [savingNews, setSavingNews] = useState(false);
 
-    // --- Fetch initial state for the news toggle ---
     useEffect(() => {
         const fetchNewsSettings = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/api/news/settings');
+                const token = await getAuthToken();
+                if (!token) return;
+
+                const response = await axios.get(`${API_BASE_URL}/api/news/settings`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                console.log(response)
                 if (response.data && typeof response.data.enabled !== 'undefined') {
                     setNewsEnabled(response.data.enabled);
                 }
@@ -32,15 +39,19 @@ const SettingsTab = () => {
             }
         };
         fetchNewsSettings();
-    }, []);
+    }, [getAuthToken]);
 
 
-    // --- Logic for AI Job Assistant Toggle ---
     const saveJobToggleState = async (enabledState) => {
         setSavingJobs(true);
         try {
-            await axios.post('http://localhost:8000/api/settings/jobs-toggle', {
+            const token = await getAuthToken();
+            if (!token) throw new Error("User not authenticated.");
+
+            await axios.post(`${API_BASE_URL}/api/settings/jobs-toggle`, {
                 enabled: enabledState
+            }, {
+                headers: { 'Authorization': `Bearer ${token}` }
             });
         } catch (error) {
             console.error("Failed to save job setting:", error);
@@ -52,7 +63,7 @@ const SettingsTab = () => {
 
     const handleJobToggleClick = () => {
         const isTurningOn = !jobsEnabled;
-        setJobsEnabled(isTurningOn); // Optimistic UI update
+        setJobsEnabled(isTurningOn);
 
         if (isTurningOn) {
             if (!hasUploadedResume) {
@@ -65,14 +76,16 @@ const SettingsTab = () => {
         }
     };
 
-    // --- Logic for AI News Briefing Toggle (Simplified) ---
     const saveNewsToggleState = async (enabledState) => {
         setSavingNews(true);
         try {
-            // Directly post the new enabled state to a dedicated endpoint.
-            // This no longer needs to fetch other settings first.
-            await axios.post('http://localhost:8000/api/news/settings/toggle', {
+            const token = await getAuthToken();
+            if (!token) throw new Error("User not authenticated.");
+
+            await axios.post(`${API_BASE_URL}/api/news/settings/toggle`, {
                 enabled: enabledState
+            }, {
+                headers: { 'Authorization': `Bearer ${token}` }
             });
         } catch (error) {
             console.error("Failed to save news setting:", error);
@@ -84,7 +97,7 @@ const SettingsTab = () => {
 
     const handleNewsToggleClick = () => {
         const isTurningOn = !newsEnabled;
-        setNewsEnabled(isTurningOn); // Optimistic UI update
+        setNewsEnabled(isTurningOn);
         saveNewsToggleState(isTurningOn);
     };
 
@@ -92,7 +105,6 @@ const SettingsTab = () => {
         <div className="settings-tab-glass">
             <h2 className="settings-title">🔧 Settings</h2>
             <div style={{ display: "flex", flexWrap: "wrap", flexDirection: "row", gap: "30px" }}>
-                {/* --- Job Assistant Card --- */}
                 <div className="setting-card">
                     <div className="setting-info">
                         <h3 className="setting-name">Enable AI Job Assistant</h3>
@@ -111,7 +123,6 @@ const SettingsTab = () => {
                     </label>
                 </div>
 
-                {/* --- News Briefing Card --- */}
                 <div className="setting-card">
                     <div className="setting-info">
                         <h3 className="setting-name">Enable AI News Briefing Assistant</h3>
@@ -131,9 +142,7 @@ const SettingsTab = () => {
                 </div>
             </div>
 
-            {/* Conditionally render the overlay for resume upload */}
             {isResumeModalOpen && <ResumeUploadOverlay />}
-
             {(savingJobs || savingNews) && <div className="save-status">Saving your preference...</div>}
         </div>
     );

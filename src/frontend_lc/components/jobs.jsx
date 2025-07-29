@@ -11,7 +11,7 @@ const JobsTab = () => {
         const fetchJobs = async () => {
             setLoading(true);
             try {
-                const response = await axios.get('http://localhost:8000/api/jobs/today');
+                const response = await axios.get('https://druv-backend-338967818277.us-central1.run.app/api/jobs/today');
 
                 let jobData = response.data;
 

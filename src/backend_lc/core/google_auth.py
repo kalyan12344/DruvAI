@@ -77,15 +77,14 @@ def get_google_auth_url(user_id: str, service: str) -> dict:
     )
     return {"authorization_url": authorization_url}
 
-def process_google_callback(code: str, state: str) -> str:
+def process_google_callback(code: str, state: str):
     """
-    Handles the OAuth2 callback from Google, exchanges the code for credentials,
-    and saves them to Firestore. Creates the user document if it's the first write.
+    Processes the callback, saves credentials, and updates the simplified status field.
     """
     try:
         user_id, service = state.split("::")
     except ValueError:
-        raise ValueError("Invalid state parameter received from Google.")
+        raise ValueError("Invalid state parameter.")
         
     flow = Flow.from_client_config(CLIENT_SECRETS_FILE, scopes=SERVICE_SCOPES[service], redirect_uri=REDIRECT_URI)
     flow.fetch_token(code=code)
@@ -93,19 +92,19 @@ def process_google_callback(code: str, state: str) -> str:
 
     db = firestore.client()
     user_ref = db.collection('users').document(user_id)
+    user_info = auth.get_user(user_id)
     
-    # This command creates the document if it doesn't exist, or updates it if it does.
-    user_ref.set({
-        "google_credentials": {f"{service}_token": json.loads(credentials.to_json())}
-    }, merge=True)
+    # Prepare all the data to be updated
+    update_data = {
+        # This is essential for your app to make API calls
+        f"google_credentials.{service}_token": json.loads(credentials.to_json()),
+        # This is the new simplified status for your frontend
+        f"calendars.{service}": {
+            "connected": True,
+            "email": user_info.email
+        }
+    }
     
-    # Optionally, you can also store the user's email at this point.
-    try:
-        user_info = auth.get_user(user_id)
-        if user_info.email:
-            user_ref.set({"email": user_info.email}, merge=True)
-            return user_info.email
-    except Exception as e:
-        print(f"Could not fetch user info for {user_id}: {e}")
-
-    return "Unknown Email"
+    user_ref.update(update_data)
+    
+    return user_info.email

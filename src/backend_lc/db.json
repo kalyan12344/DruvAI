@@ -2,8 +2,8 @@
   "jobs_feature_enabled": false,
   "connected_calendars": {
     "google": {
-      "connected": true,
-      "user_email": "kalyanraju90@gmail.com"
+      "connected": false,
+      "user_email": null
     },
     "outlook": {
       "connected": false,
