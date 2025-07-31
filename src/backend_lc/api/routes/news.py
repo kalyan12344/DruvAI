@@ -62,7 +62,7 @@ def generate_and_save_briefings_for_user(user: User):
 
         for topic in topics:
             print(f"\nFetching news for topic: '{topic}'")
-            raw_content = web_search.invoke({"query": topic})
+            raw_content = web_search.invoke({"query": "latest news in " + topic})
             summary = "Could not fetch content."
             if raw_content and "Error:" not in raw_content:
                 summary = _summarize_content_with_llm(raw_content, topic)
