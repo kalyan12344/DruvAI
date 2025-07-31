@@ -2,41 +2,47 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { FaNewspaper, FaCog, FaSync } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "../context/authcontext";
 import "../styles/news.css";
 
+const API_BASE_URL = "https://druv-backend-338967818277.us-central1.run.app";
+
 const News = () => {
-    // --- State Management ---
     const [briefings, setBriefings] = useState([]);
     const [settings, setSettings] = useState({ topics: [], enabled: true });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [isNewsEnabled, setIsNewsEnabled] = useState(true);
-
-    // --- State for Settings Modal ---
     const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
     const [tempTopics, setTempTopics] = useState("");
     const [isSaving, setIsSaving] = useState(false);
 
-    // --- Data Fetching ---
+    const { getAuthToken } = useAuth();
+
     const fetchNewsData = async () => {
         setLoading(true);
         setError(null);
         try {
-            // First, fetch only the settings to see if the component should be active.
-            const settingsResponse = await axios.get("http://127.0.0.1:8000/api/news/settings");
+            const token = await getAuthToken();
+            if (!token) throw new Error("User not authenticated.");
+            const headers = { 'Authorization': `Bearer ${token}` };
+
+            const settingsResponse = await axios.get(`${API_BASE_URL}/api/news/settings`, { headers });
             const fetchedSettings = settingsResponse.data || { topics: [], enabled: false };
+            console.log(fetchedSettings)
 
             setSettings(fetchedSettings);
             setIsNewsEnabled(fetchedSettings.enabled);
-            setTempTopics(fetchedSettings.topics.join("\n"));
+            // This is the corrected line
+            setTempTopics((fetchedSettings.topics || []).join("\n"));
 
-            // Only if the feature is enabled, fetch the actual briefings.
             if (fetchedSettings.enabled) {
-                const briefingsResponse = await axios.get("http://127.0.0.1:8000/api/news/briefings/latest");
+                const briefingsResponse = await axios.get(`${API_BASE_URL}/api/news/briefings/latest`, { headers });
+                console.log("briefing", briefingsResponse)
                 setBriefings(briefingsResponse.data || []);
             } else {
-                setBriefings([]); // Ensure briefings are empty if disabled
+                setBriefings([]);
             }
 
         } catch (err) {
@@ -49,13 +55,7 @@ const News = () => {
 
     useEffect(() => {
         fetchNewsData();
-    }, []);
-
-    // --- Event Handlers ---
-    const handleOpenSettings = () => {
-        setTempTopics(settings.topics.join("\n"));
-        setIsSettingsModalOpen(true);
-    };
+    }, [getAuthToken]);
 
     const handleSaveSettings = async () => {
         setIsSaving(true);
@@ -63,7 +63,11 @@ const News = () => {
         const newSettings = { ...settings, topics: topicsArray };
 
         try {
-            await axios.post("http://127.0.0.1:8000/api/news/settings", newSettings);
+            const token = await getAuthToken();
+            if (!token) throw new Error("User not authenticated.");
+            const headers = { 'Authorization': `Bearer ${token}` };
+
+            await axios.post(`${API_BASE_URL}/api/news/settings`, newSettings, { headers });
             setSettings(newSettings);
             setIsSettingsModalOpen(false);
         } catch (err) {
@@ -77,7 +81,11 @@ const News = () => {
         setIsRefreshing(true);
         setError(null);
         try {
-            await axios.get("http://127.0.0.1:8000/api/news/briefings/generate");
+            const token = await getAuthToken();
+            if (!token) throw new Error("User not authenticated.");
+            const headers = { 'Authorization': `Bearer ${token}` };
+
+            await axios.get(`${API_BASE_URL}/api/news/briefings/generate`, { headers });
             await fetchNewsData();
         } catch (err) {
             console.error("Error refreshing briefings:", err);
@@ -87,8 +95,10 @@ const News = () => {
         }
     };
 
-
-    // --- Render Functions ---
+    const handleOpenSettings = () => {
+        setTempTopics((settings.topics || []).join("\n"));
+        setIsSettingsModalOpen(true);
+    };
 
     const renderHeader = () => (
         <div className="news-header">
@@ -161,9 +171,7 @@ const News = () => {
         </AnimatePresence>
     );
 
-    // --- Top-level Render Check ---
     if (!isNewsEnabled) {
-        // If the feature is disabled, render nothing at all.
         return null;
     }
 

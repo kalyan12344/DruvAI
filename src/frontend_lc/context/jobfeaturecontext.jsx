@@ -1,44 +1,48 @@
-// frontend_lc/context/jobfeaturecontext.jsx (Corrected)
-
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import axios from 'axios';
+import { useAuth } from './authcontext'; // Make sure this path is correct
 
-// Create the context
+const API_BASE_URL = "https://druv-backend-338967818277.us-central1.run.app"
+
 export const JobsFeatureContext = createContext();
 
-// Create the provider component
 export const JobsFeatureProvider = ({ children }) => {
     const [jobsEnabled, setJobsEnabled] = useState(false);
     const [loading, setLoading] = useState(true);
     const [hasUploadedResume, setHasUploadedResume] = useState(false);
     const [isResumeModalOpen, setIsResumeModalOpen] = useState(false);
 
-    // This useEffect hook runs once when the component is first mounted.
+    const { getAuthToken } = useAuth();
+
     useEffect(() => {
         const fetchInitialSettings = async () => {
+            const token = await getAuthToken();
+            if (!token) {
+                setLoading(false);
+                return; // Can't fetch without a token
+            }
+            const headers = { 'Authorization': `Bearer ${token}` };
             setLoading(true);
-            try {
-                // --- THIS CODE IS NOW ACTIVE ---
-                // Fetch the toggle status from the backend
-                const settingsResponse = await fetch('http://localhost:8000/api/settings/jobs-toggle-status');
-                const settingsData = await settingsResponse.json();
-                setJobsEnabled(settingsData.enabled);
 
-                // Fetch the resume status from the backend
-                const resumeResponse = await fetch('http://localhost:8000/api/resume/status');
-                const resumeData = await resumeResponse.json();
-                setHasUploadedResume(resumeData.hasUploadedResume);
-                // --- END OF ACTIVE CODE ---
+            try {
+                // Fetch both settings in parallel
+                const [settingsResponse, resumeResponse] = await Promise.all([
+                    axios.get(`${API_BASE_URL}/api/settings/jobs-toggle-status`, { headers }),
+                    axios.get(`${API_BASE_URL}/api/resume/status`, { headers })
+                ]);
+
+                setJobsEnabled(settingsResponse.data.enabled);
+                setHasUploadedResume(resumeResponse.data.hasUploadedResume);
 
             } catch (error) {
                 console.error("Failed to load user settings:", error);
-                // In case of error, we'll just stick with the default 'false' states
             } finally {
                 setLoading(false);
             }
         };
 
         fetchInitialSettings();
-    }, []); // The empty dependency array [] ensures this runs only once on load
+    }, [getAuthToken]); // Re-run if the user logs in/out
 
     const value = {
         jobsEnabled,
@@ -57,5 +61,4 @@ export const JobsFeatureProvider = ({ children }) => {
     );
 };
 
-// Custom hook to use the context
 export const useJobsFeature = () => useContext(JobsFeatureContext);

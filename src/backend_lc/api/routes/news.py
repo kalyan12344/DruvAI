@@ -1,4 +1,3 @@
-#api/routes/news.py
 import json
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel, Field
@@ -70,7 +69,6 @@ def generate_and_save_briefings_for_user(user: User):
 
             new_briefings.append({"date": today_str, "topic": topic, "summary": summary})
 
-        # Update the user's document with the new briefings
         user_ref.update({"daily_briefings": new_briefings})
         print(f"\n✅ Briefing for user {user.uid} complete and saved to Firestore.")
         return {"message": "News briefing generated successfully."}
@@ -88,12 +86,33 @@ def trigger_generate_briefings(current_user: User = Depends(get_current_user)):
 
 @router.get("/briefings/latest")
 def get_latest_briefings(current_user: User = Depends(get_current_user)):
-    """Fetches the latest briefings for the authenticated user from Firestore."""
+    """
+    Fetches the latest briefings. If briefings for the current day are not found,
+    it automatically generates them first and then returns them.
+    """
     db = firestore.client()
-    user_doc = db.collection('users').document(current_user.uid).get()
+    user_ref = db.collection('users').document(current_user.uid)
+    user_doc = user_ref.get()
+    
     if not user_doc.exists:
         return []
-    return user_doc.to_dict().get("daily_briefings", [])
+
+    user_data = user_doc.to_dict()
+    briefings = user_data.get("daily_briefings", [])
+    today_str = datetime.now().strftime("%Y-%m-%d")
+
+    # Check if briefings are missing or outdated
+    if not briefings or (briefings and briefings[0].get("date") != today_str):
+        print(f"Briefings not found or are outdated for user {current_user.uid}. Generating new ones...")
+        # Call the generation function to create and save new briefings
+        generate_and_save_briefings_for_user(current_user)
+        
+        # Re-fetch the document to get the newly created data
+        updated_doc = user_ref.get()
+        return updated_doc.to_dict().get("daily_briefings", [])
+    
+    # If briefings exist and are for today, return them
+    return briefings
 
 @router.get("/settings")
 def get_news_settings(current_user: User = Depends(get_current_user)):
@@ -117,7 +136,6 @@ def toggle_news_feature(request: ToggleRequest, current_user: User = Depends(get
     """Toggles the news feature for the authenticated user in Firestore."""
     db = firestore.client()
     user_ref = db.collection('users').document(current_user.uid)
-    # Use dot notation for efficient updates
     user_ref.update({"news_settings.enabled": request.enabled})
     status = "enabled" if request.enabled else "disabled"
     return {"message": f"News briefing feature has been {status}."}
