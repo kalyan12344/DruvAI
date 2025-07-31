@@ -21,13 +21,40 @@ class NewsSettings(BaseModel):
 class ToggleRequest(BaseModel):
     enabled: bool
 
-# --- Helper function for summarization (Unchanged) ---
+# In api/routes/news.py
+
 def _summarize_content_with_llm(content: str, topic: str) -> str:
+    """
+    Summarizes the raw text content by calling the LLM directly with a new,
+    more structured prompt for a cleaner output.
+    """
     print(f"📝 Summarizing content for topic: '{topic}' via LLM...")
+
+    # This new prompt is more explicit about the desired Markdown format.
     summarization_prompt = ChatPromptTemplate.from_messages([
-        ("system", """You are an expert news editor..."""), # Prompt shortened for brevity
-        ("user", """**NEWS TOPIC:** "{topic}"\n\n**RAW ARTICLE CONTENT:**\n---\n{content}\n---"""),
+        ("system", """You are an expert news editor. Your task is to analyze a large block of raw text and extract 3-5 distinct news stories related to the user's topic.
+
+**CRITICAL FORMATTING RULES:**
+1.  The entire output **MUST** be a Markdown bulleted list.
+2.  Each bullet point should start with a relevant news-related emoji (e.g., 📰, 📢, 📈, 🌍).
+3.  Each item **MUST** follow this exact format: `* emoji **Headline:** A single, concise summary sentence.`
+4.  Base your summary **ONLY** on the text provided.
+
+**EXAMPLE OUTPUT:**
+* 📰 **Google Unveils AI Mode:** Google introduces advanced AI features in Search for more thorough and interactive responses.
+* 📈 **New Balance to Release 2000 and 204L Models:** New Balance is introducing fresh formulations with the 2000 and 204L models, expected to gain significant attention in Fall 2025.
+"""),
+        ("user", """
+**NEWS TOPIC:** "{topic}"
+
+**RAW ARTICLE CONTENT:**
+---
+{content}
+---
+
+Now, generate the structured Markdown summary following all rules precisely.""")
     ])
+
     summarization_chain = summarization_prompt | llm
     try:
         response = summarization_chain.invoke({"topic": topic, "content": content})
