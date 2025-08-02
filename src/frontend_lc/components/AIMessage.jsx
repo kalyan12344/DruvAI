@@ -7,6 +7,8 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { CalendarCard, ConfirmationCard, NewsCard } from './Home';
 
 const AIMessage = ({ content }) => {
+    console.log(content, "from aimessage")
+
     if (!content) {
         return (
             <div className="ai-message-wrapper">

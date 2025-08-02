@@ -11,4 +11,5 @@ class AgentQuery(BaseModel):
 @router.post("/ask")
 async def ask_agent(query: AgentQuery, current_user: User = Depends(get_current_user)):
     output_dict = await run_agent(user_input=query.input, user=current_user)
+    print(output_dict)
     return output_dict

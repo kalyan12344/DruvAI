@@ -143,26 +143,23 @@ const Home = () => {
                 { headers: { 'Authorization': `Bearer ${token}` } }
             );
 
-            const aiResponse = response.data.data;
-            console.log(aiResponse)
+            // FIX: Grab the entire response object, not just the 'output' part.
+            const aiResponse = response.data;
+            console.log("Full AI Response Object:", aiResponse); // This will now show the full object
+
             setMessages(prev => [...prev, { content: aiResponse, sender: "bot" }]);
 
         } catch (error) {
             console.error("API Error:", error);
             const errorContent = {
-                final_answer: {
-                    response_type: "confirmation",
-                    status: "error",
-                    message: "An error occurred while contacting the AI."
-                },
-                reasoning_trace: []
+                output: "An error occurred while contacting the AI.",
+                intermediate_steps: []
             };
             setMessages(prev => [...prev, { content: errorContent, sender: "bot" }]);
         } finally {
             setIsTyping(false);
         }
     };
-
     const handleKeyPress = (e) => {
         if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); }
     };
@@ -212,6 +209,7 @@ const Home = () => {
                                 {msg.sender === 'user' ?
                                     <p>{msg.text}</p> :
                                     <AIMessage content={msg.content} />
+
                                 }
                             </motion.div>
                         ))}
