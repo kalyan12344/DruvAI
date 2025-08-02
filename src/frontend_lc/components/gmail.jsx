@@ -10,8 +10,8 @@ import { useAuth } from '../context/authcontext';
 import "../styles/gmail.css";
 import Contacts from "./contacts";
 
-const API_BASE_URL = "http://127.0.0.1:8000"; // For local testing
-// const API_BASE_URL = "https://druv-backend-338967818277.us-central1.run.app"; // For production
+const API_BASE_URL = "http://127.0.0.1:8000";
+// const API_BASE_URL = "https://druv-backend-338967818277.us-central1.run.app";
 
 const Gmail = () => {
     const [messages, setMessages] = useState([]);
@@ -144,7 +144,8 @@ const Gmail = () => {
             const headers = { 'Authorization': `Bearer ${token}` };
 
             const response = await axios.post(`${API_BASE_URL}/api/gmail/message/${selectedMessage.id}/agent-query`, { query }, { headers });
-            setAskAiResponse(response.data.response);
+            console.log(response)
+            setAskAiResponse(response.data.output);
         } catch (err) {
             setAskAiResponse("Sorry, I couldn't process your request.");
         } finally {
@@ -188,6 +189,7 @@ const Gmail = () => {
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 onKeyDown={handleSearch}
+                                autoFocus
                             />
                         </motion.div>
                     )}
@@ -261,7 +263,7 @@ const Gmail = () => {
                     <button onClick={() => setSelectedMessage(null)} className="close-btn" title="Close"><FaTimes /></button>
                 </div>
                 <div className="detail-actions">
-                    <button className="action-pill" onClick={() => alert('Archived!')}><FaArchive /> Archive</button>
+                    {/* <button className="action-pill" onClick={() => alert('Archived!')}><FaArchive /> Archive</button> */}
                     <button className="action-pill" onClick={() => setIsAskAiModalOpen(true)} disabled={isAgentReplying}><BsQuestionCircleFill /> Ask AI</button>
                     <button className="action-pill primary" onClick={() => setIsPerspectiveModalOpen(true)} disabled={isAgentReplying}>
                         <IoSparkles /> {isAgentReplying ? 'Thinking...' : 'Draft Reply with AI'}

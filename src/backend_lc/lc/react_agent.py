@@ -6,6 +6,7 @@ from langchain import hub
 from lc.config import get_llm
 from lc import ALL_TOOLS
 from api.routes.auth import User
+import asyncio
 
 today = datetime.utcnow().strftime("%Y-%m-%d")
 llm = get_llm()
@@ -111,6 +112,8 @@ async def run_agent(user_input: str | dict, user: User) -> dict:
         tool_params = inspect.signature(tool.func).parameters
         if 'user_id' in tool_params:
             tool.func = partial(tool.func, user_id=user.uid)
+        elif 'user_email' in tool_params:
+            tool.func = partial(tool.func, user_email=user.email)
         
         user_specific_tools.append(tool)
 

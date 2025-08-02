@@ -1,21 +1,22 @@
 import base64
 import json
+import asyncio
 from email.mime.text import MIMEText
 from typing import List, Optional
+import traceback   
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from bs4 import BeautifulSoup
 from firebase_admin import firestore
 
-# FIX: Added imports for authentication and the User model
 from api.routes.auth import User, get_current_user
 from core.google_auth import get_gmail_service
 from lc.react_agent import run_agent
 
 router = APIRouter()
 
-# --- Pydantic Models (Unchanged) ---
+# --- Pydantic Models ---
 class EmailContent(BaseModel):
     subject: str
     snippet: str
@@ -33,7 +34,7 @@ class ModifyRequest(BaseModel):
 class AgentQueryRequest(BaseModel):
     query: str
 
-# --- Helper Functions (Unchanged) ---
+# --- Helper Functions ---
 def get_email_body(payload):
     if 'parts' in payload:
         for part in payload['parts']:
@@ -48,7 +49,7 @@ def get_email_body(payload):
         return base64.urlsafe_b64decode(data.encode('ASCII')).decode('utf-8')
     return ""
 
-def _fetch_and_format_messages(service, message_ids):
+def _fetch_and_format_messages_sync(service, message_ids):
     if not message_ids:
         return []
     formatted_messages = []
@@ -69,7 +70,6 @@ def _fetch_and_format_messages(service, message_ids):
 
 @router.get("/status")
 async def get_mail_connection_status(current_user: User = Depends(get_current_user)):
-    """Gets the Gmail connection status for the authenticated user from Firestore."""
     db = firestore.client()
     user_doc = db.collection('users').document(current_user.uid).get()
     if not user_doc.exists:
@@ -82,34 +82,39 @@ async def get_mail_connection_status(current_user: User = Depends(get_current_us
 
 @router.get("/messages")
 async def get_gmail_messages(current_user: User = Depends(get_current_user)):
-    """Gets the latest messages from the INBOX for the authenticated user."""
     try:
-        service = get_gmail_service(user_id=current_user.uid)
-        results = service.users().messages().list(userId='me', labelIds=['INBOX'], maxResults=25).execute()
+        service = await get_gmail_service(user_id=current_user.uid)
+        results = await asyncio.to_thread(
+            service.users().messages().list(userId='me', labelIds=['INBOX'], maxResults=25).execute
+        )
         message_ids = results.get('messages', [])
-        return _fetch_and_format_messages(service, message_ids)
+        formatted_messages = await asyncio.to_thread(_fetch_and_format_messages_sync, service, message_ids)
+        return formatted_messages
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/search")
 async def search_emails(q: str, current_user: User = Depends(get_current_user)):
-    """Searches the authenticated user's mailbox for a query."""
     if not q:
         raise HTTPException(status_code=400, detail="A search query 'q' is required.")
     try:
-        service = get_gmail_service(user_id=current_user.uid)
-        results = service.users().messages().list(userId='me', q=q, maxResults=25).execute()
+        service = await get_gmail_service(user_id=current_user.uid)
+        results = await asyncio.to_thread(
+            service.users().messages().list(userId='me', q=q, maxResults=25).execute
+        )
         message_ids = results.get('messages', [])
-        return _fetch_and_format_messages(service, message_ids)
+        formatted_messages = await asyncio.to_thread(_fetch_and_format_messages_sync, service, message_ids)
+        return formatted_messages
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/message/{message_id}")
 async def get_single_email(message_id: str, current_user: User = Depends(get_current_user)):
-    """Fetches the full content of a single email for the authenticated user."""
     try:
-        service = get_gmail_service(user_id=current_user.uid)
-        message = service.users().messages().get(userId='me', id=message_id, format='full').execute()
+        service = await get_gmail_service(user_id=current_user.uid)
+        message = await asyncio.to_thread(
+            service.users().messages().get(userId='me', id=message_id, format='full').execute
+        )
         payload = message.get('payload', {})
         headers = payload.get('headers', [])
         subject = next((h['value'] for h in headers if h['name'] == 'Subject'), 'No Subject')
@@ -122,36 +127,37 @@ async def get_single_email(message_id: str, current_user: User = Depends(get_cur
 
 @router.post("/message/{message_id}/modify")
 async def modify_email(message_id: str, req: ModifyRequest, current_user: User = Depends(get_current_user)):
-    """Modifies an email's labels for the authenticated user."""
     try:
-        service = get_gmail_service(user_id=current_user.uid)
+        service = await get_gmail_service(user_id=current_user.uid)
         body = req.model_dump(exclude_none=True)
         if not body:
             raise HTTPException(status_code=400, detail="No modification specified.")
-        updated_message = service.users().messages().modify(userId='me', id=message_id, body=body).execute()
+        updated_message = await asyncio.to_thread(
+            service.users().messages().modify(userId='me', id=message_id, body=body).execute
+        )
         return updated_message
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/send-email")
 async def send_email(req: SendEmailRequest, current_user: User = Depends(get_current_user)):
-    """Sends an email from the authenticated user's account."""
     try:
-        service = get_gmail_service(user_id=current_user.uid)
+        service = await get_gmail_service(user_id=current_user.uid)
         message = MIMEText(req.body, 'html')
         message['to'] = req.to
         message['from'] = current_user.email
         message['subject'] = req.subject
         encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
         create_message = {'raw': encoded_message}
-        send_message = service.users().messages().send(userId="me", body=create_message).execute()
+        send_message = await asyncio.to_thread(
+            service.users().messages().send(userId="me", body=create_message).execute
+        )
         return {"status": "success", "message_id": send_message['id']}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/draft-reply")
 async def draft_ai_reply(email: EmailContent, current_user: User = Depends(get_current_user)):
-    """Instructs the AI agent to draft a reply for the authenticated user."""
     try:
         prompt = f"""Use the 'draft_reply_tool' to generate a response. The user's name is {current_user.name}.
         Email Subject: "{email.subject}"
@@ -163,24 +169,34 @@ async def draft_ai_reply(email: EmailContent, current_user: User = Depends(get_c
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/message/{message_id}/agent-query")
-async def query_agent_on_email(message_id: str, req: AgentQueryRequest, current_user: User = Depends(get_current_user)):
-    """Takes a user's query about a specific email and returns the agent's response."""
+async def query_agent_on_email(message_id: str,
+                               req: AgentQueryRequest,
+                               current_user: User = Depends(get_current_user)):
     try:
-        service = get_gmail_service(user_id=current_user.uid)
-        message = service.users().messages().get(userId='me', id=message_id, format='full').execute()
+        service = await get_gmail_service(user_id=current_user.uid)
+        message = await asyncio.to_thread(
+            service.users().messages().get(
+                userId='me', id=message_id, format='full'
+            ).execute
+        )
+
         email_body_html = get_email_body(message.get('payload', {}))
-        soup = BeautifulSoup(email_body_html, "html.parser")
+        soup = BeautifulSoup(email_body_html or "", "html.parser")
         email_body_text = soup.get_text(separator='\n', strip=True)
 
-        prompt = f"""A user named {current_user.name} is asking a question about an email. Use the email's content as context.
-        USER'S QUESTION: "{req.query}"
-        USER'S EMAIL ADDRESS (for context): "{current_user.email}"
-        FULL EMAIL CONTENT:
-        ---
-        {email_body_text}
-        ---
-        """
-        ai_response = await run_agent(prompt, user=current_user)
-        return ai_response
+        # ⚡ use a safe fallback for name
+        user_display = getattr(current_user, "name", None) or \
+                       getattr(current_user, "display_name", None) or \
+                       current_user.email.split("@")[0]
+
+        prompt = (
+            f"A user named {user_display} is asking about an email.\n"
+            f"USER'S QUESTION: \"{req.query}\"\n"
+            f"FULL EMAIL CONTENT:\n---\n{email_body_text[:10_000]}\n---"
+        )
+
+        return await run_agent(prompt, user=current_user)
+
     except Exception as e:
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))

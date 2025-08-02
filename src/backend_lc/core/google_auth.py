@@ -5,6 +5,7 @@ from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request as GoogleAuthRequest
 from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
+import asyncio
 
 # --- Configuration ---
 google_creds_json = os.environ.get("GOOGLE_CREDENTIALS")
@@ -20,29 +21,25 @@ SERVICE_SCOPES = {
 }
 
 # --- Credential Management ---
-def _get_credentials_for_user(user_id: str, service: str) -> Credentials:
-    """
-    Fetches a user's stored Google credentials from Firestore, refreshing them if necessary.
-    """
+async def _get_credentials_for_user(user_id: str, service: str):
     db = firestore.client()
     user_ref = db.collection('users').document(user_id)
     user_doc = user_ref.get()
 
     if not user_doc.exists:
-        raise ValueError(f"User '{user_id}' not found in Firestore. Cannot get credentials.")
+        raise ValueError("User not found in Firestore.")
 
     user_data = user_doc.to_dict()
     creds_dict = user_data.get("google_credentials", {}).get(f"{service}_token")
 
     if not creds_dict:
-        raise ValueError(f"User '{user_id}' has not authenticated with Google {service.capitalize()}.")
+        raise ValueError(f"User has not authenticated with Google {service.capitalize()}.")
 
     creds = Credentials.from_authorized_user_info(creds_dict, SERVICE_SCOPES[service])
 
-    # If credentials have expired and a refresh token exists, refresh them.
     if creds and creds.expired and creds.refresh_token:
-        creds.refresh(GoogleAuthRequest())
-        # Persist the newly refreshed credentials back to Firestore.
+        # FIX: The blocking refresh call is now run in a separate thread
+        await asyncio.to_thread(creds.refresh, GoogleAuthRequest())
         user_ref.set({
             "google_credentials": {f"{service}_token": json.loads(creds.to_json())}
         }, merge=True)
@@ -51,19 +48,19 @@ def _get_credentials_for_user(user_id: str, service: str) -> Credentials:
     return creds
 
 # --- Service Client Builders ---
-def get_calendar_service(user_id: str):
+async def get_calendar_service(user_id: str):
     """Builds and returns a Google Calendar service client."""
-    creds = _get_credentials_for_user(user_id, "calendar")
+    creds = await _get_credentials_for_user(user_id, "calendar")
     return build('calendar', 'v3', credentials=creds)
 
-def get_gmail_service(user_id: str):
+async def get_gmail_service(user_id: str):
     """Builds and returns a Gmail service client."""
-    creds = _get_credentials_for_user(user_id, "gmail")
+    creds = await _get_credentials_for_user(user_id, "gmail")
     return build('gmail', 'v1', credentials=creds)
 
-def get_people_service(user_id: str):
+async def get_people_service(user_id: str):
     """Builds and returns a Google People API (Contacts) service client."""
-    creds = _get_credentials_for_user(user_id, "contacts")
+    creds = await _get_credentials_for_user(user_id, "contacts")
     return build('people', 'v1', credentials=creds)
 
 # --- OAuth2 Flow Handlers ---
