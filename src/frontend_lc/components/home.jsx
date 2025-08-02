@@ -141,6 +141,7 @@ const Home = () => {
             );
 
             const aiResponse = response.data.data;
+            console.log(aiResponse)
             setMessages(prev => [...prev, { content: aiResponse, sender: "bot" }]);
 
         } catch (error) {
