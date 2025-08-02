@@ -303,8 +303,9 @@
 
 .event-summary {
     font-size: 1rem;
-    color: var(--off-white);
+    color: var(--subtle-gold);
     font-weight: 500;
+
 }
 
 /* --- NEW: Confirmation Card Styles --- */
@@ -365,6 +366,7 @@
 .card-content {
     display: flex;
     flex-direction: column;
+    margin-left: 30px;
     gap: 8px;
 }
 

@@ -16,6 +16,7 @@ from .browser_tools import (
     get_visible_text_from_page,
     close_browser_session 
 )
+
 from .summarizer import summarize_page, analyze_page
 from .browser_automation_tools import navigate_and_get_title
 from .basic_web_tools import open_url_in_browser
