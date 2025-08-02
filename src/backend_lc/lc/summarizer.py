@@ -5,25 +5,24 @@ from lc.config import get_llm
 
 llm = get_llm()
 
-# --- summarize_page Tool (with Structured Prompt) ---
+# --- summarize_page Tool (Upgraded with Structured Prompt) ---
 class SummArgs(BaseModel):
-    page_content: str = Field(..., description="Raw visible text of a webpage")
+    page_content: str = Field(..., description="Raw visible text of a webpage to be summarized.")
 
 @tool(args_schema=SummArgs)
 def summarize_page(page_content: str) -> str:
     """Summarizes webpage content into a structured Markdown format."""
-    print("📝 Generating structured page summary...")
+    print("📝 Generating structured summary with summarize_page...")
     
     summarization_prompt = ChatPromptTemplate.from_messages([
-        ("system", """You are an expert. Your task is to read the provided text from a webpage and create a concise, structured summary.
+        ("system", """You are an expert analyst. Your task is to read the provided text from a webpage and create a concise, structured summary.
 
-**CRITICAL FORMATTING RULES:**
+**FORMATTING RULES:**
 1.  The entire output **MUST** be in Markdown format.
 2.  Start with a `## Summary` heading.
-3.  Below the heading, provide a 2-3 sentence overview of the main topic.
-4.  After the overview, create a `### Key Takeaways` subheading.
-5.  Under "Key Takeaways", list the 3-5 most important points as a bulleted list.
-6.  Bold any key terms, names, or data points."""),
+3.  Follow with a 2-3 sentence overview of the main topic.
+4.  Create a `### Key Takeaways` subheading.
+5.  Under "Key Takeaways", list the 3-5 most important points as a bulleted list."""),
         ("user", """
 **WEBPAGE CONTENT:**
 ---
@@ -39,7 +38,7 @@ Now, generate the structured Markdown summary.""")
     print("✅ Page summary complete.")
     return response.content
 
-# --- analyze_page Tool (with Structured Prompt) ---
+# --- analyze_page Tool (Upgraded with Structured Prompt) ---
 class AnalyzeArgs(BaseModel):
     page_content: str
     question: str
@@ -52,12 +51,11 @@ def analyze_page(page_content: str, question: str) -> str:
     analysis_prompt = ChatPromptTemplate.from_messages([
         ("system", """You are a meticulous research assistant. Your goal is to answer a user's question based *strictly* on the provided text content.
 
-**CRITICAL INSTRUCTIONS:**
-1.  Answer the question directly and concisely.
-2.  Format your answer using Markdown.
-3.  If the answer involves a list of items, use a bulleted list.
-4.  If you are quoting directly from the text, use Markdown blockquotes (`>`).
-5.  If the text does not contain the answer, you **MUST** state: "The provided text does not contain an answer to this question." """),
+**FORMATTING RULES:**
+1.  Answer the question directly and concisely using Markdown.
+2.  If the answer involves a list, use a bulleted list.
+3.  If quoting from the text, use Markdown blockquotes (`>`).
+4.  If the text does not contain the answer, state: "The provided text does not contain an answer to this question." """),
         ("user", """
 **PROVIDED TEXT:**
 ---
