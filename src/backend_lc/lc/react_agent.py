@@ -1,11 +1,14 @@
 # lc/react_agent.py
 # Note: Other imports and functions remain the same. This focuses on the prompt fix.
 
+import inspect
+from functools import partial
+from datetime import datetime
 from langchain.agents import AgentExecutor, create_structured_chat_agent
 from langchain import hub
 from lc.config import get_llm
 from lc import ALL_TOOLS
-from datetime import datetime
+from api.routes.auth import User
 
 today = datetime.utcnow().strftime("%Y-%m-%d")
 llm = get_llm()
@@ -92,54 +95,35 @@ agent = create_structured_chat_agent(
 def fix_parsing_error(error):
     error_str = str(error)
     if "Could not parse LLM output:" in error_str:
-        actual_response = error_str.split("Could not parse LLM output:")[-1].strip()
-        return actual_response
+        return error_str.split("Could not parse LLM output:")[-1].strip()
     return "I encountered a formatting issue. Please try again."
 
-SMART_AGENT = AgentExecutor.from_agent_and_tools(
-    agent=agent,
-    tools=ALL_TOOLS,
-    verbose=True,
-    handle_parsing_errors=fix_parsing_error,
-)
-
-
 async def run_agent(user_input: str | dict, user: User) -> dict:
-    """
-    This function now creates a personalized agent for each user request and runs asynchronously.
-    """
-    print(f"Running agent for user: {user.uid}")
-
     user_specific_tools = []
-    for tool in ALL_TOOLS:
+    for original_tool in ALL_TOOLS:
+        tool = original_tool.copy()
         tool_params = inspect.signature(tool.func).parameters
         if 'user_id' in tool_params:
-            user_specific_tools.append(partial(tool, user_id=user.uid))
-        else:
-            user_specific_tools.append(tool)
+            tool.func = partial(tool.func, user_id=user.uid)
+        user_specific_tools.append(tool)
 
     agent = create_structured_chat_agent(
         llm=llm,
         tools=user_specific_tools,
         prompt=custom_prompt
     )
-
     agent_executor = AgentExecutor.from_agent_and_tools(
         agent=agent,
         tools=user_specific_tools,
         verbose=True,
         handle_parsing_errors=fix_parsing_error,
     )
-
-    final_agent_input_str = user_input if isinstance(user_input, str) else user_input.get("question", "")
     
+    final_agent_input_str = user_input if isinstance(user_input, str) else user_input.get("question", "")
     agent_payload = {"input": final_agent_input_str}
     result = await agent_executor.ainvoke(agent_payload, return_intermediate_steps=True)
     
-    final_response = {
-        "output": result.get("output"),
-        "intermediate_steps": []
-    }
+    final_response = {"output": result.get("output"), "intermediate_steps": []}
     if "intermediate_steps" in result:
         for step in result["intermediate_steps"]:
             action, observation = step
@@ -150,10 +134,4 @@ async def run_agent(user_input: str | dict, user: User) -> dict:
                 "tool_input": action.tool_input,
                 "observation": str(observation)
             })
-            
     return final_response
-
-
-
-
-
