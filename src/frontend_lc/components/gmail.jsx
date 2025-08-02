@@ -1,18 +1,19 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
-
-// Icon Imports - added FaSearch
-import { FaPlus, FaTimes, FaPen, FaPaperPlane, FaArchive, FaSearch } from "react-icons/fa";
+import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaPlus, FaTimes, FaPaperPlane, FaArchive, FaSearch } from "react-icons/fa";
 import { SiGmail } from "react-icons/si";
 import { BsInboxFill, BsQuestionCircleFill } from "react-icons/bs";
 import { IoSparkles } from "react-icons/io5";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from '../context/authcontext';
 import "../styles/gmail.css";
 import Contacts from "./contacts";
 
+const API_BASE_URL = "http://127.0.0.1:8000"; // For local testing
+// const API_BASE_URL = "https://druv-backend-338967818277.us-central1.run.app"; // For production
+
 const Gmail = () => {
-    // --- Core State ---
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -20,8 +21,6 @@ const Gmail = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [selectedMessage, setSelectedMessage] = useState(null);
     const [isDetailLoading, setIsDetailLoading] = useState(false);
-
-    // --- State for AI Actions & Modals ---
     const [isAgentReplying, setIsAgentReplying] = useState(false);
     const [aiDraft, setAiDraft] = useState("");
     const [askAiResponse, setAskAiResponse] = useState("");
@@ -29,33 +28,36 @@ const Gmail = () => {
     const [replyPerspective, setReplyPerspective] = useState("");
     const [isAskAiModalOpen, setIsAskAiModalOpen] = useState(false);
     const [askAiQuery, setAskAiQuery] = useState("");
-
-    // --- NEW: State for Search ---
     const [searchQuery, setSearchQuery] = useState("");
     const [isSearchVisible, setIsSearchVisible] = useState(false);
     const [isSearchActive, setIsSearchActive] = useState(false);
 
-
-    // --- Data Fetching and Event Handlers ---
+    const { getAuthToken } = useAuth();
 
     const fetchInitialData = async () => {
         setLoading(true);
         setError(null);
-        setIsSearchActive(false); // Reset search state
+        setIsSearchActive(false);
         setSearchQuery("");
         try {
-            const statusResponse = await axios.get("http://127.0.0.1:8000/api/gmail/status");
+            const token = await getAuthToken();
+            if (!token) throw new Error("User not authenticated.");
+            const headers = { 'Authorization': `Bearer ${token}` };
+
+            const statusResponse = await axios.get(`${API_BASE_URL}/api/gmail/status`, { headers });
             const gmailConnection = statusResponse.data?.google_gmail;
+
             if (gmailConnection && gmailConnection.connected) {
                 setConnections(gmailConnection);
-                const messagesResponse = await axios.get("http://127.0.0.1:8000/api/gmail/messages");
+                const messagesResponse = await axios.get(`${API_BASE_URL}/api/gmail/messages`, { headers });
                 setMessages(messagesResponse.data || []);
             } else {
                 setConnections({ connected: false, user_email: null });
+                setMessages([]);
             }
         } catch (err) {
             console.error("Error fetching initial data:", err);
-            setError("Could not load connection status from the server.");
+            setError("Could not load connection status or messages.");
         } finally {
             setLoading(false);
         }
@@ -63,7 +65,7 @@ const Gmail = () => {
 
     useEffect(() => {
         fetchInitialData();
-    }, []);
+    }, [getAuthToken]);
 
     const handleEmailClick = async (messageId) => {
         if (selectedMessage?.id === messageId) return;
@@ -72,25 +74,41 @@ const Gmail = () => {
         setAiDraft("");
         setAskAiResponse("");
         try {
-            const response = await axios.get(`http://127.0.0.1:8000/api/gmail/message/${messageId}`);
+            const token = await getAuthToken();
+            if (!token) throw new Error("User not authenticated.");
+            const headers = { 'Authorization': `Bearer ${token}` };
+
+            const response = await axios.get(`${API_BASE_URL}/api/gmail/message/${messageId}`, { headers });
             setSelectedMessage(response.data);
         } catch (err) {
             console.error("Failed to fetch email details", err);
+            setError("Could not load email details.");
         } finally {
             setIsDetailLoading(false);
         }
     };
 
-    const handleConnectGmail = () => {
-        const authUrl = `https://druv-backend-338967818277.us-central1.run.app/api/google/auth/login?service=gmail`;
-        const popup = window.open(authUrl, `gmail-auth-popup`, 'width=600,height=700');
+    const handleConnectGmail = async () => {
         setIsMenuOpen(false);
-        const checkPopupClosed = setInterval(() => {
-            if (!popup || popup.closed) {
-                clearInterval(checkPopupClosed);
-                window.location.reload();
-            }
-        }, 1000);
+        try {
+            const token = await getAuthToken();
+            if (!token) throw new Error("User not authenticated.");
+            const headers = { 'Authorization': `Bearer ${token}` };
+
+            const response = await axios.get(`${API_BASE_URL}/api/google/auth/login-url?service=gmail`, { headers });
+            const { authorization_url } = response.data;
+
+            const popup = window.open(authorization_url, `gmail-auth-popup`, 'width=600,height=700');
+            const checkPopupClosed = setInterval(() => {
+                if (!popup || popup.closed) {
+                    clearInterval(checkPopupClosed);
+                    fetchInitialData();
+                }
+            }, 1000);
+        } catch (error) {
+            console.error("Failed to initiate Gmail authentication:", error);
+            setError("Could not start the connection process.");
+        }
     };
 
     const handleDraftReply = async (perspective) => {
@@ -98,11 +116,15 @@ const Gmail = () => {
         setIsAgentReplying(true);
         setAiDraft("");
         try {
-            const response = await axios.post("http://127.0.0.1:8000/api/gmail/draft-reply", {
+            const token = await getAuthToken();
+            if (!token) throw new Error("User not authenticated.");
+            const headers = { 'Authorization': `Bearer ${token}` };
+
+            const response = await axios.post(`${API_BASE_URL}/api/gmail/draft-reply`, {
                 subject: selectedMessage.subject,
                 snippet: selectedMessage.snippet,
                 perspective: perspective
-            });
+            }, { headers });
             setAiDraft(response.data.draft);
         } catch (err) {
             setAiDraft("Sorry, I couldn't generate a draft.");
@@ -117,7 +139,11 @@ const Gmail = () => {
         setIsAgentReplying(true);
         setAskAiResponse("");
         try {
-            const response = await axios.post(`http://127.0.0.1:8000/api/gmail/message/${selectedMessage.id}/agent-query`, { query });
+            const token = await getAuthToken();
+            if (!token) throw new Error("User not authenticated.");
+            const headers = { 'Authorization': `Bearer ${token}` };
+
+            const response = await axios.post(`${API_BASE_URL}/api/gmail/message/${selectedMessage.id}/agent-query`, { query }, { headers });
             setAskAiResponse(response.data.response);
         } catch (err) {
             setAskAiResponse("Sorry, I couldn't process your request.");
@@ -127,13 +153,16 @@ const Gmail = () => {
         }
     };
 
-    // --- NEW: Handler for Search ---
     const handleSearch = async (e) => {
         if (e.key === 'Enter' && searchQuery.trim()) {
             setLoading(true);
-            setSelectedMessage(null); // Close any open message
+            setSelectedMessage(null);
             try {
-                const response = await axios.get(`http://127.0.0.1:8000/api/gmail/search?q=${searchQuery}`);
+                const token = await getAuthToken();
+                if (!token) throw new Error("User not authenticated.");
+                const headers = { 'Authorization': `Bearer ${token}` };
+
+                const response = await axios.get(`${API_BASE_URL}/api/gmail/search?q=${searchQuery}`, { headers });
                 setMessages(response.data || []);
                 setIsSearchActive(true);
             } catch (err) {
@@ -145,14 +174,10 @@ const Gmail = () => {
         }
     };
 
-
-    // --- Render Functions ---
-
     const renderHeader = () => (
         <div className="gmail-header">
             <div className="gmail-title"><BsInboxFill /><h2>Inbox</h2></div>
             <div className="gmail-actions">
-                {/* --- NEW: Search UI --- */}
                 <AnimatePresence>
                     {isSearchVisible && (
                         <motion.div initial={{ width: 0, opacity: 0 }} animate={{ width: 'auto', opacity: 1 }} exit={{ width: 0, opacity: 0 }}>
@@ -200,7 +225,6 @@ const Gmail = () => {
 
         return (
             <>
-                {/* --- NEW: Clear Search button --- */}
                 {isSearchActive && (
                     <div className="search-results-header">
                         <span>Showing results for "{searchQuery}"</span>

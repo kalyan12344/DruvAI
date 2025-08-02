@@ -1,6 +1,3 @@
-# lc/react_agent.py
-# Note: Other imports and functions remain the same. This focuses on the prompt fix.
-
 import inspect
 from functools import partial
 from datetime import datetime
@@ -9,9 +6,9 @@ from langchain import hub
 from lc.config import get_llm
 from lc import ALL_TOOLS
 from api.routes.auth import User
-from langchain.agents.output_parsers import ReActSingleInputOutputParser
 
-
+today = datetime.utcnow().strftime("%Y-%m-%d")
+llm = get_llm()
 today = datetime.utcnow().strftime("%Y-%m-%d")
 llm = get_llm()
 
@@ -92,7 +89,6 @@ agent = create_structured_chat_agent(
 
 )
 
-# This error handler is still useful for other potential issues
 def fix_parsing_error(error):
     error_str = str(error)
     if "Could not parse LLM output:" in error_str:
@@ -103,9 +99,19 @@ async def run_agent(user_input: str | dict, user: User) -> dict:
     user_specific_tools = []
     for original_tool in ALL_TOOLS:
         tool = original_tool.copy()
+        
+        # --- THIS IS THE FIX ---
+        # Add a check to ensure the tool's function is valid before using it.
+        if not callable(getattr(tool, 'func', None)):
+            print(f"🔥 CRITICAL ERROR: The tool '{getattr(tool, 'name', 'Unnamed Tool')}' is invalid or has no function.")
+            # Skip this invalid tool to prevent a crash
+            continue
+        # --- END OF FIX ---
+
         tool_params = inspect.signature(tool.func).parameters
         if 'user_id' in tool_params:
             tool.func = partial(tool.func, user_id=user.uid)
+        
         user_specific_tools.append(tool)
 
     agent = create_structured_chat_agent(
@@ -130,9 +136,7 @@ async def run_agent(user_input: str | dict, user: User) -> dict:
             action, observation = step
             thought = action.log.split("Action:")[0].replace("Thought:", "").strip()
             final_response["intermediate_steps"].append({
-                "thought": thought,
-                "tool": action.tool,
-                "tool_input": action.tool_input,
-                "observation": str(observation)
+                "thought": thought, "tool": action.tool,
+                "tool_input": action.tool_input, "observation": str(observation)
             })
     return final_response

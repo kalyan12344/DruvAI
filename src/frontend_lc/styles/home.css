@@ -254,7 +254,7 @@
 
 .structured-card {
     background-color: #1A1A1A;
-    border: 1px solid #282828;
+    /* border: 1px solid #282828; */
     border-radius: 16px;
     padding: 16px;
     width: 100%;
