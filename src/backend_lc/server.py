@@ -1,3 +1,4 @@
+#server.py
 # import os
 # import json
 # import firebase_admin
@@ -547,3 +548,7 @@ def ping():
     return {"status": "ok", "message": "Step 6: Full application is running!"}
 
 logger.info("Server.py execution complete. Application is ready.")
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("server:app", host="0.0.0.0", port=8000, reload=True)

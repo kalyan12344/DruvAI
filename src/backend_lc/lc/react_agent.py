@@ -16,12 +16,6 @@ llm = get_llm()
 SYSTEM_PROMPT = """
 # MISSION
 Your mission is to act as Druv, a proactive and intelligent AI personal assistant. Your primary goal is to use tools to gather information and then format that information into a structured JSON object for the frontend application.
-# TOOL USAGE PROTOCOL
-**RULE 1: ALWAYS SEARCH FIRST FOR FACTUAL QUERIES**
-For any question that requires current, factual, or specific information (e.g., news, events, technical details, statistics), you **MUST** use the `web_search` tool. **DO NOT** answer from your internal knowledge.
-
-**RULE 2: ALWAYS FORMAT AFTER SEARCHING**
-After using `web_search`, you **MUST** use the `format_web_summary` tool to structure the raw text before giving the `Final Answer`.
 
 # CRITICAL RESPONSE PROTOCOL - YOU MUST FOLLOW THIS EXACTLY
 ⚠️  **MANDATORY**: EVERY response must start with "Thought:" - NO EXCEPTIONS.
@@ -50,6 +44,9 @@ If your answer is based on data returned from ANY tool (like calendar events, se
 The ONLY time you should provide a simple string in `Final Answer` is for a direct greeting (e.g., "Hi, how can I help?") or if you cannot use any tools to answer the user's question.
 
 ---
+
+# Rule 3: 
+# Make sure to refer todays date {today} while fetching calendar events
 # MANDATORY WORKFLOW & EXAMPLES
 
 ### Correct Workflow (Querying Data):
@@ -106,41 +103,57 @@ SMART_AGENT = AgentExecutor.from_agent_and_tools(
     handle_parsing_errors=fix_parsing_error,
 )
 
-# In lc/react_agent.py
 
-def run_agent(user_input: str | dict) -> dict:
+async def run_agent(user_input: str | dict, user: User) -> dict:
     """
-    Runs the agent and returns a dictionary containing both the final answer
-    and the intermediate reasoning steps.
+    This function now creates a personalized agent for each user request and runs asynchronously.
     """
-    final_agent_input_str = ""
-    if isinstance(user_input, dict):
-        question = user_input.get("question")
-        page_content = user_input.get("page_content")
-        final_agent_input_str = question
-        if page_content:
-            final_agent_input_str += f"\n\n[Context from current page]:\n{page_content}"
-    else:
-        final_agent_input_str = user_input
+    print(f"Running agent for user: {user.uid}")
 
-    agent_payload = {"input": final_agent_input_str}
+    user_specific_tools = []
+    for tool in ALL_TOOLS:
+        tool_params = inspect.signature(tool.func).parameters
+        if 'user_id' in tool_params:
+            user_specific_tools.append(partial(tool, user_id=user.uid))
+        else:
+            user_specific_tools.append(tool)
+
+    agent = create_structured_chat_agent(
+        llm=llm,
+        tools=user_specific_tools,
+        prompt=custom_prompt
+    )
+
+    agent_executor = AgentExecutor.from_agent_and_tools(
+        agent=agent,
+        tools=user_specific_tools,
+        verbose=True,
+        handle_parsing_errors=fix_parsing_error,
+    )
+
+    final_agent_input_str = user_input if isinstance(user_input, str) else user_input.get("question", "")
     
-    # Execute the agent, asking it to return the intermediate steps
-    result = SMART_AGENT.invoke(agent_payload, return_intermediate_steps=True)
-
-    # Format the response for the frontend
+    agent_payload = {"input": final_agent_input_str}
+    result = await agent_executor.ainvoke(agent_payload, return_intermediate_steps=True)
+    
     final_response = {
-        "final_answer": result.get("output"),
-        "reasoning_trace": []
+        "output": result.get("output"),
+        "intermediate_steps": []
     }
-
     if "intermediate_steps" in result:
         for step in result["intermediate_steps"]:
             action, observation = step
-            final_response["reasoning_trace"].append({
+            thought = action.log.split("Action:")[0].replace("Thought:", "").strip()
+            final_response["intermediate_steps"].append({
+                "thought": thought,
                 "tool": action.tool,
                 "tool_input": action.tool_input,
                 "observation": str(observation)
             })
-
+            
     return final_response
+
+
+
+
+
