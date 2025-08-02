@@ -15,7 +15,7 @@ def summarize_page(page_content: str) -> str:
     print("📝 Generating structured page summary...")
     
     summarization_prompt = ChatPromptTemplate.from_messages([
-        ("system", """You are an expert analyst. Your task is to read the provided text from a webpage and create a concise, structured summary.
+        ("system", """You are an expert. Your task is to read the provided text from a webpage and create a concise, structured summary.
 
 **CRITICAL FORMATTING RULES:**
 1.  The entire output **MUST** be in Markdown format.

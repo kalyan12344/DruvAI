@@ -1,26 +1,21 @@
-// src/components/Home.jsx
-
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Mic, Sparkles, Calendar, CheckCircle2, AlertTriangle, ExternalLink, Newspaper } from 'lucide-react';
-import '../styles/home.css'; // This component will now use the new styles
+import '../styles/home.css';
 import axios from "axios";
 import { auth } from '../../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
+import AIMessage from './AIMessage';
 
 const api = axios.create({ baseURL: "https://druv-backend-338967818277.us-central1.run.app/agent" });
 
-// Suggestion chips to engage the user
 const suggestionChips = [
     { text: "What are my most important tasks for today?" },
     { text: "Find me remote Senior Product Manager roles." },
     { text: "Summarize the latest news on AI hardware." },
 ];
 
-
-// --- Component to render a structured calendar view ---
-const CalendarCard = ({ data }) => {
-
+export const CalendarCard = ({ data }) => {
     const formatTime = (timeString) => {
         if (!timeString) return "All-day";
         if (!timeString.includes('T')) {
@@ -52,7 +47,7 @@ const CalendarCard = ({ data }) => {
             <div className="card-content">
                 {data.events?.map((event, index) => (
                     <a
-                        href={event.htmlLink} // Assumes backend provides this link
+                        href={event.htmlLink}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="event-item"
@@ -72,8 +67,7 @@ const CalendarCard = ({ data }) => {
     );
 };
 
-// --- Component to render a confirmation message ---
-const ConfirmationCard = ({ data }) => {
+export const ConfirmationCard = ({ data }) => {
     const isSuccess = data.status === 'success';
     return (
         <div className={`structured-card confirmation-card ${isSuccess ? 'success' : 'error'}`}>
@@ -85,11 +79,10 @@ const ConfirmationCard = ({ data }) => {
                 <p>{data.message}</p>
             </div>
         </div>
-    )
-}
+    );
+};
 
-// --- NEW: Component to render a structured news summary ---
-const NewsCard = ({ data }) => {
+export const NewsCard = ({ data }) => {
     return (
         <div className="structured-card news-card">
             <div className="card-header">
@@ -115,14 +108,11 @@ const NewsCard = ({ data }) => {
     );
 };
 
-
 const Home = () => {
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
     const [isTyping, setIsTyping] = useState(false);
     const messagesEndRef = useRef(null);
-    const hasUserSentMessage = messages.some(msg => msg.sender === 'user');
-
     const [user, setUser] = useState(null);
 
     useEffect(() => {
@@ -131,29 +121,6 @@ const Home = () => {
         });
         return () => unsubscribe();
     }, []);
-
-    // --- This single function now handles all message types ---
-    const renderMessageContent = (msg) => {
-        if (typeof msg.text === 'object' && msg.text !== null) {
-            const data = msg.text;
-            switch (data.response_type) {
-                case 'calendar_view':
-                    return <CalendarCard data={data} />;
-                case 'confirmation':
-                    return <ConfirmationCard data={data} />;
-                case 'news_summary': // ADDED: Case for news
-                    return <NewsCard data={data} />;
-                case 'no_events':
-                    return <p>🎉 {data.message || `You're free on ${data.date_checked}!`}</p>;
-                case 'conversational':
-                    return <p>{data.message}</p>;
-                default:
-                    return <pre>{JSON.stringify(data, null, 2)}</pre>;
-            }
-        }
-        return <p>{msg.text}</p>;
-    };
-
 
     const handleSendMessage = async (content = message) => {
         const trimmedMessage = content.trim();
@@ -164,41 +131,29 @@ const Home = () => {
         setMessage('');
         setIsTyping(true);
 
-        const payload = { input: trimmedMessage };
-
         try {
-            const response = await api.post("/ask", payload);
+            const token = await user?.getIdToken();
+            if (!token) throw new Error("User not authenticated.");
 
-            let rawReply = response.data;
-            let aiReply;
+            const response = await api.post("/ask",
+                { input: trimmedMessage },
+                { headers: { 'Authorization': `Bearer ${token}` } }
+            );
 
-            if (rawReply && typeof rawReply === 'object' && rawReply.response && typeof rawReply.response === 'string') {
-                try {
-                    aiReply = JSON.parse(rawReply.response);
-                } catch (e) {
-                    aiReply = { response_type: "conversational", message: rawReply.response };
-                }
-            } else if (typeof rawReply === 'string') {
-                try {
-                    aiReply = JSON.parse(rawReply);
-                } catch (e) {
-                    aiReply = { response_type: "conversational", message: rawReply };
-                }
-            } else if (typeof rawReply === 'object' && rawReply !== null) {
-                aiReply = rawReply;
-            } else {
-                aiReply = { response_type: "confirmation", status: "error", message: "Received an unexpected response format." };
-            }
+            const aiResponse = response.data.data;
+            setMessages(prev => [...prev, { content: aiResponse, sender: "bot" }]);
 
-            setMessages(prev => [...prev, { text: aiReply, sender: "bot" }]);
         } catch (error) {
             console.error("API Error:", error);
-            const errorMessage = {
-                response_type: "confirmation",
-                status: "error",
-                message: "An error occurred while contacting the AI."
+            const errorContent = {
+                final_answer: {
+                    response_type: "confirmation",
+                    status: "error",
+                    message: "An error occurred while contacting the AI."
+                },
+                reasoning_trace: []
             };
-            setMessages(prev => [...prev, { text: errorMessage, sender: "bot" }]);
+            setMessages(prev => [...prev, { content: errorContent, sender: "bot" }]);
         } finally {
             setIsTyping(false);
         }
@@ -211,6 +166,8 @@ const Home = () => {
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages, isTyping]);
+
+    const hasUserSentMessage = messages.some(msg => msg.sender === 'user');
 
     return (
         <div className="home-container">
@@ -248,12 +205,19 @@ const Home = () => {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.3, ease: 'easeOut' }}
                             >
-                                {renderMessageContent(msg)}
+                                {msg.sender === 'user' ?
+                                    <p>{msg.text}</p> :
+                                    <AIMessage content={msg.content} />
+                                }
                             </motion.div>
                         ))}
                         {isTyping && (
                             <motion.div className="message bot-message" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                                <div className="typing-indicator"><div className="typing-dot"></div><div className="typing-dot"></div><div className="typing-dot"></div></div>
+                                <div className="typing-indicator">
+                                    <div className="typing-dot"></div>
+                                    <div className="typing-dot"></div>
+                                    <div className="typing-dot"></div>
+                                </div>
                             </motion.div>
                         )}
                         <div ref={messagesEndRef} />

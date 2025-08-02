@@ -1,27 +1,29 @@
-/* --- News Page: Adapted from gmail.css theme --- */
-
 .news-page {
-    overflow-y: scroll;
-    display: flex;
-    justify-content: center;
-    /* Center the container for a focused view */
-}
 
-/* --- Container & Header --- */
-.news-container {
-    font-family: 'Inter', sans-serif;
-    padding: 30px;
+
     width: 750px;
+    height: 600px;
+    border-radius: 20px;
 
     background: rgb(0, 0, 0);
     color: var(--off-white);
+    border: 1px solid #2a2a2a;
+
+}
+
+.news-container {
+    font-family: 'Inter', sans-serif;
+    padding: 30px;
+
+    overflow-y: scroll;
+
     /* Consistent max-width */
     height: fit-content;
-    height: 400px;
-    /* Consistent height */
+    width: 750px;
+    height: 500px;
+
     margin-top: 30px;
-    border-radius: 20px;
-    border: 1px solid #2a2a2a;
+
     display: flex;
     flex-direction: column;
 }
@@ -32,6 +34,7 @@
     align-items: center;
     margin-bottom: 24px;
     flex-shrink: 0;
+    
 }
 
 .news-title {
@@ -60,7 +63,7 @@
 
 .briefing-item {
     padding: 20px;
-    border: 1px solid #2a2a2a;
+    /* border: 1px solid #2a2a2a; */
     border-radius: 12px;
     /* background-color: #101010; */
     transition: all 0.2s ease-in-out;

@@ -32,7 +32,7 @@ def _summarize_content_with_llm(content: str, topic: str) -> str:
 
     # This new prompt is more explicit about the desired Markdown format.
     summarization_prompt = ChatPromptTemplate.from_messages([
-        ("system", """You are an expert news editor. Your task is to analyze a large block of raw text and extract 3-5 distinct news stories related to the user's topic.
+        ("system", """You are an expert news reporter. Your task is to analyze a large block of raw text and extract 3-5 distinct news stories related to the user's topic from the webpage not create .
 
 **CRITICAL FORMATTING RULES:**
 1.  The entire output **MUST** be a Markdown bulleted list.

@@ -100,8 +100,13 @@ SMART_AGENT = AgentExecutor.from_agent_and_tools(
     handle_parsing_errors=fix_parsing_error,
 )
 
-def run_agent(user_input: str | dict) -> dict | str:
-    # This function's logic does not need to change.
+# In lc/react_agent.py
+
+def run_agent(user_input: str | dict) -> dict:
+    """
+    Runs the agent and returns a dictionary containing both the final answer
+    and the intermediate reasoning steps.
+    """
     final_agent_input_str = ""
     if isinstance(user_input, dict):
         question = user_input.get("question")
@@ -113,5 +118,23 @@ def run_agent(user_input: str | dict) -> dict | str:
         final_agent_input_str = user_input
 
     agent_payload = {"input": final_agent_input_str}
-    result = SMART_AGENT.invoke(agent_payload)
-    return result.get("output", str(result))
+    
+    # Execute the agent, asking it to return the intermediate steps
+    result = SMART_AGENT.invoke(agent_payload, return_intermediate_steps=True)
+
+    # Format the response for the frontend
+    final_response = {
+        "final_answer": result.get("output"),
+        "reasoning_trace": []
+    }
+
+    if "intermediate_steps" in result:
+        for step in result["intermediate_steps"]:
+            action, observation = step
+            final_response["reasoning_trace"].append({
+                "tool": action.tool,
+                "tool_input": action.tool_input,
+                "observation": str(observation)
+            })
+
+    return final_response
