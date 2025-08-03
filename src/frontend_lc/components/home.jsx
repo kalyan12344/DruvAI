@@ -7,7 +7,8 @@ import { auth } from '../../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import AIMessage from './AIMessage';
 
-const api = axios.create({ baseURL: "http://127.0.0.1:8000" });
+// const api = axios.create({ baseURL: "http://127.0.0.1:8000" });
+const api = axios.create({ baseURL: "https://druv-backend-338967818277.us-central1.run.app" })
 
 const suggestionChips = [
     { text: "What's on my calendar today?" },
