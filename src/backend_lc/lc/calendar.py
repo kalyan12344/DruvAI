@@ -5,6 +5,8 @@ from pydantic import BaseModel, Field, field_validator
 from langchain_core.tools import tool
 from lc.config import get_llm
 from core.google_auth import get_calendar_service
+import asyncio                    # ← NEW
+
 
 CHICAGO_TZ = ZoneInfo("America/Chicago")
 TODAY = datetime.now(CHICAGO_TZ).strftime("%Y-%m-%d")
@@ -19,7 +21,7 @@ def _to_future(date_obj: datetime.date) -> datetime.date:
 def get_all_events(user_id: str, max_results: int = 250) -> list:
     """Fetches all upcoming calendar events for *user_id*."""
     now = datetime.now(CHICAGO_TZ).isoformat()
-    service = get_calendar_service(user_id=user_id)
+    service = asyncio.run(get_calendar_service(user_id))  
     events_result = service.events().list(
         calendarId="primary", timeMin=now, maxResults=max_results,
         singleEvents=True, orderBy="startTime"
@@ -67,7 +69,7 @@ class EventsOnArgs(BaseModel):
 @tool(args_schema=EventsOnArgs)
 def get_events_on_date(*, date: str, user_id: str) -> dict:
     """Returns a list of all calendar events for a user on a given date."""
-    service = get_calendar_service(user_id=user_id)
+    service = asyncio.run(get_calendar_service(user_id)) 
     day_start = datetime.strptime(f"{date} 00:00:00", "%Y-%m-%d %H:%M:%S").astimezone(CHICAGO_TZ)
     day_end = datetime.strptime(f"{date} 23:59:59", "%Y-%m-%d %H:%M:%S").astimezone(CHICAGO_TZ)
     items = service.events().list(
@@ -93,7 +95,7 @@ def create_event(*, description: str, user_id: str) -> str:
 
     title, date_str, time_str = data["title"], data["date"], data["time"]
     dur = int(data.get("duration_minutes", 60))
-    service = get_calendar_service(user_id=user_id)
+    service = asyncio.run(get_calendar_service(user_id)) 
 
     if time_str and time_str != "00:00":
         start_dt = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M").astimezone(CHICAGO_TZ)
@@ -114,7 +116,7 @@ class RangeArgs(BaseModel):
 def get_events_in_range(*, request: str, user_id: str) -> str:
     """Finds and lists all calendar events for a user within a natural language date range (e.g., 'this week', 'next month', 'August 5th to 10th')."""
     try:
-        service = get_calendar_service(user_id=user_id)
+        service = asyncio.run(get_calendar_service(user_id)) 
         prompt = f"""Today is {TODAY}. Extract start_date and end_date (YYYY-MM-DD) from the text: "{request}". Respond ONLY as JSON: {{"start_date":"YYYY-MM-DD","end_date":"YYYY-MM-DD"}}"""
         response_content = get_llm().invoke(prompt).content.strip()
         dates = json.loads(response_content)
@@ -146,7 +148,7 @@ def delete_event(*, instruction: str, user_id: str) -> str:
     final_title = parsed_title_part.strip().strip("'\" ")
     date_str = date_str.strip()
 
-    service = get_calendar_service(user_id=user_id)
+    service = asyncio.run(get_calendar_service(user_id)) 
     day_start = datetime.strptime(f"{date_str} 00:00:00", "%Y-%m-%d %H:%M:%S").astimezone(CHICAGO_TZ)
     day_end = datetime.strptime(f"{date_str} 23:59:59", "%Y-%m-%d %H:%M:%S").astimezone(CHICAGO_TZ)
 

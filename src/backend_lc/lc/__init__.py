@@ -34,8 +34,9 @@ from .task_tools import create_task_tool, delete_task_tool
 from .email_tools import draft_reply_tool
 from .shipping_tools import  nike_order_lookup
 from .reminder_tools import create_reminder_tool, delete_reminder_tool,check_reminder_exists, list_all_reminders
+from .retrieval_tools import search_user_documents 
 
-# --- Add all tools to the list for the agent to use ---
+
 ALL_TOOLS = [
     # Calendar Tools
     find_dates,
@@ -73,5 +74,9 @@ ALL_TOOLS = [
 
     # Shipping Tools
     # track_standard_carrier,
-    nike_order_lookup
+    nike_order_lookup,
+
+    #doc tools
+    search_user_documents
+
 ]

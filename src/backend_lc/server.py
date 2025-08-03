@@ -450,8 +450,9 @@ try:
 
     cred = credentials.Certificate(creds_dict)
     if not firebase_admin._apps:
-        firebase_admin.initialize_app(cred)
-        logger.info("✅ Firebase Admin SDK initialized successfully.")
+        firebase_admin.initialize_app(cred, {
+            'storageBucket': 'deft-axon-455818-t8.firebasestorage.app'
+        })
     else:
         logger.info("Firebase Admin SDK already initialized.")
 
@@ -474,6 +475,7 @@ try:
     # from api.routes.resume import router as resume_router
     from api.routes.settings import router as settings_router
     # from api.routes.jobs import router as jobs_router
+    from api.routes.chat import router as chat_router
     from api.routes.google_auth import router as google_auth_router
     from api.routes.gmail import router as gmail_router
     from api.routes.contacts import router as contact_router
@@ -482,6 +484,7 @@ try:
     from api.routes.notes import router as notes_router
     from api.routes.news import router as news_router
     from api.routes.auth import router as auth_router
+    from api.routes.document import router as documents_router
 
     logger.info("API routers imported successfully.")
 except ImportError as e:
@@ -530,6 +533,7 @@ app.include_router(calendar_router, prefix="/api/calendar", tags=["Calendar"])
 app.include_router(webhook_router, prefix="/api/webhooks", tags=["Webhooks"])
 # app.include_router(resume_router, prefix="/api/resume", tags=["Resume"])
 # app.include_router(jobs_router, prefix="/api/jobs", tags=["Jobs"])
+app.include_router(chat_router, prefix="/api/chat", tags=["Chat History"])
 app.include_router(settings_router, prefix="/api/settings", tags=["Settings"])
 app.include_router(google_auth_router, prefix="/api/google/auth", tags=["Google Auth"])
 app.include_router(gmail_router, prefix="/api/gmail", tags=["Gmail"])
@@ -538,6 +542,8 @@ app.include_router(tasks_router, prefix="/api/tasks", tags=["Tasks"])
 app.include_router(remainders_router, prefix="/api/remainders", tags=["Remainders"])
 app.include_router(notes_router, prefix="/api/notes", tags=["Notes"])
 app.include_router(news_router, prefix="/api/news", tags=["News"])
+app.include_router(documents_router, prefix="/api/documents", tags=["News"])
+
 logger.info("All routers included.")
 
 # --- Health check endpoint for deployment environment ---

@@ -7,6 +7,8 @@ from lc.config import get_llm
 from lc import ALL_TOOLS
 from api.routes.auth import User
 import asyncio
+from lc.retrieval_tools import search_user_documents
+from lc.formatting_tools import format_rich_summary, format_confirmation
 
 today = datetime.utcnow().strftime("%Y-%m-%d")
 llm = get_llm()
@@ -21,6 +23,7 @@ CORE RULES
 1. *Think aloud*: begin every reasoning step with **Thought:** explaining why you will (or won’t) take an action.  
 2. *Tool-first facts*: never rely on memory; all factual content must come from a tool call.  
 3. *One-shot finish*: whatever the `format_…` tool returns is the Final Answer—do not alter or add commentary.
+4.  **Search Documents in Document Mode:** If the user is in "document_qa" mode, you **MUST** use the `search_user_documents` tool to get context before answering.
 
 STANDARD WORKFLOW  
 Step 1 – Clarify  
@@ -96,25 +99,36 @@ def fix_parsing_error(error):
         return error_str.split("Could not parse LLM output:")[-1].strip()
     return "I encountered a formatting issue. Please try again."
 
-async def run_agent(user_input: str | dict, user: User) -> dict:
-    user_specific_tools = []
-    for original_tool in ALL_TOOLS:
-        tool = original_tool.copy()
-        
-        # --- THIS IS THE FIX ---
-        # Add a check to ensure the tool's function is valid before using it.
-        if not callable(getattr(tool, 'func', None)):
-            print(f"🔥 CRITICAL ERROR: The tool '{getattr(tool, 'name', 'Unnamed Tool')}' is invalid or has no function.")
-            # Skip this invalid tool to prevent a crash
-            continue
-        # --- END OF FIX ---
+# FIX: Added 'context' parameter to the function signature
+async def run_agent(user_input: str | dict, user: User, context: dict = None) -> dict:
+    print(f"Running agent for user: {user.uid}")
 
+    # Determine the current mode from the context provided by the frontend
+    mode = context.get("mode", "general") if context else "general"
+    
+    available_tools = []
+    if mode == 'document_qa':
+        print("Agent is in DOCUMENT Q&A mode.")
+        # In this mode, the agent can ONLY search user documents and format the answer.
+        available_tools = [
+            search_user_documents,
+            format_rich_summary,
+            format_confirmation
+        ]
+    else:
+        print("Agent is in GENERAL mode.")
+        # In general mode, the agent gets all tools.
+        available_tools = ALL_TOOLS
+
+    # Create a personalized toolset for the current user from the available tools
+    user_specific_tools = []
+    for original_tool in available_tools:
+        tool = original_tool.copy()
         tool_params = inspect.signature(tool.func).parameters
         if 'user_id' in tool_params:
             tool.func = partial(tool.func, user_id=user.uid)
         elif 'user_email' in tool_params:
             tool.func = partial(tool.func, user_email=user.email)
-        
         user_specific_tools.append(tool)
 
     agent = create_structured_chat_agent(
