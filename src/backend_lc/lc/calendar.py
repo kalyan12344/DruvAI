@@ -21,7 +21,7 @@ def _to_future(date_obj: datetime.date) -> datetime.date:
 def get_all_events(user_id: str, max_results: int = 250) -> list: 
 
      """Fetches all upcoming calendar events for *user_id*.""" 
-     now = datetime.now(CHICAGO_TZ).isoformat()-8000 
+     now = (datetime.now(CHICAGO_TZ) - timedelta(days=1)).isoformat()
      service = asyncio.run(get_calendar_service(user_id))   
      events_result = service.events().list( 
          calendarId="primary", timeMin=now, maxResults=max_results, 
