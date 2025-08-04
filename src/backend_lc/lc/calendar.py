@@ -18,14 +18,32 @@ def _to_future(date_obj: datetime.date) -> datetime.date:
         return date_obj.replace(year=date_obj.year + 1)
     return date_obj
 
-def get_all_events(user_id: str, max_results: int = 250) -> list:
-    """Fetches all upcoming calendar events for *user_id*."""
-    now = datetime.now(CHICAGO_TZ).isoformat()
-    service = asyncio.run(get_calendar_service(user_id))  
-    events_result = service.events().list(
-        calendarId="primary", timeMin=now, maxResults=max_results,
-        singleEvents=True, orderBy="startTime"
-    ).execute()
+async def get_all_events(user_id: str, max_results: int = 250) -> list:
+    """
+    Fetches all calendar events for the user from the beginning of the current month.
+    """
+    # 1. Get the current date and time
+    now = datetime.now(CHICAGO_TZ)
+    
+    # 2. Determine the first day of the current month
+    start_of_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    
+    # 3. Format it as an ISO string for the API
+    start_of_month_iso = start_of_month.isoformat()
+
+    print(f"Fetching events from: {start_of_month_iso}")
+
+    # 4. Use the new start date in the API call
+    service = await get_calendar_service(user_id=user_id)
+    events_result = await asyncio.to_thread(
+        service.events().list(
+            calendarId="primary",
+            timeMin=start_of_month_iso, # Use the start of the month here
+            maxResults=max_results,
+            singleEvents=True,
+            orderBy="startTime"
+        ).execute
+    )
     return events_result.get("items", [])
 
 class FindDatesArgs(BaseModel):
