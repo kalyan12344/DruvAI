@@ -17,6 +17,7 @@ import TodoListWidget from './frontend_lc/components/todolist.jsx';
 import Gmail from './frontend_lc/components/gmail.jsx';
 import Auth from './frontend_lc/components/auth.jsx';
 import { auth } from './firebase';
+import ReportsAnalytics from './frontend_lc/components/ra.jsx';
 
 
 
@@ -40,6 +41,8 @@ function App() {
         return < Home />;
       case 'My Tasks':
         return <Tasks />;
+      case 'Reports & Analytics':
+        return <ReportsAnalytics />
       case 'Inbox':
         return <Gmail />
       case 'Calendar':

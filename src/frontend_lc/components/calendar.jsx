@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import { FaChevronLeft, FaChevronRight, FaPlus, FaBrain } from "react-icons/fa";
 import { SiGooglecalendar } from "react-icons/si";
@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import GCIMG from "../assets/Google_Calendar_icon.svg";
 import { useAuth } from '../context/authcontext';
 import "../styles/calendar.css";
+import EventsCard from "./eventscard";
 
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -241,17 +242,22 @@ const Calendar = () => {
     );
 
     return (
-        <div className="calendar-container">
-            {renderHeader()}
-            {loading ? (
-                <div className="centered-state">Loading...</div>
-            ) : connectionStatus?.connected ? (
-                <AnimatePresence mode="wait">
-                    {view === 'month' ? renderMonthView() : renderDayView()}
-                </AnimatePresence>
-            ) : (
-                renderConnectPrompt()
-            )}
+        <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", gap: "30px" }}>
+            <div className="calendar-container">
+                {renderHeader()}
+                {loading ? (
+                    <div className="centered-state">Loading...</div>
+                ) : connectionStatus?.connected ? (
+                    <AnimatePresence mode="wait">
+                        {view === 'month' ? renderMonthView() : renderDayView()}
+                    </AnimatePresence>
+                ) : (
+                    renderConnectPrompt()
+                )}
+            </div>
+            <div>
+                <EventsCard events={events} selectedDate={currentDate} />
+            </div>
         </div>
     );
 };

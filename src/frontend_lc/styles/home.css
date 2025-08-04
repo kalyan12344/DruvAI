@@ -1,8 +1,4 @@
-/*
-================================================================================
-|   Druv AI - Home/Chat Styles (Always-Visible Input Layout)
-================================================================================
-*/
+/*home.css */
 
 :root {
     --dark-charcoal: #101010;
@@ -14,7 +10,6 @@
     --gold-glow: 0 0 10px rgba(212, 175, 55, 0.3);
 }
 
-/* Flexbox layout to push the input section to the bottom */
 .home-container {
     width: 85vw;
     height: 100vh;
@@ -23,25 +18,19 @@
     color: var(--off-white);
     display: flex;
     flex-direction: column;
-    /* This is key */
     overflow: hidden;
 }
 
-/* This is the main content area that holds either the welcome or chat view */
 .main-content-area {
     margin-top: 50px;
     width: 50vw;
     flex-grow: 1;
-    /* This makes it take up all available space */
     position: relative;
-    /* For positioning the absolute animated exit */
     overflow-y: auto;
-    /* Allows content to scroll if needed */
     display: flex;
     flex-direction: column;
 }
 
-/* --- Welcome View (Initial State) --- */
 .welcome-view {
     display: flex;
     flex-direction: column;
@@ -51,7 +40,6 @@
     padding: 2rem;
     text-align: center;
     flex-grow: 1;
-    /* Center vertically within the main content area */
 }
 
 .welcome-icon {
@@ -93,7 +81,6 @@
 }
 
 
-/* --- Chat Container (Active State) --- */
 .chat-container {
     padding: 24px;
     display: flex;
@@ -102,7 +89,6 @@
     width: 100%;
     max-width: 860px;
 
-    /* Constrain width for readability */
     margin: 0 auto;
 }
 
@@ -143,14 +129,16 @@
     color: #000;
 }
 
-/* --- Input Section (Always Visible) --- */
 .input-section {
     padding: 16px 24px;
     border-top: 1px solid var(--glass-border);
     background-color: var(--dark-charcoal);
     flex-shrink: 0;
-    /* Prevents it from shrinking */
-    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
 }
 
 .input-container {
@@ -161,8 +149,11 @@
     border-radius: 14px;
     padding: 8px;
     transition: all 0.2s ease;
+    width: 220%;
     max-width: 860px;
-    margin: 0 auto;
+    flex-grow: 1;
+    transform: translateX(30px);
+    margin-right: 80px;
 }
 
 .input-container:focus-within {
@@ -216,11 +207,9 @@
     color: var(--dark-charcoal);
 }
 
-/* --- Typing Indicator & Lists --- */
 .typing-indicator {
     display: flex;
     gap: 6px;
-    /* padding: 10px; */
 }
 
 .typing-dot {
@@ -277,7 +266,6 @@
     gap: 8px;
 }
 
-/* --- Calendar Card Specific Styles --- */
 .calendar-card .card-header h4 {
     color: var(--text-primary);
     font-weight: 600;
@@ -308,7 +296,6 @@
 
 }
 
-/* --- NEW: Confirmation Card Styles --- */
 .confirmation-card.success .card-header {
     color: var(--success-green);
 }
@@ -343,7 +330,6 @@
     color: var(--dark-charcoal);
 }
 
-/* --- Structured Card Base (Required for all cards) --- */
 .structured-card {
     background-color: #1A1A1A;
     border: 1px solid #282828;
@@ -371,7 +357,6 @@
 }
 
 
-/* --- News Card Specific Styles --- */
 .news-card .card-header h4 {
     color: var(--text-primary);
     font-weight: 600;
@@ -490,4 +475,25 @@
     background-color: var(--subtle-gold);
     color: var(--black);
     border-color: var(--subtle-gold);
+}
+
+.clear-chat-btn {
+    background-color: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    color: var(--text-secondary);
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.clear-chat-btn:hover {
+    background-color: var(--danger-red);
+    border-color: var(--danger-red);
+    color: white;
 }

@@ -1,0 +1,10 @@
+.ra {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: gold;
+    margin-right: 300px;
+
+}

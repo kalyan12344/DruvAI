@@ -1,14 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Mic, Sparkles, Calendar, CheckCircle2, AlertTriangle, ExternalLink, Newspaper, Paperclip, X, FileText } from 'lucide-react';
+import { Send, Mic, Sparkles, Calendar, CheckCircle2, AlertTriangle, ExternalLink, Newspaper, Paperclip, X, FileText, Trash2 } from 'lucide-react';
 import '../styles/home.css';
 import axios from "axios";
 import { auth } from '../../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import AIMessage from './AIMessage';
 
-// const api = axios.create({ baseURL: "http://127.0.0.1:8000" });
-const api = axios.create({ baseURL: "https://druv-backend-338967818277.us-central1.run.app" })
+const api = axios.create({ baseURL: "http://127.0.0.1:8000" });
 
 const suggestionChips = [
     { text: "What's on my calendar today?" },
@@ -68,9 +67,34 @@ export const ConfirmationCard = ({ data }) => {
     );
 };
 
-export const NewsCard = ({ data }) => { /* ... component code ... */ };
+export const NewsCard = ({ data }) => {
+    return (
+        <div className="structured-card news-card">
+            <div className="card-header">
+                <Newspaper size={16} />
+                <h4>{data.message || "Latest News"}</h4>
+            </div>
+            <div className="card-content">
+                {data.articles?.map((article, index) => (
+                    <div className="article-item" key={index}>
+                        <div className="article-header">
+                            <span className="article-source">{article.source}</span>
+                            <h5 className="article-headline">{article.headline}</h5>
+                        </div>
+                        <ul className="summary-points">
+                            {article.summary_points?.map((point, i) => (
+                                <li key={i}>{point}</li>
+                            ))}
+                        </ul>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
 
 const Home = () => {
+
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
     const [isTyping, setIsTyping] = useState(false);
@@ -81,6 +105,7 @@ const Home = () => {
     const messagesEndRef = useRef(null);
     const fileInputRef = useRef(null);
     const [user, setUser] = useState(null);
+    console.log()
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
@@ -129,7 +154,7 @@ const Home = () => {
         const file = event.target.files[0];
         if (file) {
             setFileToUpload(file);
-            setDocumentContext(null); // Clear document context when a new file is attached
+            setDocumentContext(null);
         }
     };
 
@@ -144,8 +169,23 @@ const Home = () => {
 
     const handleSelectDocument = (doc) => {
         setDocumentContext(doc);
-        setFileToUpload(null); // Clear any pending file uploads
+        setFileToUpload(null);
         setIsDocModalOpen(false);
+    };
+
+    const handleClearChat = async () => {
+        if (!window.confirm("Are you sure you want to clear the entire chat history? This cannot be undone.")) {
+            return;
+        }
+        try {
+            const token = await user?.getIdToken();
+            if (!token) return;
+            await api.delete("/api/chat/history", { headers: { 'Authorization': `Bearer ${token}` } });
+            setMessages([]);
+        } catch (error) {
+            console.error("Failed to clear chat history:", error);
+            alert("Could not clear chat history. Please try again.");
+        }
     };
 
     const handleSendMessage = async (content = message) => {
@@ -164,17 +204,18 @@ const Home = () => {
             const headers = { 'Authorization': `Bearer ${token}` };
 
             if (fileToUpload) {
+                const originalQuestion = trimmedMessage || `Summarize this document: ${fileToUpload.name}`;
                 const statusMessageId = `status-${Date.now()}`;
                 const statusMessage = { id: statusMessageId, content: { output: `📄 Processing '${fileToUpload.name}'...` }, sender: "bot", isStatus: true };
                 setMessages(prev => [...prev, statusMessage]);
-
                 const formData = new FormData();
-                formData.append('prompt', trimmedMessage);
+                formData.append('prompt', originalQuestion);
                 formData.append('file', fileToUpload);
+
+                console.log()
 
                 const uploadResponse = await api.post("/agent/ask_with_file", formData, { headers: { ...headers, 'Content-Type': 'multipart/form-data' } });
                 const { document_id } = uploadResponse.data;
-                const originalQuestion = trimmedMessage || `Summarize this document: ${fileToUpload.name}`;
                 setFileToUpload(null);
 
                 const pollStatus = setInterval(async () => {
@@ -182,17 +223,21 @@ const Home = () => {
                         const statusResponse = await api.get(`/api/documents/status/${document_id}`, { headers });
                         if (statusResponse.data.status === 'Indexed' || statusResponse.data.status === 'Error') {
                             clearInterval(pollStatus);
-                            setMessages(prev => prev.filter(m => m.id !== statusMessageId));
 
                             const finalPayload = { input: originalQuestion, context: { mode: 'document_qa', document_filename: statusResponse.data.filename } };
                             const finalResponse = await api.post("/agent/ask", finalPayload, { headers });
 
-                            setMessages(prev => [...prev, { content: finalResponse.data, sender: "bot" }]);
+                            setMessages(prev => {
+                                const newMessages = prev.filter(m => m.id !== statusMessageId);
+                                return [...newMessages, { content: finalResponse.data, sender: "bot" }];
+                            });
                             saveMessageToHistory("bot", finalResponse.data);
                             setIsTyping(false);
                         }
                     } catch (pollError) {
                         clearInterval(pollStatus);
+                        const errorContent = { output: { response_type: "confirmation", status: "error", message: "Could not get document status." }, intermediate_steps: [] };
+                        setMessages(prev => prev.map(msg => msg.id === statusMessageId ? { content: errorContent, sender: "bot" } : msg));
                         setIsTyping(false);
                     }
                 }, 4000);
@@ -265,6 +310,11 @@ const Home = () => {
                 </AnimatePresence>
                 {hasUserSentMessage && (
                     <motion.div className="chat-container" key="chat">
+                        <div className="chat-header-actions">
+                            <button onClick={handleClearChat} className="clear-chat-btn" title="Clear chat history">
+                                <Trash2 size={14} />
+                            </button>
+                        </div>
                         {messages.map((msg, index) => (
                             <motion.div key={index} className={`message ${msg.sender === 'user' ? 'user-message' : 'bot-message'}`}>
                                 {msg.sender === 'user' ? <p>{msg.text}</p> : <AIMessage content={msg.content} />}
@@ -281,31 +331,17 @@ const Home = () => {
             </div>
             <div className="input-section">
                 <AnimatePresence>
-                    {fileToUpload && (
-                        <motion.div className="file-preview">
-                            <span>Ready to upload: <strong>{fileToUpload.name}</strong></span>
-                            <button onClick={() => setFileToUpload(null)}><X size={14} /></button>
-                        </motion.div>
-                    )}
-                    {documentContext && (
-                        <motion.div className="file-preview">
-                            <span>Asking about: <strong>{documentContext.filename}</strong></span>
-                            <button onClick={() => setDocumentContext(null)}><X size={14} /></button>
-                        </motion.div>
-                    )}
+                    {fileToUpload && (<motion.div className="file-preview"><span>Ready to upload: <strong>{fileToUpload.name}</strong></span><button onClick={() => { setFileToUpload(null); }}><X size={14} /></button></motion.div>)}
+                    {documentContext && (<motion.div className="file-preview"><span>Asking about: <strong>{documentContext.filename}</strong></span><button onClick={() => setDocumentContext(null)}><X size={14} /></button></motion.div>)}
                 </AnimatePresence>
                 <div className="input-container">
                     <input type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileChange} />
                     <motion.button className="attach-button" whileTap={{ scale: 0.9 }} onClick={() => fileInputRef.current.click()}>
                         <Paperclip size={22} />
                     </motion.button>
-                    <input type="text" value={message} onChange={(e) => setMessage(e.target.value)} onKeyPress={handleKeyPress} placeholder="Ask Druv anything, or paste an image..." className="input-field" disabled={isTyping} />
+                    <input type="text" value={message} onChange={(e) => setMessage(e.target.value)} onKeyPress={handleKeyPress} placeholder="Ask Druv anything..." className="input-field" disabled={isTyping} />
                     <div className="input-buttons">
-                        <motion.button
-                            className={`mode-toggle-btn ${documentContext ? 'active' : ''}`}
-                            onClick={handleOpenDocSelector}
-                            title="Ask about a specific document"
-                        >
+                        <motion.button className={`mode-toggle-btn ${documentContext ? 'active' : ''}`} onClick={handleOpenDocSelector} title="Ask about a specific document">
                             <FileText size={20} />
                         </motion.button>
                         <motion.button className="mic-button" whileTap={{ scale: 0.9 }}><Mic size={22} /></motion.button>

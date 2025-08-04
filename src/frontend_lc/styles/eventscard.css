@@ -1,0 +1,106 @@
+/* --- Agenda Card Styling --- */
+.agenda-card {
+    margin-top: 30px;
+    background-color: rgba(0, 0, 0, 0.412);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    /* height: 100%; */
+    width: 400px;
+    height: 230px;
+}
+
+.agenda-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.agenda-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.view-toggle {
+    display: flex;
+    background-color: var(--dark-charcoal);
+    border-radius: 8px;
+    padding: 4px;
+}
+
+.view-toggle button {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.view-toggle button.active {
+    background-color: var(--subtle-gold);
+    color: var(--black);
+}
+
+.agenda-content {
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-top: 16px;
+    padding-right: 5px;
+    width: 370px;
+    padding-right: 20px;
+
+}
+
+.agenda-event-item {
+    display: flex;
+    gap: 16px;
+    padding: 12px 0;
+    font-size: 14px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.agenda-event-item:last-child {
+    border-bottom: none;
+}
+
+.event-time {
+    color: var(--text-secondary);
+    width: 80px;
+    flex-shrink: 0;
+    text-align: right;
+}
+
+.event-day-label {
+    display: block;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 12px;
+    margin-bottom: 4px;
+}
+
+.event-details {
+    padding-left: 16px;
+    border-left: 2px solid var(--subtle-gold);
+}
+
+.event-title {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.no-events-message {
+    color: var(--text-secondary);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
