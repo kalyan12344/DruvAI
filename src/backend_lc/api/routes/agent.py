@@ -3,7 +3,6 @@ from fastapi import APIRouter, Depends, Form, UploadFile, File, BackgroundTasks
 from pydantic import BaseModel
 from typing import Optional, Dict
 from firebase_admin import storage, firestore
-import asyncio
 
 from lc.react_agent import run_agent
 from lc.document_processor import index_document_in_background
@@ -18,7 +17,6 @@ class AgentQuery(BaseModel):
 @router.post("/ask")
 async def ask_agent(query: AgentQuery, current_user: User = Depends(get_current_user)):
     """Handles text-only queries for the agent."""
-    print(query)
     output_dict = await run_agent(
         user_input=query.input,
         user=current_user,
@@ -34,8 +32,7 @@ async def ask_agent_with_file(
     file: UploadFile = File(...)
 ):
     """
-    Handles file uploads, starts background indexing, and returns a document ID
-    for the frontend to poll.
+    Handles file uploads, starts background indexing, and returns a document ID.
     """
     try:
         db = firestore.client()
@@ -48,12 +45,9 @@ async def ask_agent_with_file(
         file_path = f"user_uploads/{current_user.uid}/{unique_filename}"
         bucket = storage.bucket()
         blob = bucket.blob(file_path)
-        
-        # Use a thread for the blocking upload call
-        await asyncio.to_thread(blob.upload_from_file, file.file, content_type=file.content_type)
+        blob.upload_from_file(file.file, content_type=file.content_type)
         
         doc_ref.update({"status": "Processing", "storage_path": file_path})
-        print(f"✅ File '{unique_filename}' uploaded to Storage at: {file_path}")
 
         # Start the slow indexing process in the background
         background_tasks.add_task(
@@ -66,7 +60,5 @@ async def ask_agent_with_file(
         
         # Immediately return the document ID to the frontend
         return {"document_id": doc_ref.id}
-
     except Exception as e:
-        print(f"🔥 File upload failed: {e}")
-        raise HTTPException(status_code=500, detail=f"An error occurred during file upload: {e}")
+        raise HTTPException(status_code=500, detail=str(e))

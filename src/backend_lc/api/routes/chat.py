@@ -58,33 +58,3 @@ async def get_chat_history(current_user: User = Depends(get_current_user)):
         return history
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-
-@router.delete("/history")
-async def clear_chat_history(current_user: User = Depends(get_current_user)):
-    """Deletes all messages in the user's chat history."""
-    try:
-        db = firestore.client()
-        collection_ref = db.collection('users').document(current_user.uid).collection('chat_history')
-        
-        # Firestore doesn't have a direct collection delete, so we delete in a batch
-        def delete_collection():
-            batch = db.batch()
-            docs = collection_ref.limit(500).stream() # Delete up to 500 docs at a time
-            deleted = 0
-            for doc in docs:
-                batch.delete(doc.reference)
-                deleted += 1
-            
-            if deleted > 0:
-                batch.commit()
-            return deleted
-
-        # Run the synchronous delete operation in a separate thread
-        deleted_count = await asyncio.to_thread(delete_collection)
-        
-        print(f"Cleared {deleted_count} messages for user {current_user.uid}")
-        return {"status": "success", "message": f"Chat history with {deleted_count} messages cleared."}
-        
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))

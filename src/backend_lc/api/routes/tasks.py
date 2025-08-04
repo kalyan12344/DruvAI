@@ -1,85 +1,133 @@
+#api/routes/tasks.py
+import json
 import uuid
-import asyncio
 from datetime import datetime
 from typing import List, Optional
 
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel, Field
-from firebase_admin import firestore
-
-from api.routes.auth import User, get_current_user
 
 router = APIRouter()
 
+# --- Data Storage ---
+# We'll use a dedicated JSON file to store our tasks.
+TASKS_DB_FILE = "tasks.json"
+
 # --- Pydantic Models for Data Validation ---
+
 class Task(BaseModel):
+    """
+    Represents a single task with all its properties.
+    """
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
-    status: str = "To Do"
-    priority: str = "Medium"
+    status: str = "To Do"  # Default status
+    priority: str = "Medium" # Default priority
     due_date: Optional[datetime] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 
 class TaskUpdate(BaseModel):
+    """
+    A model for updating an existing task. All fields are optional.
+    """
     name: Optional[str] = None
     status: Optional[str] = None
     priority: Optional[str] = None
     due_date: Optional[datetime] = None
 
-# --- API Endpoints for Task Management using Firestore ---
 
-def get_user_tasks_collection(db, user_id: str):
-    """Helper to get a reference to the user's tasks subcollection."""
-    return db.collection('users').document(user_id).collection('tasks')
+# --- Helper Functions for Reading/Writing to the JSON file ---
+
+def read_tasks() -> List[Task]:
+    """Reads all tasks from the tasks.json file."""
+    try:
+        with open(TASKS_DB_FILE, 'r') as f:
+            tasks_data = json.load(f)
+            # Use Pydantic to validate and convert the data into Task objects
+            return [Task(**task) for task in tasks_data]
+    except (FileNotFoundError, json.JSONDecodeError):
+        # If the file doesn't exist or is empty, return an empty list
+        return []
+
+def write_tasks(tasks: List[Task]):
+    """Writes the full list of tasks to the tasks.json file."""
+    with open(TASKS_DB_FILE, 'w') as f:
+        # Convert the list of Pydantic Task objects back to a JSON-serializable format
+        json.dump([task.dict() for task in tasks], f, indent=4, default=str)
+
+
+# --- API Endpoints for Task Management ---
 
 @router.post("/add", response_model=Task, status_code=status.HTTP_201_CREATED)
-async def create_task(task: Task, current_user: User = Depends(get_current_user)):
-    """Creates a new task in the authenticated user's Firestore collection."""
-    try:
-        db = firestore.client()
-        tasks_collection = get_user_tasks_collection(db, current_user.uid)
-        await asyncio.to_thread(tasks_collection.document(task.id).set, task.model_dump())
-        return task
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+def create_task(task: Task):
+    """
+    Creates a new task and adds it to the database.
+    """
+    tasks = read_tasks()
+    tasks.append(task)
+    write_tasks(tasks)
+    return task
 
 @router.get("/retrieve", response_model=List[Task])
-async def get_all_tasks(current_user: User = Depends(get_current_user)):
-    """Retrieves all tasks for the authenticated user from Firestore."""
-    try:
-        db = firestore.client()
-        tasks_collection = get_user_tasks_collection(db, current_user.uid)
-        docs_stream = await asyncio.to_thread(tasks_collection.stream)
-        return [doc.to_dict() for doc in docs_stream]
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+def get_all_tasks():
+    """
+    Retrieves a list of all tasks.
+    """
+    return read_tasks()
+
+@router.get("/retrieve/{task_id}", response_model=Task)
+def get_task(task_id: str):
+    """
+    Retrieves a single task by its ID.
+    """
+    tasks = read_tasks()
+    for task in tasks:
+        if task.id == task_id:
+            return task
+    raise HTTPException(status_code=404, detail="Task not found")
 
 @router.put("/update/{task_id}", response_model=Task)
-async def update_task(task_id: str, task_update: TaskUpdate, current_user: User = Depends(get_current_user)):
-    """Updates an existing task for the authenticated user."""
-    db = firestore.client()
-    task_ref = get_user_tasks_collection(db, current_user.uid).document(task_id)
-    
-    if not (await asyncio.to_thread(task_ref.get)).exists:
+def update_task(task_id: str, task_update: TaskUpdate):
+    """
+    Updates an existing task by its ID.
+    """
+    tasks = read_tasks()
+    task_to_update = None
+    for task in tasks:
+        if task.id == task_id:
+            task_to_update = task
+            break
+
+    if not task_to_update:
         raise HTTPException(status_code=404, detail="Task not found")
 
-    update_data = task_update.model_dump(exclude_unset=True)
-    update_data["updated_at"] = datetime.utcnow()
+    # Update the task with the provided data
+    update_data = task_update.dict(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(task_to_update, key, value)
     
-    await asyncio.to_thread(task_ref.update, update_data)
-    
-    updated_doc = await asyncio.to_thread(task_ref.get)
-    return updated_doc.to_dict()
+    # Update the 'updated_at' timestamp
+    task_to_update.updated_at = datetime.utcnow()
+
+    write_tasks(tasks)
+    return task_to_update
 
 @router.delete("/delete/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_task(task_id: str, current_user: User = Depends(get_current_user)):
-    """Deletes a task by its ID for the authenticated user."""
-    db = firestore.client()
-    task_ref = get_user_tasks_collection(db, current_user.uid).document(task_id)
+def delete_task(task_id: str):
+    """
+    Deletes a task by its ID.
+    """
+    tasks = read_tasks()
+    task_to_delete = None
+    for task in tasks:
+        if task.id == task_id:
+            task_to_delete = task
+            break
 
-    if not (await asyncio.to_thread(task_ref.get)).exists:
+    if not task_to_delete:
         raise HTTPException(status_code=404, detail="Task not found")
-        
-    await asyncio.to_thread(task_ref.delete)
+
+    tasks.remove(task_to_delete)
+    write_tasks(tasks)
     return

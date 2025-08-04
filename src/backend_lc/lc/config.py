@@ -9,9 +9,7 @@ load_dotenv()
 def get_llm():
     return ChatOpenAI(
         # model="mistralai/mistral-7b-instruct",
-        model = "mistralai/devstral-small",     
-        # model = "mistralai/devstral-medium",
-        # model = "qwen/qwen3-235b-a22b-thinking-2507",
+        model = "mistralai/devstral-small",
         # model = "qwen/qwen3-30b-a3b-instruct-2507",
         temperature=0,
         base_url="https://openrouter.ai/api/v1",
