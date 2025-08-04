@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field
 from typing import List, Optional
 from datetime import datetime
 from firebase_admin import firestore
+import asyncio
 
 from lc.web_search import web_search
 from lc.react_agent import llm
@@ -158,11 +159,17 @@ def update_news_settings(settings: NewsSettings, current_user: User = Depends(ge
     user_ref.update({"news_settings": settings.dict()})
     return {"message": "News settings updated successfully."}
 
+class ToggleRequest(BaseModel):
+    enabled: bool
+
 @router.post("/settings/toggle")
-def toggle_news_feature(request: ToggleRequest, current_user: User = Depends(get_current_user)):
+async def toggle_news_feature(request: ToggleRequest, current_user: User = Depends(get_current_user)):
     """Toggles the news feature for the authenticated user in Firestore."""
     db = firestore.client()
     user_ref = db.collection('users').document(current_user.uid)
-    user_ref.update({"news_settings.enabled": request.enabled})
+    
+    # FIX: Run the blocking .update() call in a separate thread
+    await asyncio.to_thread(user_ref.update, {"news_settings.enabled": request.enabled})
+    
     status = "enabled" if request.enabled else "disabled"
     return {"message": f"News briefing feature has been {status}."}
